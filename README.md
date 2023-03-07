@@ -1,8 +1,8 @@
 <h1>Fundamental Concepts of Programing Languages Laboratory</h1>
 
 <h2>1. Introduction</h2>
-1.1 <a href="https://docs.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/">A tour</a><br>
-1.2 <a href="https://docs.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/types">Types</a><br>
+1.1 <a href="https://docs.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/">A tour</a> Betea <br>
+1.2 <a href="https://docs.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/types">Types</a> Betea<br>
 1.3 <a href="https://docs.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/program-building-blocks">Program building blocks</a><br>
 1.4 <a href="https://docs.microsoft.com/en-us/dotnet/csharp/tour-of-csharp/features">Features</a><br>
 1.5 <a href="https://docs.microsoft.com/en-us/dotnet/csharp/fundamentals/program-structure/">Program structure</a><br>
