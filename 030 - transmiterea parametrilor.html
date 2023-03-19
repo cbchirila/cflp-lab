@@ -1,5 +1,218 @@
-
-<h1>Transmiterea parametrilor</h1>
+<!DOCTYPE html>
+<body>
+<h1>3.1 Transmiterea parametrilor</h1>
 
 <p>
-</p>
+    În C#, argumentele pot fi transmise parametrilor fie prin valoare, fie prin referință. Rețineți că tipurile C# pot fi tipuri ca referință (clasă) sau tipuri ca valoare (struct): </p>
+
+    <ul>
+        <li> Transmitere <i>prin valoare</i> înseamnă transmiterea unei copii a variabilei către metodă.
+        <li> Transmitere <i>prin referință</i> înseamnă transmiterea accesului la variabilă către metodă.
+        <li> O variabilă <i>de tip referință</i> conține o referință la datele sale.
+        <li> O variabilă <i>de tip valoare</i> conține datele sale direct.
+    </ul>
+
+<h1>3.2 Transmiterea un tip de valoare după valoare</h1>
+
+<p>Când transmiteți un tip <i>valoare</i> după <i>valoare</i>:</p>
+
+    <ul>
+    <li> Dacă metoda atribuie parametrului să facă referire la un obiect diferit, acele modificări nu sunt vizibile de la apelant.
+    <li> Dacă metoda modifică starea obiectului la care se referă parametrul, acele modificări nu sunt vizibile de la apelant.
+    </ul>
+Următorul exemplu demonstrează transmiterea parametrilor de tip valoare după valoare. Variabila n este transmisă prin valoare metodei SquareIt. Orice modificări care au loc în interiorul metodei nu au niciun efect asupra valorii inițiale a variabilei.
+
+<pre>
+<code>
+int n = 5; 
+System.Console.WriteLine("The value before calling the method: {0}", n); 
+ 
+SquareIt(n); //Transmitem variabila prin valoare.
+System.Console.WriteLine("The value after calling the method: {0}", n); 
+ 
+// Keep the console window open in debug mode. 
+System.Console.WriteLine("Press any key to exit."); 
+System.Console.ReadKey(); 
+ 
+static void SquareIt(int x) 
+//Parametrul x este transmis prin valoare.
+//Modificările aduse lui x nu vor afecta valoarea inițială a lui x.
+{ 
+    x *= x; 
+    System.Console.WriteLine("The value inside the method: {0}", x); 
+} 
+/* Ieșire: 
+    The value before calling the method: 5 
+    The value inside the method: 25 
+    The value after calling the method: 5 
+*/ 
+</code>
+</pre>
+
+<p>Variabila n este un tip de valoare. Acesta conține datele sale, valoarea 5. Când SquareIt este invocat, conținutul lui n este copiat în parametrul x, care este ridicat la pătrat în interiorul metodei. În Main, totuși, valoarea lui n este aceeași după apelarea metodei SquareIt ca și înainte. Modificarea care are loc în interiorul metodei afectează doar variabila locală x.</p>
+
+<h2>Transmiterea un tip de valoare prin referință</h2>
+
+<p>Când se transmite un tip de valoare prin referință:</p>
+    <ul>
+    <li>Dacă metoda atribuie parametrului să facă referire la un obiect diferit, acele modificări nu sunt vizibile de la apelant.
+    <li>Dacă metoda modifică starea obiectului la care se referă parametrul, acele modificări sunt vizibile de la apelant.
+</ul>
+<p>Următorul exemplu este același cu exemplul anterior, cu excepția faptului că argumentul este transmis ca parametru ref. Valoarea argumentului de bază, n, este schimbată atunci când x este schimbat în metodă.</p>
+
+<pre>
+<code>
+int n = 5; 
+System.Console.WriteLine("The value before calling the method: {0}", n); 
+ 
+SquareIt(ref n);  // Passing the variable by reference. 
+System.Console.WriteLine("The value after calling the method: {0}", n); 
+ 
+//Păstrează consola deschisă în modul debug.
+System.Console.WriteLine("Press any key to exit."); 
+System.Console.ReadKey(); 
+ 
+static void SquareIt(ref int x) 
+// Parametrul x este transmis prin referință.
+// Modificările aduse lui x vor afecta valoarea inițială a lui x.
+{ 
+    x *= x; 
+    System.Console.WriteLine("The value inside the method: {0}", x); 
+} 
+/* Ieșire: 
+    The value before calling the method: 5 
+    The value inside the method: 25 
+    The value after calling the method: 25 
+*/ 
+</code>
+</pre>
+
+<p>În acest exemplu, nu valoarea lui n este transmisă; mai degrabă, se trece o referință la n. Parametrul x nu este un int; este o referire la un int, în acest caz, o referire la n. Prin urmare, atunci când x este pătrat în interiorul metodei, ceea ce este de fapt pătrat este ceea ce x se referă, n.</p>
+
+<h1>3.3 Transmiterea un tip de referință după valoare</h1>
+
+<p>Când treceți un tip <i>referință</i> după <i></i>valoare:</p>
+<ul>
+    <li> Dacă metoda atribuie parametrul să facă referire la un obiect diferit, acele modificări nu sunt vizibile de la apelant.
+    <li> Dacă metoda modifică starea obiectului la care se referă parametrul, acele modificări sunt vizibile de la apelant.
+</ul>
+<p>Următorul exemplu demonstrează transmiterea unui parametru de tip referință, arr, după valoare, unei metode, Change. Deoarece parametrul este o referință la arr, este posibilă modificarea valorilor elementelor matricei. Cu toate acestea, încercarea de a realoca parametrul într-o locație de memorie diferită funcționează numai în cadrul metodei și nu afectează variabila originală, arr.</p>
+
+int[] arr = { 1, 4, 5 }; 
+System.Console.WriteLine("Inside Main, before calling the method, the first element is: {0}", arr[0]); 
+ 
+Change(arr); 
+System.Console.WriteLine("Inside Main, after calling the method, the first element is: {0}", arr[0]); 
+ 
+static void Change(int[] pArray) 
+{ 
+    pArray[0] = 888; //Acastă modificare afecteaza elementul inițial.
+    pArray = new int[5] { -3, -1, -2, -3, -4 };  //Această schimbare este locală.
+    System.Console.WriteLine("Inside the method, the first element is: {0}", pArray[0]); 
+} 
+/* Ieșire: 
+    Inside Main, before calling the method, the first element is: 1 
+    Inside the method, the first element is: -3 
+    Inside Main, after calling the method, the first element is: 888 
+*/ 
+
+<p>În exemplul precedent, matricea, arr, care este un tip de referință, este transmisă metodei fără parametrul ref. Într-un astfel de caz, o copie a referinței, care indică arr, este transmisă metodei. Rezultatul arată că este posibil ca metoda să modifice conținutul unui element de matrice, în acest caz de la 1 la 888. Cu toate acestea, alocarea unei noi porțiuni de memorie prin utilizarea operatorului nou din cadrul metodei Change face ca variabila pArray să fie referită matrice nouă. Astfel, orice modificări ulterioare nu vor afecta matricea originală, arr, care este creată în Main. De fapt, două matrice sunt create în acest exemplu, unul în Main și unul în interiorul metodei Change.</p>
+
+<h2>Transmiterea un tip de referință prin referință</h2>
+
+<p>Când se transmite un tip <i>referință</i> prin <i>referință</i>:
+    <ul>
+    <li>Dacă metoda atribuie parametrului să se refere la un obiect diferit, acele modificări sunt vizibile de la apelant.
+    <li>Dacă metoda modifică starea obiectului la care se referă parametrul, acele modificări sunt vizibile de la apelant.
+    </ul>
+Următorul exemplu este același cu exemplul anterior, cu excepția faptului că cuvântul cheie ref este adăugat la antetul și apelul metodei. Orice modificări care au loc în metodă afectează variabila originală din programul apelant.</p>
+
+<pre>
+<code>
+int[] arr = { 1, 4, 5 }; 
+System.Console.WriteLine("Inside Main, before calling the method, the first element is: {0}", arr[0]);
+ 
+Change(ref arr);
+ 
+System.Console.WriteLine("Inside Main, after calling the method, the first element is: {0}", arr[0]);
+ 
+static void Change(ref int[] pArray) 
+{ 
+    // Ambele din următoarele modificări vor afecta variabilele inițiale:
+    pArray[0] = 888; 
+    pArray = new int[5] { -3, -1, -2, -3, -4 }; 
+    System.Console.WriteLine("Inside the method, the first element is: {0}", pArray[0]); 
+} 
+/* Ieșire: 
+    Inside Main, before calling the method, the first element is: 1 
+    Inside the method, the first element is: -3 
+    Inside Main, after calling the method, the first element is: -3 
+*/ 
+</code>
+</pre>
+
+<p>Toate modificările care au loc în interiorul metodei afectează matricea originală din Main. De fapt, tabloul original este realocat folosind operatorul nou. Astfel, după apelarea metodei Change, orice referință la arr indică matricea de cinci elemente, care este creată în metoda Change.</p>
+
+<h1>3.4 Diferența dintre trasmiterea unui struct și a unei clase la o metodă</h1>
+
+<p>Deoarece un struct este un tip valoare, atunci când se transmite o structură după valoare unei metode, metoda primește și operează pe o copie a argumentului struct.
+ Metoda nu are acces la structura originală în metoda de apelare și, prin urmare, nu o poate modifica în niciun fel. Metoda poate schimba doar copia.</p>
+
+<p>O instanță de clasă este un tip referință, nu un tip valoare. Când un tip referință este transmis prin valoare unei metode, metoda primește o copie a referinței la instanța clasei. 
+Adică, metoda apelată primește o copie a adresei instanței, iar metoda de apelare reține adresa inițială a instanței. 
+Instanța clasei din metoda de apelare are o adresă, parametrul din metoda apelată are o copie a adresei și ambele adrese se referă la același obiect.
+ Deoarece parametrul conține doar o copie a adresei, metoda apelată nu poate schimba adresa instanței de clasă în metoda apelantă.
+ Cu toate acestea, metoda apelată poate folosi copia adresei pentru a accesa membrii clasei, atât adresa originală, cât și copia adresei de referință.
+ Dacă metoda apelată schimbă un membru al clasei, se schimbă și instanța inițială a clasei din metoda apelată.</p>
+
+<p>Rezultatul exemplului următor ilustrează diferența. Valoarea câmpului willIChange al instanței clasei este modificată de apelul la metoda ClassTaker
+ deoarece metoda folosește adresa din parametru pentru a găsi câmpul specificat al instanței clasă.
+ Câmpul willIChange al structurii din metoda de apelare nu este modificat de apelul la metoda StructTaker deoarece valoarea argumentului este o copie a structurii în sine, nu o copie a adresei acesteia.
+  StructTaker modifică copia, iar copia se pierde atunci când apelul către StructTaker este finalizat.</p>
+
+<pre>
+<code>
+class TheClass {
+    public string? willIChange; 
+} 
+ 
+struct TheStruct {
+    public string willIChange; 
+} 
+ 
+class TestClassAndStruct {
+    static void ClassTaker(TheClass c) {
+        c.willIChange = "Changed"; 
+    } 
+     
+    static void StructTaker(TheStruct s) {
+        s.willIChange = "Changed"; 
+    } 
+     
+    public static void Main() {
+        TheClass testClass = new TheClass(); 
+        TheStruct testStruct = new TheStruct(); 
+         
+        testClass.willIChange = "Not Changed"; 
+        testStruct.willIChange = "Not Changed"; 
+         
+        ClassTaker(testClass); 
+        StructTaker(testStruct); 
+         
+        Console.WriteLine("Class field = {0}", testClass.willIChange); 
+        Console.WriteLine("Struct field = {0}", testStruct.willIChange); 
+         
+        //Păstrează consola deschisă în modul debug.
+        Console.WriteLine("Press any key to exit."); 
+        Console.ReadKey(); 
+    } 
+} 
+/* Ieșire: 
+    Class field = Changed 
+    Struct field = Not Changed 
+*/ 
+</code>
+</pre>
+
+<p>Modul în care este transmis un argument și dacă este tip de referință sau tip de valoare controlează ce modificări aduse argumentului sunt vizibile de la apelant.</p>
+</body>
