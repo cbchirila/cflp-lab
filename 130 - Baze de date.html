@@ -1,5 +1,642 @@
+<html>
+<head>
+    <title>Laborator 9 - ASP.NET</title>
+</head>
+<body>
 
-<h1>Baze de date</h1>
+<style>
+    pre code {
+        background-color: #eee;
+        border: 1px solid #999;
+        display: block;
+        padding: 5px;
+    }
+
+    p {
+        font-size: 18px;
+        text-indent: 20px;
+    }
+
+    li {
+        padding: 2px;
+        font-size: 16px;
+    }
+
+</style>
+
+<h1>Laboratorul 9. Aplicație ASP.NET cu baze de date</h1>
+
+<p><i>În cadrul acestui laborator vom învăța să creem aplicații ASP.NET. În prima parte a laboratorului vom învăța cum să
+    facem partea de interfață a aplicațiilor, iar în a doua parte vom învăța cum vom scrie cod sursă pentru controale și
+    forme.</i></p>
+
+<h2>1. Baza de date</h2>
 
 <p>
+    Vom crea o nouă bază de date cu numele ”Firma” în Microsoft SQL Server. Baza de date va conține următoarele tabele:
 </p>
+<ul>
+    <li>Users</li>
+    <li>Angajati</li>
+    <li>Proiecte</li>
+    <li>AlocareProiecte</li>
+</ul>
+<p>
+    Cu următoarele câmpuri:
+</p>
+<img src="images/130/campuri01.jpg" alt="">
+<img src="images/130/campuri02.jpg" alt="">
+<img src="images/130/campuri03.jpg" alt="">
+<img src="images/130/campuri04.jpg" alt="">
+<br>
+<br>
+<h2>2. Pagina de Autentificare</h2>
+<p>Vom adăuga proiectului o nouă clasă (ConexiuneBD.cs) în care vom inițializa conexiunea la baza de date. Codul sursă al aceste clase este următorul:</p>
+<pre>
+    <code>using Microsoft.Win32;
+using System;
+using System.Collections.Generic; using System.Data.SqlClient; using System.Linq;
+using System.Web;
+
+namespace Aplicatie_ASP.NET_cu_Baze_de_date
+{
+    public class ConexiuneBD
+    {
+        public static SqlConnection conn = new SqlConnection("Data Source="+GetDataSources()+";Initial
+        Catalog=Firma;Integrated Security=True");
+
+        private static string GetDataSources()
+        {
+            string ServerName = Environment.MachineName; string data_source = "";
+            RegistryView registryView = Environment.Is64BitOperatingSystem ? RegistryView.Registry64 : RegistryView.Registry32;
+            using (RegistryKey hklm = RegistryKey.OpenBaseKey(RegistryHive.LocalMachine, registryView))
+            {
+                RegistryKey instanceKey = hklm.OpenSubKey(@"SOFTWARE\Microsoft\Microsoft SQL Server\Instance
+                Names\SQL", false);
+                if (instanceKey != null)
+                {
+                    foreach (var instanceName in instanceKey.GetValueNames())
+                    {
+                        data_source = data_source + (ServerName + "\\" + instanceName);
+                    }
+                }
+            }
+            return data_source;
+        }
+    }
+}</code>
+</pre>
+<p>În pagina de autentificare (WebForm1.aspx) vom avea un câmp DropDownList în care se vor încărca din tabelul ”Utilizatori” din baza de date toți utilizatorii care au acces la aplicație, și un câmp textBox în care utilizatorul va putea completa parola.</p>
+<img src="images\130\figura01-pagina-de-autentificare.jpg" alt="Figura 1. Pagina de autentificare">
+<h3>Figura 1. Pagina de autentificare</h3>
+<br>
+<p>Pentru a putea avea acces la variabile corespunzătoare conexiunii la baza de date, vom declara aceste variabile în cadrul clasei Formei: public partial class WebForm1 : System.Web.UI.Page {}:</p>
+<pre><code>SqlCommand cmd;
+SqlDataReader dr;</code>
+</pre>
+<p>La încărcarea paginii (Page_Load) vom adăuga următorul cod sursă:</p>
+<pre>
+    <code>protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!Page.IsPostBack)
+        {
+            try
+            {
+                ConexiuneBD.conn.Open();
+                cmd = new SqlCommand("select NumeUtilizator from Users", ConexiuneBD.conn);
+                dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    DropDownList1.Items.Add(dr[0].ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                Label1.Text = "Nu se poate realiza conexiunea " + ex.Message;
+            }
+            finally
+            {
+                ConexiuneBD.conn.Close();
+            }
+        }
+    }</code>
+</pre>
+<p>La click pe butonul ”Autentificare” adăugăm următorul cod sursă:</p>
+<pre><code>protected void Button1_Click(object sender, EventArgs e)
+    {
+        try
+        {
+            ConexiuneBD.conn.Open();
+            cmd = new SqlCommand("select Parola from Users where NumeUtilizator='" + DropDownList1.Text + "'", ConexiuneBD.conn);
+            dr = cmd.ExecuteReader();
+            if (!dr.Read())
+            {
+                Label1.Text = "Datele sunt gresite!";
+            }
+            else
+            {
+                string url;
+                if (EncDec.Decrypt(dr[0].ToString().Trim()) == TextBox1.Text.Trim())
+                {
+                    Application["numeUser"] = DropDownList1.Text; url = "WebForm2.aspx"; Response.Redirect(url);
+                }
+                else
+                {
+                    Label1.Text = "Parola gresita!";
+                }
+            }
+            catch (Exception ex)
+            {
+                Label1.Text = "Nu se poate realiza conexiunea " + ex.Message;
+            }
+            finally
+            {
+                ConexiuneBD.conn.Close();
+            }
+        }
+    }</code>
+</pre>
+<p>La click pe butonul ”Inregistrare” adăugăm următorul cod sursă:</p>
+<pre><code>protected void Button2_Click(object sender, EventArgs e)
+    {
+        //deschidem forma de înregistrare
+        Response.Redirect("WebForm6.aspx");
+    }
+</code>
+</pre>
+
+<p>Pentru a putea cripta/decripta parola vom crea o nouă clasă (EncDec.cs) în care vom crea 2 funcții pentru criptarea și decriptarea parolei cu ajutorul algoritmului AES din biblioteca:</p>
+<img src="images\130\criptare-decriptare.jpg" alt="">
+<br>
+
+<p>Codul sursă al clasei EncDec.cs este:</p>
+
+<pre><code>using System;
+using System.Collections.Generic; using System.IO;
+using System.Linq;
+using System.Security.Cryptography; using System.Text;
+using System.Web;
+
+namespace Aplicatie_ASP.NET_cu_Baze_de_date
+{
+    public static class EncDec
+    {
+        public static string Encrypt(string clearText)
+        {
+            string EncryptionKey = "MAKV2SPBNI99212";
+            byte[] clearBytes = Encoding.Unicode.GetBytes(clearText); using (Aes encryptor = Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e, 0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                encryptor.Key = pdb.GetBytes(32); encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateEncryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(clearBytes, 0, clearBytes.Length);
+                        cs.Close();
+                    }
+                    clearText = Convert.ToBase64String(ms.ToArray());
+                }
+            }
+            return clearText;
+        }
+
+        public static string Decrypt(string cipherText)
+        {
+            string EncryptionKey = "MAKV2SPBNI99212";
+            byte[] cipherBytes = Convert.FromBase64String(cipherText); using (Aes encryptor = Aes.Create())
+            {
+                Rfc2898DeriveBytes pdb = new Rfc2898DeriveBytes(EncryptionKey, new byte[] { 0x49, 0x76, 0x61, 0x6e,
+                0x20, 0x4d, 0x65, 0x64, 0x76, 0x65, 0x64, 0x65, 0x76 });
+                encryptor.Key = pdb.GetBytes(32); encryptor.IV = pdb.GetBytes(16);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    using (CryptoStream cs = new CryptoStream(ms, encryptor.CreateDecryptor(), CryptoStreamMode.Write))
+                    {
+                        cs.Write(cipherBytes, 0, cipherBytes.Length); cs.Close();
+                    }
+                    cipherText = Encoding.Unicode.GetString(ms.ToArray());
+                }
+            }
+            return cipherText;
+        }
+    }
+}</code>
+</pre>
+
+<h2>3. Pagina de înregistrare</h2>
+<img src="images\130\pagina-de-inregistrare.jpg" alt="Pagina de înregistrare">
+<br>
+
+<p>La click pe butonul ”Înregistrare” adăugăm următorul cod sursă:</p>
+
+<pre>
+    <code>public class Main {
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        SqlCommand cmd;
+        try
+        {
+            ConexiuneBD.conn.Open();
+            cmd = new SqlCommand("insert into Users (NumeUtilizator,Parola) values(@nume,@pass) ", ConexiuneBD.conn);
+            cmd.Parameters.AddWithValue("@nume", TextBox1.Text.Trim());
+            cmd.Parameters.AddWithValue("@pass", EncDec.Encrypt(TextBox2.Text.Trim()));
+            int rowsAffected = cmd.ExecuteNonQuery();
+            if (rowsAffected == 1)
+            {
+                string url = "WebForm1.aspx";
+                Response.Redirect(url);
+            }
+            else
+            {
+                LabelEroare.Text = "Eroare inserare!";
+            }
+        }
+        catch (Exception ex)
+        {
+            //log error
+            LabelEroare.Text = "Eroare la deschidere baza date " + ex.Message;
+        }
+        //adaugarea datelor
+        finally
+        {
+            ConexiuneBD.conn.Close();
+        }
+    }
+}
+    </code>
+</pre>
+
+<h2>4. Pagina Principală</h2>
+<p>În cadrul paginii principale avem următoarele funcționalități (Figura 2):</p>
+<ul>
+    <li>Vom avea un tabel cu toți angajații firmei</li>
+    <li>Vom putea căuta un angajat după nume</li>
+    <li>Vom putea adăuga un nou angajat</li>
+    <li>Vom putea aloca un proiect unui angajat</li>
+    <li>Vom putea completa, la alegere un chestionar despre anumite probleme legate de firmă</li>
+</ul>
+
+<img src="images\130\figura02-pagina-principala.jpg" alt="">
+<h3>Figura 2. Pagina principală</h3>
+<p>La încărcarea paginii (Page_Load) vom adăuga următorul cod sursă:</p>
+<pre>
+    <code>protected void Page_Load(object sender, EventArgs e)
+    {
+        Label2.Text = "User logat: " + (string) Application["numeUser"];
+        try
+        {
+            SqlDataAdapter da = new SqlDataAdapter("SELECT cnp as [CNP], nume as [Nume], prenume as [Prenume], departament as [Departament] FROM Angajati ORDER BY nume,prenume", ConexiuneBD.conn);
+            DataSet ds = new DataSet();
+            da.Fill(ds);
+            GridView1.DataSource = ds.Tables[0];
+            GridView1.DataBind();
+            //pentru chestionare
+            string[] filePaths = Directory.GetFiles(Server.MapPath("~/Formulare/"));
+            foreach(string filePath in filePaths) {
+                DropDownList1.Items.Add(new ListItem(Path.GetFileNameWithoutExtension(filePath)));
+            }
+        }
+        catch (Exception ex) {
+            Label1.Text = "Nu se poate realiza conexiunea la baza de date: " + ex.Message;
+        }
+        finally
+        {
+            ConexiuneBD.conn.Close();
+        }
+    }</code>
+</pre>
+
+<p>Codul sursă care suprascrie evenimentele la nivelul GridView:</p>
+
+<pre>
+    <code>protected override void Render(System.Web.UI.HtmlTextWriter writer)
+    {
+        foreach(GridViewRow row in GridView1.Rows)
+        {
+            if (row.RowType == DataControlRowType.DataRow)
+            {
+                row.Attributes["onmouseover"] = "this.style.cursor='hand';this.style.textDecoration='underline';";
+                row.Attributes["onmouseout"] = "this.style.textDecoration='none';";
+                row.Attributes["onclick"] =
+                        ClientScript.GetPostBackClientHyperlink(GridView1,
+                                "Select$" + row.DataItemIndex, true);
+                row.Style.Add(HtmlTextWriterStyle.Cursor, "pointer");
+            }
+        }
+        base.Render(writer);
+    }</code>
+</pre>
+<p>La evenimentul click pe butonul ”Caută” adăugăm următorul cod sursă:</p>
+
+<pre>
+    <code>public class Main {
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        foreach(GridViewRow rx in GridView1.Rows)
+        {
+            rx.BackColor = Color.White;
+            rx.ForeColor = Color.Black;
+        }
+        foreach(GridViewRow row in GridView1.Rows)
+        {
+            if (row.Cells[1].Text != null && row.Cells[1].Text.Trim() == TextBox1.Text.Trim()) {
+                GridView1.SelectedIndex = row.RowIndex;
+                Button3.Enabled = true; //butonul de alocare proiect la angajat
+                Button4.Enabled = true; //butonul de chestionare
+                row.BackColor = Color.DarkRed;
+                row.ForeColor = Color.White;
+            }
+        }
+    }
+
+}</code>
+</pre>
+
+<p>La evenimentul click pe butonul ”Adaugă angajat” adăugăm următorul cod sursă:</p>
+
+<pre>
+    <code>protected void Button2_Click(object sender, EventArgs e)
+    {
+        string url;
+        url = "WebForm3.aspx";
+        Response.Redirect(url);
+    }</code>
+</pre>
+
+<p>La evenimentul click pe butonul ”Alocare proiect angajat” adăugăm următorul cod sursă:</p>
+
+<pre>
+    <code>protected void Button3_Click(object sender, EventArgs e)
+    {
+        string url;
+        string cnp = GridView1.SelectedRow.Cells[0].Text.ToString().Trim();
+        url = "WebForm4.aspx?cnp=" + cnp;
+        Response.Redirect(url);
+    }</code>
+</pre>
+
+<p>La evenimentul Comandă pe un rând (RowCommand) la DataGrid adăugăm următorul cod sursă:</p>
+
+<pre>
+    <code>protected void GridView1_RowCommand(object sender, GridViewCommandEventArgs e)
+    {
+        if (e.CommandName == "Select")
+        {
+            Button3.Enabled = true;
+            Button4.Enabled = true; //butonul de chestionare
+        }
+    }</code>
+</pre>
+
+<p>La evenimentul click pe butonul ”Completează chestionar” adăugăm următorul cod sursă:</p>
+
+<pre>
+    <code>protected void Button4_Click(object sender, EventArgs e)
+    {
+        string url;
+        string cnp = GridView1.SelectedRow.Cells[0].Text.ToString().Trim();
+        url = "WebForm5.aspx?cnp=" + cnp +"&chestionar="+DropDownList1.Text; Response.Redirect(url);
+    }
+</code>
+</pre>
+
+<p>La evenimentul <i>GridView1_SelectedIndexChanded</i> adăugăm următorul cod sursă:</p>
+
+<pre>
+    <code>protected void GridView1_SelectedIndexChanged(object sender, EventArgs e)
+    {
+        foreach (GridViewRow rx in GridView1.Rows)
+        {
+
+
+            rx.BackColor = Color.White; rx.ForeColor = Color.Black;
+        }
+        GridView1.SelectedRow.BackColor = System.Drawing.Color.DarkRed; GridView1.SelectedRow.ForeColor =
+        System.Drawing.Color.White;
+    }</code>
+</pre>
+
+<h2>5. Pagina Adăugare Angajat</h2>
+<p>În cadrul acestei pagini vom putea adăuga un nou angajat în cadrul firmei, în tabelul Angajati (Figura 3).</p>
+<img src="images\130\figura03-adaugare-angajat.jpg" alt="">
+<h3>Figura 3. Adăugare angajat</h3>
+<br>
+
+<p>La evenimentul click pe butonul ”Adaugă” adăugăm următorul cod sursă:</p>
+
+<pre>
+    <code>protected void Button1_Click(object sender, EventArgs e)
+    {
+        SqlCommand cmd;
+        if (TextBox1.Text.ToString().Length != 13)
+        {
+            Label1.Visible = true;
+        }
+        else
+        {
+            try
+            {
+                conn.Open();
+                cmd = new SqlCommand("insert into Angajati (cnp,nume,prenume,departament) values(@cnp,@nume,@prenume,@departament) ", ConexiuneBD.conn);
+                cmd.Parameters.AddWithValue("@cnp", TextBox1.Text.Trim());
+                cmd.Parameters.AddWithValue("@nume", TextBox2.Text.Trim());
+                cmd.Parameters.AddWithValue("@prenume", TextBox3.Text.Trim());
+                cmd.Parameters.AddWithValue("@departament", TextBox4.Text.Trim());
+                int rowsAffected = cmd.ExecuteNonQuery();
+                if (rowsAffected == 1)
+                {
+                    string url = "WebForm2.aspx";
+                    Response.Redirect(url);
+                }
+                else LabelEroare.Text = "Eroare inserare!";
+            }
+            catch (Exception ex)
+            {
+                //log error
+                LabelEroare.Text = "Eroare la deschidere baza date " + ex.Message;
+            }
+            //adaugarea datelor
+            finally
+            {
+                ConexiuneBD.conn.Close();
+            }
+        }
+    }
+    </code>
+</pre>
+
+<h2>6. Pagina Alocare proiect la un angajat</h2>
+<p>În cadrul acestei pagini vom putea aloca un nou proiect unui angajat selectat din GridView, în tabelul AlocareProiecte (Figura 4).</p>
+<img src="images\130\figura04-alocare-proiecte.jpg" alt="">
+<br>
+
+<p>Pentru a putea avea acces la variabile corespunzătoare conexiunii la baza de date, vom declara/inițializa aceste variabile în cadrul clasei Formei: public partial class WebForm1 : System.Web.UI.Page {}:</p>
+
+<pre>
+    <code>SqlCommand cmd;
+SqlDataReader dr;</code>
+</pre>
+
+<p>La încărcarea paginii (Page_Load) vom adăuga următorul cod sursă:</p>
+
+<pre>
+    <code>protected void Page_Load(object sender, EventArgs e)
+    {
+        if (!Page.IsPostBack) {
+            string Cnp = Request.QueryString["cnp"];
+            TextBox1.Text = Cnp;
+            TextBox1.Enabled = false;
+            try
+            {
+                con.Open();
+                cmd = new SqlCommand("select numeProiect from Proiecte", ConexiuneBD.conn);
+                dr = cmd.ExecuteReader();
+                while (dr.Read())
+                {
+                    DropDownList1.Items.Add(dr[0].ToString());
+                }
+            }
+            catch (Exception ex)
+            {
+                Label1.Text = "Nu se poate realiza conexiunea " + ex.Message;
+            }
+            finally
+            {
+                ConexiuneBD.conn.Close();
+            }
+        }
+    }
+    </code>
+</pre>
+
+<p>La evenimentul click pe butonul ”Adaugă” adăugăm următorul cod sursă:</p>
+
+<pre>
+    <code>protected void Button1_Click(object sender, EventArgs e)
+    {
+        SqlCommand cmd;
+        try
+        {
+            conn.Open();
+            cmd = new SqlCommand("insert into AlocareProiecte (cnp,numeProiect) values(@cnp,@numeP) ", ConexiuneBD.conn);
+            cmd.Parameters.AddWithValue("@cnp", TextBox1.Text.Trim());
+            cmd.Parameters.AddWithValue("@numeP", DropDownList1.Text.Trim());
+            int rowsAffected = cmd.ExecuteNonQuery();
+            if (rowsAffected == 1)
+            {
+                string url = "WebForm2.aspx";
+                Response.Redirect(url);
+            }
+            else
+            {
+                Label1.Text = "Eroare inserare!";
+            }
+        }
+        catch (Exception ex)
+        {
+            //log error
+            Label1.Text = "Eroare la deschidere baza date " + ex.Message;
+        }
+        //adaugarea datelor
+        finally
+        {
+            ConexiuneBD.conn.Close();
+        }
+    }
+    </code>
+</pre>
+
+<h2>7. Pagina Completare chestionar</h2>
+<p>În cadrul acestei pagini vom putea completa diferite chestionare legate de activitatea în firmă (Figura 5).</p>
+<p>Chestionarul va fi generat automat în funcție de fișierul selectat în pagina anterioară, controalele generându-se automat dintr-un fișier xml.</p>
+<img src="images\130\figura05-chestionare.jpg" alt="">
+<br>
+
+<p>Structura fișierului XML este următoarea:</p>
+<img src="images\130\structura-xml.jpg" alt="">
+<br>
+
+<p>La încărcarea paginii (Page_Load) vom adăuga următorul cod sursă:</p>
+
+<pre>
+    <code>protected void Page_Load(object sender, EventArgs e)
+    {
+        XmlDocument xmlSursa = new XmlDocument();
+        string nume_fisier = Request.QueryString["chestionar"];
+        xmlSursa.Load(Server.MapPath("~/Formulare/" + nume_fisier + ".xml"));
+
+        //luam toate nodurile textBox
+        XmlNodeList nodes2 = xmlSursa.SelectNodes("//Chestionar//textbox");
+        foreach(XmlNode text in nodes2)
+        {
+            string idr = text.Attributes["detalii"].Value;
+            PlaceHolder1.Controls.Add(new LiteralControl("&ltp/&gt" + idr)); ///textBox generat
+            TextBox txt = new TextBox();
+            txt.ID = text.Attributes["nume"].Value;
+            txt.Text = "";
+            PlaceHolder1.Controls.Add(new LiteralControl("&ltp/&gt"));
+            PlaceHolder1.Controls.Add(txt);
+        }
+
+        //luam toate nodurile radioButton
+        XmlNodeList nodes = xmlSursa.SelectNodes("//Chestionar//radio");
+        foreach(XmlNode radio in nodes)
+        {
+            string idr = radio.Attributes["detalii"].Value;
+            PlaceHolder1.Controls.Add(new LiteralControl("&ltp/&gt" + idr));
+            RadioButtonList new_radio = new RadioButtonList();
+            new_radio.ID = radio.Attributes["nume"].Value;
+            XmlNodeList valori = radio.ChildNodes;
+            foreach(XmlNode valoare in valori)
+            {
+                string val = valoare.InnerText;
+                new_radio.Items.Add(val);
+            }
+            new_radio.RepeatDirection = RepeatDirection.Horizontal;
+            PlaceHolder1.Controls.Add(new_radio);
+        }
+    }
+    </code>
+</pre>
+
+<p>La evenimentul click pe butonul ”Salvează chestionar” adăugăm următorul cod sursă:</p>
+
+<pre>
+    <code>protected void Button1_Click(object sender, EventArgs e)
+    {
+        foreach(TextBox txt in PlaceHolder1.Controls.OfType < TextBox > ())
+        {
+            string nume_Control = txt.ID;
+            string valoare_Control = txt.Text;
+            TextBox1.Text = TextBox1.Text + "Nume control: " + nume_Control + " Valoare: " + valoare_Control + Environment.NewLine;
+        }
+        foreach(RadioButtonList rb in PlaceHolder1.Controls.OfType < RadioButtonList > ()) {
+            string nume_Control = rb.ID;
+            string valoare_Control = rb.SelectedValue;
+            TextBox1.Text = TextBox1.Text + "Nume control: " + nume_Control + " Valoare: " + valoare_Control + Environment.NewLine;
+        }
+    }</code>
+</pre>
+
+<h2>Capturi ecran – rulare</h2>
+
+<img src="images\130\capturi-ecran-rulare-01.jpg" alt="">
+<img src="images\130\capturi-ecran-rulare-02.jpg" alt="">
+<img src="images\130\capturi-ecran-rulare-03.jpg" alt="">
+<img src="images\130\capturi-ecran-rulare-04.jpg" alt="">
+<img src="images\130\capturi-ecran-rulare-05.jpg" alt="">
+<img src="images\130\capturi-ecran-rulare-06.jpg" alt="">
+<br>
+
+<h2>Probleme propuse</h2>
+<p>La aplicația prezentată mai sus adăugați următoarele funcționalități:</p>
+<ul>
+    <li>Crearea unui nou tabel ”Log_proiecte” în care se pot adăuga orele lucrate în fiecare zi ale unui anumit angajat la un proiect alocat.</li>
+    <li>Crearea unei pagini în care se pot introduce coordonatele privind lucrul angajatului la un anumit proiect</li>
+    <li>Crearea unei pagini în care se pot vizualiza proiectele firmei</li>
+    <li>Crearea unei pagini în care se poate vizualiza munca unui anumit angajat în luna respectivă și se pot calcula orele lucrate.</li>
+</ul>
+
+</body>
+</html>

@@ -1,5 +1,367 @@
+<html>
+<head>
+    <title>Laborator 8 - ASP.NET</title>
+</head>
+<body>
 
-<h1>ASP.NET</h1>
+<style>
+    pre code {
+        background-color: #eee;
+        border: 1px solid #999;
+        display: block;
+        padding: 5px;
+    }
 
-<p>
-</p>
+    p {
+        font-size: 18px;
+        text-indent: 20px;
+    }
+
+    li {
+        padding: 5px;
+        font-size: 16px;
+    }
+
+</style>
+
+<h1>Laboratorul 8. Introducere în ASP.NET</h1>
+
+<p><i>În cadrul acestui laborator vom învăța să creem aplicații ASP.NET. În prima parte a laboratorului vom învăța cum să
+    facem partea de interfață a aplicațiilor, iar în a doua parte vom învăța cum vom scrie cod sursă pentru controale și
+    forme.</i></p>
+
+<h2>1. Crearea unei noi aplicații ASP.NET</h2>
+
+<p>Pentru a crea o nouă aplicație ASP.NET vom parcurge următorii pași:</p>
+<p>File → New → Project → Visual C# → ASP.NET Web Application (.NET Framework) → Empty (Figura 1).</p>
+
+
+<img src="images\120\figura01-aplicatie-asp-net.jpg" alt="Figura 1. Aplicație ASP.NET">
+<img src="images\120\figura01-aplicatie-asp-net2.jpg" alt="Figura 1. Aplicație ASP.NET">
+
+<h3>Figura 1. Aplicație ASP.NET</h3>
+<br>
+<p>Se adaugă o nouă componentă proiectului nou creat (Add → New Item), Web Form (Figura 2)</p>
+<img src="images\120\figura02-adaugarea-unei-noi-forme.jpg" alt="Figura 2. Adăugarea unei noi forme">
+<h3>Figura 2. Adăugarea unei noi forme</h3>
+<br>
+<p>Forma care se adaugă va avea 2 posibilități de vizualizare (Design sau Source). Dacă o vizualizăm în mod Design vom
+    putea adăuga componente în cadrul ei din toolbox, iar dacă o vizualizăm în mod Design putem scrie cod HTML pentru a
+    crea interfața.</p>
+<p>De asemenea, pentru crearea interfeței vom putea adăuga biblioteca bootstrap și putem folosi componente din această
+    bibliotecă pentru crearea interfeței. Tot pentru a crea mai ușor o interfață vom putea folosi template-uri bootstrap
+    și nu numai.</p>
+<p>Bootstrap este cel mai popular framework HTML, CSS și JavaScript pentru dezvoltarea de web front-end receptivă și
+    mobilă. Conține șabloane de design bazate pe CSS și JavaScript pentru tipografie, formulare, butoane, navigare și
+    alte componente de interfață. (Figura 3)</p>
+<img src="images\120\figura03-bootstrap.jpg" alt="Figura 3. Bootstrap">
+<h3>Figura 3. Bootstrap</h3>
+<br>
+<h2>2. Adăugarea elementelor de bootstrap pe interfață</h2>
+
+<p>După ce adăugăm o nouă formă sursa formei respective va arăta in felul următor:</p>
+<img src="images\120\figura04-sursa-aspx-a-formei-web.jpg" alt="Figura 4. Sursa .aspx a formei web">
+<h3>Figura 4. Sursa .aspx a formei web</h3>
+<br>
+<p>Pentru a putea adăuga conținut și grafică interfeței putem folosi diverse coduri html din biblioteca bootstrap
+    prezentată mai sus.</p>
+<p>De exemplu pentru a adăuga un meniu de navigare putem insera următorul cod în cadrul sursei de mai sus:</p>
+<p>1. Înlocuim codul dintre tag-urile &lthead&gt cu următorul cod sursă:</p>
+
+<pre>
+<code>&lthtml lang="en"&gt
+&lthead&gt
+    &lttitle&gtBootstrap Example&lt/title&gt
+    &ltmeta charset="utf-8"&gt
+    &ltmeta name="viewport" content="width=device-width, initial-scale=1"&gt
+    &ltlink rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"&gt
+    &ltscript src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"&gt&lt/script&gt
+    &ltscript src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.16.0/umd/popper.min.js"&gt&lt/script&gt
+    &ltscript src="https://maxcdn.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"&gt&lt/script&gt
+&lt/head&gt
+</code>
+</pre>
+
+<p>2. Adăugăm la tag-ul &ltbody&gt următoarele linii de cod:</p>
+
+<pre>
+<code>&ltbody&gt
+    &ltform id="form1" runat="server"&gt
+        &ltdiv&gt
+
+&ltdiv class="container"&gt
+    &lth2&gtNav&lt/h2&gt
+    &ltp&gtBasic horizontal menu:&lt/p&gt
+    &ltul class="nav"&gt
+        &ltli class="nav-item"&gt
+            &lta class="nav-link" href="#"&gtLink&lt/a&gt
+        &lt/li&gt
+        &ltli class="nav-item"&gt
+            &lta class="nav-link" href="#"&gtLink&lt/a&gt
+        &lt/li&gt
+        &ltli class="nav-item"&gt
+            &lta class="nav-link" href="#"&gtLink&lt/a&gt
+        &lt/li&gt
+        &ltli class="nav-item"&gt
+            &lta class="nav-link disabled" href="#"&gtDisabled&lt/a&gt
+        &lt/li&gt
+    &lt/ul&gt
+&lt/div&gt
+
+&lt/div&gt
+&lt/form&gt
+&lt/body&gt
+</code>
+</pre>
+
+<p>Rezultatul rulării acestui cod va fi următorul:</p>
+<img src="images\120\figura05-meniu-de-navigare.jpg" alt="Meniu de navigare">
+<br>
+<p>3. Dacă în locul meniului dorim să punem o bară de navigare (navbar) în locul codului de la punctul 2 vom insera
+    următorul cod:</p>
+<pre>
+    <code>&ltbody&gt
+    &ltform id="form1" runat="server"&gt
+        &ltdiv&gt
+
+&ltnav class="navbar navbar-expand-sm bg-light"&gt
+    &ltul class="navbar-nav"&gt
+        &ltli class="nav-item"&gt
+            &lta class="nav-link" href="#"&gtLink 1&lt/a&gt
+        &lt/li&gt
+        &ltli class="nav-item"&gt
+            &lta class="nav-link" href="#"&gtLink 2&lt/a&gt
+        &lt/li&gt
+        &ltli class="nav-item"&gt
+            &lta class="nav-link" href="#"&gtLink 3&lt/a&gt
+        &lt/li&gt
+    &lt/ul&gt
+&lt/nav&gt
+&ltbr&gt
+
+&ltdiv class="container-fluid"&gt
+    &lth3&gtExemplu NavBar&lt/h3&gt
+    &ltp&gtO bară de navigare este un antet de navigare plasat în partea de sus a paginii.&lt/p&gt
+&lt/div&gt
+
+&lt/div&gt
+&lt/form&gt
+&lt/body&gt</code>
+</pre>
+
+<p>Rezultatul în acest caz va fi următorul:</p>
+<img src="images\120\figura05-meniu-de-navigare2.jpg" alt="Meniu de navigare">
+<br>
+<p>În acest fel putem să adăugăm conținutul vizual al paginii noastre. Pentru mai multe exemple de folosire a
+    elemenetelor bootstrap accesați următoarele tutoriale:</p>
+<ul>
+    <li>
+        <a href="https://www.w3schools.com/bootstrap4/">https://www.w3schools.com/bootstrap4/</a>
+    </li>
+    <li>
+        <a href="https://getbootstrap.com/docs/4.0/examples/">https://getbootstrap.com/docs/4.0/examples/</a>
+    </li>
+    <li>
+        <a href="https://startbootstrap.com/snippets">https://startbootstrap.com/snippets</a>
+    </li>
+    <li>
+        <a href="https://www.tutorialrepublic.com/twitter-bootstrap-examples.php">https://www.tutorialrepublic.com/twitter-bootstrap-examples.php</a>
+    </li>
+</ul>
+<p>De asemenea putem folosi pentru o anumită pagină un template în următorul fel: </p>
+<p>Vom alege de pe <a href="https://startbootstrap.com/">https://startbootstrap.com/</a> un template care se potrivește
+    pentru aplicația noastră.</p>
+<img src="images\120\figura06-bootstrap-template.jpg" alt="Bootstrap Template">
+<br>
+<p>După ce am ales un template vom apăsa butonul View Source Code. De pe pagina care se deschide vom copia codul sursă
+    pentru pagina principală, sau pentru toate paginile de care avem nevoie. De asemenea vom copia toate folderele cu
+    fișiere necesare paginii noastre:</p>
+<img src="images\120\figura07-template-source-codes.jpg" alt="Template Source Codes">
+<br>
+<p>Folderele respective le vom copia in cadrul proiectului nostru, iar in sursa ferestrei vom lua continutul fișierului
+    index.html.</p>
+<p>După editarea template-ului respectiv s-a obținut următorul rezultat:</p>
+<img src="images\120\figura08-template-editat.jpg" alt="Template Editat"><br><br>
+<h2>4. Adăugarea unei forme Master Page</h2>
+<p>O pagină principală (Master Page) oferă aspectul și funcționalitatea altor pagini. Pentru a crea un master page
+    parcurgem următorii pași:</p>
+<p>1. Se adaugă o nouă componentă la proiect (Add→ New Item)</p>
+<img src="images\120\figura09-master-page.jpg" alt="Master Page">
+<br>
+<p>2. După ce faceți click pe butonul Add, pagina principală „site1.master” se adaugă la proiectul nostru. Faceți clic
+    pe site1.master în Solution Explorer (prezentat în imagine):</p>
+<img src="images\120\figura09-master-page2.jpg" alt="Master Page"><br>
+<p>3. Proiectați pagina principală, utilizând HTML. Și aici se pot folosi componentele bootstrap.</p>
+<p>4. După crearea paginii principale, în momentul adăugării unei noi forme în cadrul proiectului, vom selecta Web Form
+    with Master Page și vom alege pagina principală care dorim să o moștenească.</p>
+<h2>5. Exemplu aplicație ASP.NET simplă</h2>
+<p>Vom crea un nou proiect ASP.Net, vom adăuga un Master Page, în care vom adăuga următorul cod sursă:</p>
+<pre>
+    <code>&lt%@ Master Language="C#" AutoEventWireup="true" CodeBehind="Site1.master.cs"
+Inherits="Exemplu_MasterPage.Site1" %&gt
+
+&lt!DOCTYPE html&gt
+
+&lthtml lang="en"&gt
+&lthead runat="server"&gt
+    &lttitle&gtAplicație ASP.NET&lt/title&gt
+    &ltlink href="css/my.css" rel="stylesheet" /&gt
+    &ltlink rel="stylesheet" type="text/css" href="my.css"&gt
+    &ltasp:ContentPlaceHolder ID="head" runat="server"&gt
+    &lt/asp:ContentPlaceHolder&gt
+&lt/head&gt
+
+&ltbody&gt
+&ltheader id="header"&gt
+&lth1&gtAplicație ASP.NET&lt/h1&gt
+&lt/header&gt
+&ltnav id="nav"&gt
+    &ltul&gt
+        &ltli&gt&lta href="WebForm1.aspx"&gtAcasa&lt/a&gt&lt/li&gt
+        &ltli&gt&lta href="#"&gtDespre&lt/a&gt&lt/li&gt
+        &ltli&gt&lta href="#"&gtContact&lt/a&gt&lt/li&gt
+    &lt/ul&gt
+&lt/nav&gt
+
+    &ltdiv id="con"&gt
+        &ltasp:ContentPlaceHolder ID="ContentPlaceHolder1" runat="server"&gt
+
+        &lt/asp:ContentPlaceHolder&gt
+    &lt/div&gt
+
+&ltfooter id="footer"&gt
+    Chirila Oana Sorina - Medii si tehnologii de programare - ASP.NET
+&lt/footer&gt
+&lt/body&gt
+&lt/html&gt</code>
+</pre>
+
+<p>Fișierul my.css folosit îl vom adăuga în cadrul aplicației noastre, în folderul css. Acest fișier are următoarea
+    structură:</p>
+
+<pre>
+    <code>#header{
+    color: #247BA0;
+    text-align: center;
+    font-size: 20px;
+}
+#nav{
+    background-color:#940200;
+    padding: 5px;
+}
+ul{
+    list-style-type: none;
+}
+li a {
+    color: #F1FAEE;
+    font-size: 30px;
+    column-width: 5%;
+}
+li {
+    display: inline;
+    padding-left: 2px;
+    column-width: 20px;
+}
+a{
+    text-decoration: none;
+    margin-left:20px
+}
+li a:hover{
+    background-color: #F3FFBD;
+    color: #FF1654;
+    padding:1%;
+}
+#footer{
+    background-color: #82020d;
+    text-align:center;
+    padding-bottom: 5%;
+    font-size: 20px;
+}
+#con{
+    border:double;
+    border-color:burlywood;
+}</code>
+</pre>
+
+<p>După crearea paginii principale vom adăuga o nouă pagină de tip Web Form with Master Page la care vom selecta Master
+    Page-ul creat anterior. În cadrul acestei forme, în formatul Design vom adăuga din meniul Table un tabel care ne va
+    ajuta să plasăm controalele pe formă într-o manieră mai ordonată. Vom adăuga controale pentru a crea o fereastră de
+    autentificare.</p>
+
+<p>În același mod vom adăuga încă o formă în care se va adăuga doar un control textBox care va primi o variabilă din
+    forma precedentă.</p>
+<br>
+<p>Codul sursă pentru forma de login este:</p>
+<pre><code>using System;
+using System.Collections.Generic; using System.IO;
+using System.Linq; using System.Web; using System.Web.UI;
+using System.Web.UI.WebControls;
+namespace Exemplu_MasterPage
+{
+    public partial class WebForm1 : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            string[] utilizatori = File.ReadAllLines(Server.MapPath("~/Fisiere/") + "utilizatori.txt");
+            foreach (var line in utilizatori)
+            {
+                string[] inregistrare = line.Split(','); DropDownList1.Items.Add(inregistrare[0]);
+            }
+    }
+    protected void Button1_Click(object sender, EventArgs e)
+    {
+        string[] utilizatori = File.ReadAllLines(Server.MapPath("~/Fisiere/") + "utilizatori.txt");
+        foreach (var line in utilizatori)
+        {
+            string[] inregistrare = line.Split(',');
+            if ((DropDownList1.Text).Equals(inregistrare[0]))
+            {
+                if (TextBoxPWD.Text.Trim().Equals(inregistrare[1].Trim()))
+                {
+                    Response.Redirect("Despre.aspx?utilizator="+DropDownList1.Text.Trim());
+                }
+                else
+                {
+                    string script = "alert(\"Parola incorecta!\");";
+                    ScriptManager.RegisterStartupScript(this, GetType(), "ServerControlScript", script, true);
+                }
+            }
+        }
+    }
+}
+    </code>
+</pre>
+
+<p>Codul sursă pentru a doua formă este:</p>
+
+<pre>
+    <code>using System;
+using System.Collections.Generic; using System.Linq;
+using System.Web; using System.Web.UI;
+using System.Web.UI.WebControls;
+namespace Exemplu_MasterPage
+{
+    public partial class Despre : System.Web.UI.Page
+    {
+        protected void Page_Load(object sender, EventArgs e)
+        {
+            String nume = Request.QueryString["utilizator"]; TextBox1.Text = nume;
+        }
+    }
+}
+    </code>
+</pre>
+
+<p>Rezultatul la rulare este următorul:</p>
+
+<img src="images\120\figura10-rezultat-aplicatie-asp-net.jpg" alt="Rezultat aplicație ASP.NET">
+<br>
+<img src="images\120\figura10-rezultat-aplicatie-asp-net2.jpg" alt="Rezultat aplicație ASP.NET">
+<br>
+<h2>Probleme Propuse</h2>
+<p>Realizați o aplicație la alegere cu un design la alegere, cu minim 3 pagini în care să se afișeze diferite
+    informații. Aplicația să conțină minim o citire/scriere din fișier și o transmitere de parametrii de la o formă la
+    alta. (Exemplu: O forma de Login, se transmite numele utilizatorului, în a doua formă utilizatorul completează un
+    formular de contact care se salvează în fișier, forma a 3-a conține informații despre aplicație.)</p>
+</body>
+</html>
