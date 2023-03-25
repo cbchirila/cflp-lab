@@ -1,5 +1,538 @@
+<body>
+    <h1>8.Indecși</h1>
 
-<h1>Indecsi</h1>
+    <ul>
+        <li>8.1 Indecși</li>
+        <li>8.2 Utilizarea indecșilor</li>
+        <li>8.3 Indecșii în interfețe</li>
+        <li>8.4 Proprietăți și indecși</li>
+    </ul>
 
-<p>
-</p>
+    <h2>8.1 Indecși</h2>
+
+    <p>
+    Indecșii permit instanțelor unei clase sau ale unei structuri să fie indexate la fel ca și vectorii. Valoarea indexată poate fi setată sau obținută fără a specifica explicit un tip sau membru al instanței. Indecșii seamănă cu proprietățile, cu excepția faptului că accesorii lor iau parametri.
+    </p>
+
+    <p>
+    Următorul exemplu definește o clasă generică cu metode simple de acces get și set pentru atribuirea și obținerea valorilor. Clasa Program creează o instanță a acestei clase pentru stocarea șirurilor de caractere.
+    </p>
+
+    <pre><code>
+                using System;
+
+                class SampleCollection&lt;T&gt;
+                {
+                    // Declarare vector pentru stocarea elementelor.
+                    private T[] arr = new T[100];
+
+                    // Definirea indexului pentru a-i permite codului client să utilizeze notația []
+                    public T this[int i]
+                    {
+                        get { return arr[i]; }
+                        set { arr[i] = value; }
+                    }
+                }
+
+                class Program
+                {
+                    static void Main()
+                    {
+                        var stringCollection = new SampleCollection&lt;string&gt;();
+                        stringCollection[0] = "Hello, World";
+                        Console.WriteLine(stringCollection[0]);
+                    }
+                }
+                // În urma exemplului de mai sus se afișează:
+                //       Hello, World.
+    </code></pre>
+
+    <h3>Definițiile corpului de expresii</h3>
+
+    <p>
+    Se obișnuiește ca metoda de acces get sau set al unui index să constea dintr-o singură instrucțiune care returnează sau setează o valoare. Membrii cu corpul expresiei furnizează o sintaxă simplificată pentru a susține acest fapt. Un index doar pentru citire poate fi implementat ca membru cu un corp de expresie, după cum se arată în exemplul următor:
+    </p>
+
+    <pre><code>
+                using System;
+
+                class SampleCollection&lt;T&gt;
+                {
+                    // Declarare vector pentru stocarea elementelor.
+                    private T[] arr = new T[100];
+                    int nextIndex = 0;
+
+                    // Definirea indexului pentru a-i permite codului client să utilizeze notația []
+                    public T this[int i] => arr[i];
+
+                    public void Add(T value)
+                    {
+                        if (nextIndex >= arr.Length)
+                            throw new IndexOutOfRangeException($"The collection can hold only {arr.Length} elements.");
+                        arr[nextIndex++] = value;
+                    }
+                }
+
+                class Program
+                {
+                    static void Main()
+                    {
+                        var stringCollection = new SampleCollection&lt;string&gt;(); // //string
+                        stringCollection.Add("Hello, World");
+                        System.Console.WriteLine(stringCollection[0]);
+                    }
+                }
+                // În urma exemplului de mai sus se afișează:
+                //       Hello, World.
+    </code></pre>
+
+    <p>
+        Observați că '=>' introduce corpul expresiei, neutilizând cuvântul cheie 'get'.
+    </p>
+
+    <p>Atât metoda de acces get, cât și cea set pot fi implementate ca membri corp-expresie. În acest caz, trebuie utilizate atât cuvintele cheie 'get', cât și 'set'. De exemplu:</p>
+
+    <pre><code>
+                using System;
+
+                class SampleCollection&lt;T&gt;
+                {
+                    // Declarare vector pentru stocarea elementelor.
+                    private T[] arr = new T[100];
+
+                    public T this[int i]
+                    {
+                    get => arr[i];
+                    set => arr[i] = value;
+                    }
+                }
+
+                class Program
+                {
+                    static void Main()
+                    {
+                        var stringCollection = new SampleCollection&lt;string&gt;();
+                        stringCollection.Add("Hello, World");
+                        System.Console.WriteLine(stringCollection[0]);
+                    }
+                }
+                // În urma exemplului de mai sus se afișează:
+                //       Hello, World.
+    </code></pre>
+
+    <h3>Prezentare generală a indecșilor</h3>
+
+    <ul>
+        <li>Indecșii permit obiectelor să fie indexate într-un mod similar cu vectorii.</li>
+        <li>O metoda accesor get returnează o valoare. O metoda accesor set atribuie o valoare.</li>
+        <li>Cuvântul cheie 'this' este folosit pentru a defini indexul.</li>
+        <li>Cuvântul cheie 'value' este folosit pentru a defini valoarea atribuită de către metoda de acces set.</li>
+        <li>Indecșii nu trebuie să fie indexați prin intermediul unei valori întregi; este la alegerea utilizatorului cum să definească mecanismul specific de căutare.</li>
+        <li>Indecșii pot fi suprascriși.</li>
+        <li>Indecșii pot avea mai mult de un parametru formal, de exemplu, atunci când se accesează o matrice bidimensională.</li>
+    </ul> 
+
+    <h3>Secțiuni aferente</h3>
+    <ul>
+        <li>Utilizarea indecșilor</li>
+        <li>Indecșii în interfețe</li>
+        <li>Comparare între proprietăți și indecși</li>
+        <li>Restricționarea accesibilității accesoriilor</li>
+    </ul>
+
+    <br>
+
+    <h2>8.2 Utilizarea indecșilor</h2>
+
+    <p>
+        Indecșii reprezintă un avantaj care vă permite să creați o clasă, o structură sau o interfață la care aplicațiile client pot accesa precum se acceseaza un vector. Compilatorul va genera o proprietate Item (sau o proprietate cu un nume alternativ dacă IndexerNameAttribute este prezent) și metodele accessor corespunzătoare. Indecșii sunt implementați cel mai frecvent în tipuri al căror scop principal este de a încapsula o colecție sau un vector intern. De exemplu, să presupunem că avem o clasă TempRecord care reprezintă temperatura în Fahrenheit înregistrată în 10 momente diferite pe parcursul unei perioade de 24 de ore. Clasa conține un array temps de tip float[] pentru a stoca valorile temperaturii. Prin implementarea unui index în această clasă, clienții pot accesa temperaturile într-o instanță TempRecord ca float temp = tempRecord[4] în loc de float temp = tempRecord.temps[4]. Notația indexului nu numai că simplifică sintaxa pentru aplicațiile client, ci determină ca atât clasa, cât și scopul ei sa fie mai intuitiv de înțeles pentru alți dezvoltatori.
+    </p>
+
+    <p>
+        Pentru a declara un index pentru o clasă sau o structură se utilizează cuvântul cheie 'this', așa cum se arată în următorul exemplu: 
+    </p>
+
+    <pre><code>
+        // Declararea indexului
+        public int this[int index]
+        {
+            // accesorii get și set
+        }
+    </code></pre>
+
+    <p>Important! Declararea unui index va genera automat o proprietate numită Item pe obiect. Proprietatea Item nu este accesibilă direct din expresia de acces la membrul instanței. În plus, dacă se adaugă propria proprietate Item la un obiect cu un index, se va obține o eroare de compilare CS0102. Pentru a evita această eroare, utilizați IndexerNameAttribute pentru a redenumi indexul, așa cum este detaliat mai jos.</p>
+
+    <h3>Remarci</h3>
+
+    <p>Tipul unui index și tipul parametrilor săi trebuie să fie cel puțin la fel de accesibile ca și indexul în sine. Pentru mai multe informații despre nivelurile de accesibilitate, consultați "Modificatorii de acces".</p>
+
+    <p>Pentru mai multe informații despre modul de utilizare a indexatorilor cu o interfață, consultați "Indecșii de interfață".</p>
+
+    <p>Semnătura unui index constă din numărul și tipurile parametrilor săi formali. Aceasta nu include tipul de indexului sau numele parametrilor formali. Dacă declarați mai mult de un index în aceeași clasă, aceștia trebuie să aibă semnături diferite.</p>
+
+    <p>Un index nu este clasificat ca o variabilă; prin urmare, valoarea unui index nu poate fi transmisă prin referință (ca parametru ref sau out) doar dacă valoarea sa este o referință (adică returnează prin referință).</p>
+
+    <p>Pentru a oferi indexului un nume pe care alte limbaje îl pot utiliza, utilizați System.Runtime.CompilerServices.IndexerNameAttribute, așa cum arată exemplul următor:</p>
+
+    <pre><code>
+        // Declarare index
+        [System.Runtime.CompilerServices.IndexerName("TheItem")]
+        public int this[int index]
+        {
+            // accesorii get și set
+        }
+    </code></pre>
+
+    <p>Acest index va avea numele "TheItem", deoarece este suprascris de atributul numelui indexului. În mod implicit, numele indexului este "Item".</p>
+
+    <h3>Exemplul 1</h3>
+
+    <p>Exemplul următor arată cum să declarați un câmp de tip array privat, temps, și un index. Indexul permite accesul direct la instanța tempRecord[i]. Alternativa la utilizarea indexului este să declarați array-ul ca membru public și să îi accesați membrii, tempRecord.temps[i], direct.</p>
+
+    <pre><code>
+        public class TempRecord
+        {
+            // Vector cu valorile temperaturilor
+            float[] temps = new float[10]
+            {
+                56.2F, 56.7F, 56.5F, 56.9F, 58.8F,
+                61.3F, 65.9F, 62.1F, 59.2F, 57.5F
+            };
+
+            // Pentru a activa codul client ca să valideze intrarea
+            // când accesați indexul
+            public int Length => temps.Length;
+            
+            // Declarare index
+            // Dacă indexul este în afara intervalului, vectorul temp va arunca o excepție
+            public float this[int index]
+            {
+                get => temps[index];
+                set => temps[index] = value;
+            }
+        }
+    </code></pre>
+
+    <p>Rețineți faptul că atunci când se evaluează accesul unui index, de exemplu, într-o instrucțiune Console.Write, accesorul get este invocat. Prin urmare, dacă nu există niciun accesor get, apare o eroare de compilare.</p>
+
+    <pre><code>
+        class Program
+        {
+            static void Main()
+            {
+                var tempRecord = new TempRecord();
+
+                // Utilizarea accesorului set al indexului
+                tempRecord[3] = 58.3F;
+                tempRecord[5] = 60.1F;
+
+                // Utilizarea metodei de acces get al indexului
+                for (int i = 0; i < 10; i++)
+                {
+                    Console.WriteLine($"Element #{i} = {tempRecord[i]}");
+                }
+
+                // "Păstrează fereastra consolei deschisă în modul de depanare
+                Console.WriteLine("Press any key to exit.");
+                Console.ReadKey();
+            }
+            /* Ieșire:
+                Element #0 = 56.2
+                Element #1 = 56.7
+                Element #2 = 56.5
+                Element #3 = 58.3
+                Element #4 = 58.8
+                Element #5 = 60.1
+                Element #6 = 65.9
+                Element #7 = 62.1
+                Element #8 = 59.2
+                Element #9 = 57.5
+            */
+        }
+    </code></pre>
+
+    <h3>Indexarea utilizând alte valori</h3>
+
+    <p>Limbajul C# nu limitează tipul parametrului indexului la integer. De exemplu, poate fi util să folosiți un string cu un index. Un astfel de index ar putea fi implementat căutând string-ul în colecție și returnând valoarea corespunzătoare. Deoarece accesori pot fi supraîncărcați, versiunile string și integer pot coexista.</p>
+
+    <h3>Exemplul 2</h3>
+
+    <p>Următorul exemplu declară o clasă care stochează zilele săptămânii. O metodă de acces get primește ca și parametru un șir de caractere ce reprezintă numele unei zile și returnează numărul întreg corespunzător. De exemplu, "Duminică" returnează 0, "Luni" returnează 1 și tot așa.</p>
+
+    <pre><code>
+        // Utilizarea unui string ca și tip al indexului
+        class DayCollection
+        {
+            string[] days = { "Sun", "Mon", "Tues", "Wed", "Thurs", "Fri", "Sat" };
+
+            // Indexul doar cu accesorul get cu definiția corpului de expresie
+            public int this[string day] => FindDayIndex(day);
+
+            private int FindDayIndex(string day)
+            {
+                for (int j = 0; j < days.Length; j++)
+                {
+                    if (days[j] == day)
+                    {
+                        return j;
+                    }
+                }
+
+                throw new ArgumentOutOfRangeException(
+                    nameof(day),
+                    $"Day {day} is not supported.\nDay input must be in the form \"Sun\", \"Mon\", etc");
+            }
+        }
+    </code></pre>
+
+    <h3>Utilizarea exemplului 2</h3>
+
+    <pre><code>
+        class Program
+        {
+            static void Main(string[] args)
+            {
+                var week = new DayCollection();
+                Console.WriteLine(week["Fri"]);
+        
+                try
+                {
+                    Console.WriteLine(week["Made-up day"]);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                    Console.WriteLine($"Not supported input: {e.Message}");
+                }
+            }
+            // Ieșire:
+            // 5
+            // Not supported input: Day Made-up day is not supported.
+            // Day input must be in the form "Sun", "Mon", etc (Parameter 'day')
+        }
+    </code></pre>
+
+    <h3>Exemplul 3</h3>
+
+    <p>Următorul exemplu declară o clasă care stochează zilele săptămânii folosind enum-ul System.DayOfWeek. O metodă de acces get primește o valoare de tipul DayOfWeek și returnează numărul întreg corespunzător. De exemplu, DayOfWeek.Sunday returnează 0, DayOfWeek.Monday returnează 1 și tot așa.</p>
+
+    <pre><code>
+        using Day = System.DayOfWeek;
+
+        class DayOfWeekCollection
+        {
+            Day[] days =
+            {
+                Day.Sunday, Day.Monday, Day.Tuesday, Day.Wednesday,
+                Day.Thursday, Day.Friday, Day.Saturday
+            };
+        
+            // Indexul doar cu accesorul get cu definiția corpului de expresie
+            public int this[Day day] => FindDayIndex(day);
+        
+            private int FindDayIndex(Day day)
+            {
+                for (int j = 0; j < days.Length; j++)
+                {
+                    if (days[j] == day)
+                    {
+                        return j;
+                    }
+                }
+                throw new ArgumentOutOfRangeException(
+                    nameof(day),
+                    $"Day {day} is not supported.\nDay input must be a defined System.DayOfWeek value.");
+            }
+        }
+    </code></pre>
+
+    <h3>Utilizarea exemplului 3</h3>
+
+    <pre><code>
+        class Program
+        {
+            static void Main()
+            {
+                var week = new DayOfWeekCollection();
+                Console.WriteLine(week[DayOfWeek.Friday]);
+        
+                try
+                {
+                    Console.WriteLine(week[(DayOfWeek)43]);
+                }
+                catch (ArgumentOutOfRangeException e)
+                {
+                    Console.WriteLine($"Not supported input: {e.Message}");
+                }
+            }
+            // Output:
+            // 5
+            // Not supported input: Day 43 is not supported.
+            // Day input must be a defined System.DayOfWeek value. (Parameter 'day')
+        }
+    </code></pre>
+
+    <h3>Programarea robustă</h3>
+
+    <p>Există două modalități principale prin care se poate îmbunătăți securitatea și fiabilitatea indecșilor: </p>
+
+    <ul>
+        <li>Asigurați-vă că abordați un fel de strategie de gestionare a erorilor pentru a trata șansa ca, codul client să transmită o valoare de index invalidă. În primul exemplu de mai sus, clasa TempRecord furnizează o proprietate Length care permite codului client să verifice intrarea înainte de a o transmite indexului. De asemenea, puteți pune codul de gestionare a erorilor în interiorul  indexului însuși. Asigurați-vă că scrieți explicații pentru utilizatori rerferitoare la excepțiile pe care le generați în interiorul unui accesor al indexului.</li>
+        <li>Setați accesibilitatea metodelor de accesare get și set la cel mai restricționat nivel posibil. Acest lucru este important în special pentru metoda de accesare set. Pentru mai multe informații, consultați Restricting Accessor Accessibility.</li>
+    </ul>
+
+    <br>
+
+    <h2>8.3 Indecșii în interfețe</h2>
+
+    <p>Indecșii pot fi declarați pe o interfață. Accesorii indecșilor de interfață diferă de accesorii indecșilor de clasă în următoarele moduri:</p>
+
+    <ul>
+        <li>Accesorii de interfață nu utilizează modificatori.</li>
+        <li>De obicei, un accesor de interfață nu are un corp definit.</li>
+    </ul>
+
+    <p>Scopul accesorului este de a indica dacă indexul este read-write, read-only sau write-only. Se poate furniza o implementare pentru un index definit într-o interfață, dar acest lucru este rar. De obicei, indecșii definesc o interfață de programare a aplicației (API) pentru accesarea câmpurilor de date, iar câmpurile de date nu pot fi definite într-o interfață.</p>
+
+    <p>Următoarea secvență de cod este un exemplu de accesor pentru un index de interfață: </p>
+
+    <pre><code>
+        public interface ISomeInterface
+        {
+            //...
+        
+            // Declarare index:
+            string this[int index]
+            {
+                get;
+                set;
+            }
+        }
+    </code></pre>
+
+    <p>Semnătura unui index trebuie să difere de semnăturile tuturor celorlalți indecși declarați în aceeași interfață.</p>
+
+    <h3>Exemplu</h3>
+
+    <p>Următorul exemplu arată cum să implementați indecșii de interfață:</p>
+
+    <pre><code>
+        // Indexul unei interfețe
+        public interface IIndexInterface
+        {
+            // Declarare index:
+            int this[int index]
+            {
+                get;
+                set;
+            }
+        }
+        
+        // Implementarea interfeței.
+        class IndexerClass : IIndexInterface
+        {
+            private int[] arr = new int[100];
+            public int this[int index]   // declarare index
+            {
+                // Obiectul arr va arunca excepția IndexOutOfRange.
+                get => arr[index];
+                set => arr[index] = value;
+            }
+        }
+    </code></pre>
+
+    <pre><code>
+        IndexerClass test = new IndexerClass();
+        System.Random rand = System.Random.Shared;
+        // Call the indexer to initialize its elements.
+        for (int i = 0; i < 10; i++)
+        {
+            test[i] = rand.Next();
+        }
+        for (int i = 0; i < 10; i++)
+        {
+            System.Console.WriteLine($"Element #{i} = {test[i]}");
+        }
+        
+        /* Sample output:
+            Element #0 = 360877544
+            Element #1 = 327058047
+            Element #2 = 1913480832
+            Element #3 = 1519039937
+            Element #4 = 601472233
+            Element #5 = 323352310
+            Element #6 = 1422639981
+            Element #7 = 1797892494
+            Element #8 = 875761049
+            Element #9 = 393083859
+        */
+    </code></pre>
+
+    <p>În exemplul anterior, puteți utiliza implementarea explicită a membrilor de interfață prin utilizarea numelui complet calificat al membrului de interfață. De exemplu:</p>
+
+    <pre><code>
+        string IIndexInterface.this[int index]
+        {
+        }
+    </code></pre>
+
+    <p>Cu toate acestea, numele complet calificat este necesar doar pentru a evita ambiguitatea atunci când clasa implementează mai mult de o interfață cu aceeași semnătură a indexului. De exemplu, dacă o clasă Employee implementează două interfețe, ICitizen și IEmployee, iar ambele interfețe au aceeași semnătură a indexului, implementarea explicită a membrului de interfață este necesară. Adică, următoarea declarație a indexului:</p>
+
+    <pre><code>
+        string IEmployee.this[int index]
+        {
+        }
+    </code></pre>
+
+    <p> implementează indexul pe interfața IEmployee, în timp ce următoarea declarație:</p>
+
+    <pre><code>
+        string ICitizen.this[int index]
+        {
+        }
+    </code></pre>
+
+    <p>implementează indexul pe interfața ICitizen.</p>
+
+    <br>
+
+    <h2>8.4 Proprietăți și indecși</h2>
+
+    <p>Indecșii sunt similari cu proprietățile. Cu excepția diferențelor prezentate în tabelul următor, toate regulile definite pentru accesorii de proprietăți se aplică și accesorilor de indecși.</p>
+
+    <table>
+        <tr>
+            <th>Proprietate</th>
+            <th>Index</th>
+        </tr>
+        <tr>
+            <td>Permite apelarea metodelor ca și cum ar fi membri de date publici.</td>
+            <td>Permite accesarea elementelor unei colecții interne a unui obiect utilizând notația de tip array pe obiectul însuși.</td>
+        </tr>
+        <tr>
+            <td>Accesată prin intermediul unui nume simplu.</td>
+            <td>Accesat prin intermediul unui index.</td>
+        </tr>
+        <tr>
+            <td>Poate fi un membru static sau un membru instanță.</td>
+            <td>Trebuie să fie un membru instanță.</td>
+        </tr>
+        <tr>
+            <td>Un accessor get al unei proprietăți nu are parametri.</td>
+            <td>Un accessor get al unui index are aceeași listă de parametri formali ca și indexul.</td>
+        </tr>
+        <tr>
+            <td>Un accesor set al unei proprietăți conține parametrul valoare implicită.</td>
+            <td>Un accesor set al unui index are aceeași listă de parametri formali ca și indexul și, de asemenea, pentru parametrul valoare.</td>
+        </tr>
+        <tr>
+            <td>Suportă sintaxă scurtă cu proprietăți cu implementare automată. </td>
+            <td>Suportă membri cu corp-expresie doar pentru a obține indecși.</td>
+        </tr>
+        
+    </table>
+
+
+
+
+
+</body>
