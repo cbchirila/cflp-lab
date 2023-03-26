@@ -1,5 +1,1277 @@
+<!DOCTYPE html>
 
-<h1>Siruri colectii si iteratori</h1>
+<body>
+    <h1>5.6 Transmiterea tablourilor ca parametrii</h1>
 
-<p>
-</p>
+    <p>Tablourile pot fi transmise ca argumente la parametrii metodei.
+        Deoarece tablourile sunt tipuri de referință,
+        metoda poate modifica valoarea elementelor.</p>
+
+    <h2>Transmiterea tablourilor unidimensionale ca argumente</h2>
+    <p>Puteți transmite un tablou unidimensional inițializat la o metodă.
+        De exemplu, următoarea secvență transmite un tablou către o metodă de scriere.
+    <pre>
+    <code>
+        int[] theArray = { 1, 3, 5, 7, 9 };
+        PrintArray(theArray);
+    </code>
+    </pre>
+
+    Următorul cod arată o implementare parțială a metodei de scriere.
+    <pre>
+    <code>
+        void PrintArray(int[] arr)
+        {
+             // Method code.
+        }
+    </code>
+    </pre>
+
+    Puteți inițializa și transmite un nou tablou într-un singur pas,
+    așa cum se arată în următorul exemplu.
+
+    <pre><code>
+        PrintArray(new int[] { 1, 3, 5, 7, 9 });
+     </code></pre>
+    </p>
+
+    <h2>Exemplu</h2>
+    <p>În exemplul următor, un tablou de șiruri de caractere este inițializat și
+        transmis ca un
+        argument la o metodă DisplayArray pentru șiruri de caractere.
+        Metoda afișează elementele
+        tabloului. În continuare, metoda ChangeArray inversează elementele tabloului,
+        iar apoi metoda ChangeArrayElements modifică primele trei elemente ale tabloului.
+        După returnarea fiecărei metode, metoda DisplayArray arată că transmiterea unui
+        tablou
+        ca valoare nu împiedică modificările elementelor din tablou.
+
+    <pre><code>
+    using System;
+
+    class ArrayExample
+    {
+        static void DisplayArray(string[] arr) => Console.WriteLine(string.Join(" ", arr));
+
+        // Change the array by reversing its elements.
+        static void ChangeArray(string[] arr) => Array.Reverse(arr);
+
+        static void ChangeArrayElements(string[] arr)
+        {
+            // Change the value of the first three array elements.
+            arr[0] = "Mon";
+            arr[1] = "Wed";
+            arr[2] = "Fri";
+        }
+
+        static void Main()
+        {
+            // Declare and initialize an array.
+            string[] weekDays = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+            // Display the array elements.
+            DisplayArray(weekDays);
+            Console.WriteLine();
+
+            // Reverse the array.
+            ChangeArray(weekDays);
+            // Display the array again to verify that it stays reversed.
+            Console.WriteLine("Array weekDays after the call to ChangeArray:");
+            DisplayArray(weekDays);
+            Console.WriteLine();
+
+            // Assign new values to individual array elements.
+            ChangeArrayElements(weekDays);
+            // Display the array again to verify that it has changed.
+            Console.WriteLine("Array weekDays after the call to ChangeArrayElements:");
+            DisplayArray(weekDays);
+        }
+    }
+    // The example displays the following output:
+    //         Sun Mon Tue Wed Thu Fri Sat
+    //
+    //        Array weekDays after the call to ChangeArray:
+    //        Sat Fri Thu Wed Tue Mon Sun
+    //
+    //        Array weekDays after the call to ChangeArrayElements:
+    //        Mon Wed Fri Wed Tue Mon Sun
+   </code> </pre>
+    </p>
+    <h2>Transmiterea tablourior multidimensionale ca argumente</h2>
+
+    <p>Puteți transmite la o metodă un tablou multidimensional inițializat
+        în același mod în care transmiteți un tablou unidimensional.
+
+    <pre><code>
+    int[,] theArray = { { 1, 2 }, { 2, 3 }, { 3, 4 } };
+    Print2DArray(theArray);
+       </code> </pre>
+    Următorul cod arată o declarație parțială a unei metode de imprimare
+    care acceptă un tablou bidimensional ca argument.
+    <pre><code>
+     void Print2DArray(int[,] arr)
+     {
+        // Method code.
+     }
+      </code></pre>
+
+    Puteți inițializa și transmite un nou tablou într -un singur pas,
+    așa cum se arată în următorul exemplu:
+    <pre><code>
+    Print2DArray(new int[,] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } });
+       </code> </pre>
+    </p>
+    <h2>Exemplu</h2>
+    <p>
+        În următorul exemplu,
+        un tablou bidimensional de numere întregi este inițializat
+        și transmis ca parametru la metodei Print2DArray.
+        Metoda afișează elementele tabloului.
+    <pre><code>
+    class ArrayClass2D
+    {
+        static void Print2DArray(int[,] arr)
+        {
+            // Display the array elements.
+            for (int i = 0; i < arr.GetLength(0); i++)
+            {
+                for (int j = 0; j < arr.GetLength(1); j++)
+                {
+                    System.Console.WriteLine("Element({0},{1})={2}", i, j, arr[i, j]);
+                }
+            }
+        }
+        static void Main()
+        {
+            // Pass the array as an argument.
+            Print2DArray(new int[,] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } });
+
+            // Keep the console window open in debug mode.
+            System.Console.WriteLine("Press any key to exit.");
+            System.Console.ReadKey();
+        }
+    }
+    /* Output:
+        Element(0,0)=1
+        Element(0,1)=2
+        Element(1,0)=3
+        Element(1,1)=4
+        Element(2,0)=5
+        Element(2,1)=6
+        Element(3,0)=7
+        Element(3,1)=8
+    */
+</code></pre>
+    </p>
+
+
+    <h1>5.7 Tablouri tipizate implicit</h1>
+    <p>
+        Puteți crea un tablou tipizate implicit în care tipul instanței de tablou
+        este dedus din elementele specificate în inițializarea tabloului.
+        Regulile pentru orice variabilă cu tip implicit se aplică și tablourilor
+        tipizate implicit.
+        <br><br>
+
+        Tablourile tipizate implicit sunt de obicei utilizate în expresiile de
+        interogare împreună cu tipuri anonime și inițializatoare de obiecte și colecții.
+        <br><br>
+        Următoarele exemple arată cum să creezi un tablou tipizat implicit:
+    <pre><code>
+    class ImplicitlyTypedArraySample
+    {
+        static void Main()
+        {
+            var a = new[] { 1, 10, 100, 1000 }; // int[]
+            var b = new[] { "hello", null, "world" }; // string[]
+
+            // single-dimension jagged array
+            var c = new[]
+            {
+                new[]{1,2,3,4},
+                new[]{5,6,7,8}
+            };
+
+            // jagged array of strings
+            var d = new[]
+            {
+                new[]{"Luca", "Mads", "Luke", "Dinesh"},
+                new[]{"Karen", "Suma", "Frances"}
+            };
+        }
+    }
+       </code> </pre>
+    În exemplul anterior, observați că la tablouri tipizate implicit, nu sunt
+    utilizate paranteze pătrate în partea stângă a declarației de inițializare.
+    Rețineți, de asemenea, că tablourile zimțate sunt inițializate
+    folosind new [] la fel ca tablourile unidimensionale.
+    </p>
+
+    <h2>Tablouri tipizate implicit în inițializatorii de obiecte.</h2>
+    <p>
+        Când creați un tip anonim care conține un tablou, tabloul trebuie să fie
+        implicit tipizat în inițializatorul de obiect al tipului. În exemplul următor,
+        contacts este un tablou tipizat implicit de tipuri anonime, fiecare dintre acestea
+        conținând un tablou numit PhoneNumbers. Observați că cuvântul cheie "var" nu este
+        folosit în interiorul inițializatorului de obiecte.
+
+    <pre> <code>
+    var contacts = new[]
+    {
+        new {
+            Name = " Eugene Zabokritski",
+            PhoneNumbers = new[] { "206-555-0108", "425-555-0001" }
+        },
+        new {
+            Name = " Hanying Feng",
+            PhoneNumbers = new[] { "650-555-0199" }
+        }
+    };
+  </code>  </pre>
+    </p>
+    <h1>5.8 Colecții</h1>
+    <p>
+        Pentru multe aplicații, doriți să creați și să gestionați grupuri de obiecte legate între ele. Există două
+        modalități de a grupa obiecte: crearea de tablouri de obiecte și crearea de colecții de obiecte.
+        <br><br>
+        Tablourile sunt cele mai utile pentru crearea și lucrul cu un număr fix de obiecte puternic tipizate.
+        <br><br>
+        Colecțiile oferă o modalitate mai flexibilă de a lucra cu grupuri de obiecte. Spre deosebire de tablouri, grupul
+        de obiecte cu care lucrați poate crește și scadea dinamic pe măsură ce necesitățile aplicației se schimbă.
+        Pentru unele colecții, puteți atribui o cheie oricărui obiect pe care îl puneți în colecție, astfel încât să
+        puteți recupera rapid obiectul folosind cheia.
+        <br><br>
+        O colecție este o clasă, deci trebuie să declarați o instanță a clasei înainte de a putea adăuga elemente în
+        acea colecție.
+        <Br><br>
+        Dacă colecția dvs. conține elemente doar dintr-un singur tip de date, puteți utiliza una dintre clasele din
+        spațiul de nume System.Collections.Generic. O colecție generică impune siguranța tipului astfel încât să nu se
+        poată adăuga niciun alt tip de date în ea. Când recuperați un element dintr-o colecție generică, nu trebuie să
+        determinați tipul său de date sau să-l convertiți.
+        <br><br>
+        For the examples in this topic, include using directives for the System.Collections.Generic and System.Linq
+        namespaces.
+    </p>
+
+    <h2>Utilizarea unei colecții simple</h2>
+    <p>
+        Exemplele din această secțiune folosesc clasa generică List&lt;T&gt;,
+        care vă permite să lucrați cu o listă de obiecte tipizate puternic.
+        <br><br>
+        Următorul exemplu creează o listă de șiruri și apoi parcurge
+        șirurile folosind o instrucțiune foreach.
+    <pre> <code>
+    // Create a list of strings.
+    var salmons = new List&lt;string&gt;();
+    salmons.Add("chinook");
+    salmons.Add("coho");
+    salmons.Add("pink");
+    salmons.Add("sockeye");
+
+    // Iterate through the list.
+    foreach (var salmon in salmons)
+    {
+        Console.Write(salmon + " ");
+    }
+    // Output: chinook coho pink sockeye
+</code>  </pre>
+
+    Dacă conținutul unei colecții este cunoscut în avans, puteți utiliza un inițializator de colecție pentru a
+    inițializa colecția.
+    <br><br>
+    Următorul exemplu este identic cu exemplul anterior, cu excepția faptului că un inițializator de colecție este
+    utilizat pentru a adăuga elemente în colecție.
+    <pre> <code>
+    // Create a list of strings by using a
+    // collection initializer.
+    var salmons = new List&lt;string&gt; { "chinook", "coho", "pink", "sockeye" };
+
+    // Iterate through the list.
+    foreach (var salmon in salmons)
+    {
+        Console.Write(salmon + " ");
+    }
+    // Output: chinook coho pink sockeye
+    </code></pre>
+    Puteți utiliza o instrucțiune for în loc de o instrucțiune foreach pentru a parcurge o colecție. Acest lucru se
+    realizează prin accesarea elementelor colecției prin poziția indexului. Indexul elementelor începe de la 0 și se
+    termină la numărul de elemente minus 1.
+    <br><br>
+    Următorul exemplu parcurge elementele unei colecții folosind instrucțiunea for
+    în loc de foreach.
+    <pre> <code>
+    // Create a list of strings by using a
+    // collection initializer.
+    var salmons = new List&lt;string&gt; { "chinook", "coho", "pink", "sockeye" };
+
+    for (var index = 0; index &lt; salmons.Count; index++)
+    {
+        Console.Write(salmons[index] + " ");
+    }
+    // Output: chinook coho pink sockeye
+   </code></pre>
+    Următorul exemplu elimină un element din colecție prin specificarea obiectului de eliminat.
+    <pre> <code>
+    // Create a list of strings by using a
+    // collection initializer.
+    var salmons = new List&lt;string&gt; { "chinook", "coho", "pink", "sockeye" };
+
+    // Remove an element from the list by specifying
+    // the object.
+    salmons.Remove("coho");
+
+    // Iterate through the list.
+    foreach (var salmon in salmons)
+    {
+        Console.Write(salmon + " ");
+    }
+    // Output: chinook pink sockeye
+   </code></pre>
+
+    Următorul exemplu elimină elemente dintr-o listă generică.
+    În loc de o instrucțiune foreach, este utilizată o instrucțiune
+    for care parcurge în ordine descrescătoare. Aceasta se datorează
+    faptului că metoda RemoveAt determină elementele după un element
+    eliminat să aibă o valoare mai mică a indexului.
+    <pre> <code>
+    var numbers = new List&lt;int&gt; { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
+
+         // Remove odd numbers.
+         for (var index = numbers.Count - 1; index >= 0; index--)
+         {
+             if (numbers[index] % 2 == 1)
+             {
+                // Remove the element by specifying
+                // the zero-based index in the list.
+                 numbers.RemoveAt(index);
+             }
+         }
+            
+        // Iterate through the list.
+        // A lambda expression is placed in the ForEach method
+        // of the List(T) object.
+         numbers.ForEach(
+             number => Console.Write(number + " "));
+        // Output: 0 2 4 6 8
+   </code> </pre>
+    Pentru tipul de elemente din List&lt;T&gt;,
+    puteți defini propriul dvs. clasă. În exemplul următor,
+    clasa Galaxy, care este utilizată de List&lt;T&gt;, este definită în cod.
+    <pre> <code>
+    private static void IterateThroughList()
+    {
+        var theGalaxies = new List&lt;Galaxy&gt;
+            {
+                new Galaxy() { Name="Tadpole", MegaLightYears=400},
+                new Galaxy() { Name="Pinwheel", MegaLightYears=25},
+                new Galaxy() { Name="Milky Way", MegaLightYears=0},
+                new Galaxy() { Name="Andromeda", MegaLightYears=3}
+            };
+
+        foreach (Galaxy theGalaxy in theGalaxies)
+        {
+            Console.WriteLine(theGalaxy.Name + "  " + theGalaxy.MegaLightYears);
+        }
+
+        // Output:
+        //  Tadpole  400
+        //  Pinwheel  25
+        //  Milky Way  0
+        //  Andromeda  3
+    }
+
+    public class Galaxy
+    {
+        public string Name { get; set; }
+        public int MegaLightYears { get; set; }
+    }
+     </code></pre>
+    </p>
+
+    <h2>Tipuri de colecții</h2>
+
+    <p>
+        Multe colecți comune sunt oferite de .NET. Fiecare tip de colecție este
+        conceput pentru un scop specific.
+        <br><br>
+        În această secțiune sunt descrise unele dintre clasele de colecție comune:
+    <ul>
+        <li>Clasele System.Collections.Generic</li>
+        <li>Clasele System.Collections.Concurrent</li>
+        <li> Clasele System.Collections</li>
+    </ul>
+
+    <h3>Clasele System.Collections.Generic</h3>
+    Puteți crea o colecție generică folosind una dintre clasele din spațiul de nume System.Collections.Generic. O
+    colecție generică este utilă atunci când fiecare element din colecție are același tip de date. O colecție generică
+    impune tipul de date prin permiterea adăugării doar a tipului de date dorit.
+    <br><br>
+    Următorul tabel listează unele dintre clasele frecvent utilizate din spațiul de
+    nume System.Collections.Generic:
+
+    <table>
+        <tr>
+            <th>Clasa</th>
+            <th>Descrierea</th>
+
+        </tr>
+        <tr>
+            <td>Dictionary &lt;TKey,TValue&gt;</td>
+            <td>Reprezintă o colecție de perechi cheie/valoare organizate în funcție de cheie.</td>
+        </tr>
+        <tr>
+            <td>ListList &lt;T&gt;</td>
+            <td>Reprezintă o listă de obiecte la care se poate accesa prin index. Oferă metode pentru căutarea, sortarea
+                și modificarea listelor.</td>
+        </tr>
+        <tr>
+            <td>Queue &lt;T&gt;</td>
+            <td>Reprezintă o colecție de obiecte de tipul "primul intrat, primul ieșit" (FIFO).</td>
+        </tr>
+        <tr>
+            <td>SortedList &lt;TKey,TValue&gt;</td>
+            <td>Reprezintă o colecție de perechi cheie/valoare care sunt sortate după cheie, bazat pe implementarea
+                IComparer&lt;T&gt; asociată.</td>
+        </tr>
+        <tr>
+            <td>Stack &lt;T&gt;</td>
+            <td>Reprezintă o colecție de obiecte de tipul "ultimul intrat, primul ieșit" (LIFO).</td>
+        </tr>
+    </table>
+
+    <h3>Clasele System.Collections.Concurrent</h3>
+
+    În .NET Framework 4 și versiunile ulterioare, colecțiile din spațiul de nume System.Collections.Concurrent
+    furnizează operații eficiente sigure pentru thread-uri pentru accesarea elementelor colecției din mai multe
+    thread-uri.
+    <br><br>
+    Clasele din spațiul de nume System.Collections.Concurrent trebuie utilizate în locul
+    tipurilor corespunzătoare din spațiul de nume System.Collections.Generic și
+    System.Collections atunci când mai multe thread-uri accesează colecția
+    în mod concomitent.
+    <br><br>
+    Unele clase incluse în spațiul de nume System.Collections.Concurrent sunt
+    BlockingCollection&lt;T&gt;, ConcurrentDictionary&lt;TKey, TValue&gt;,
+    ConcurrentQueue&lt;T&gt; și ConcurrentStack&lt;T&gt;.
+
+    <h3>Clasele System.Collections</h3>
+    Clasele din spațiul de nume System.Collections nu stochează elemente ca obiecte cu tip specific, ci ca obiecte de
+    tipul Object.
+    <br><br>
+    În cazul în care este posibil, ar trebui să utilizați colecțiile generice din spațiul de nume
+    System.Collections.Generic sau spațiul de nume System.Collections.Concurrent în locul tipurilor vechi din spațiul de
+    nume System.Collections.
+    <br><br>
+    Mai jos este prezentată o listă cu unele dintre clasele utilizate frecvent în spațiul de nume System.Collections:
+
+    <table>
+        <tr>
+            <th>Clasa</th>
+            <th>Descrierea</th>
+
+        </tr>
+        <tr>
+            <td>ArrayList</td>
+            <td>Reprezintă un tablou de obiecte a cărui dimensiune este mărită dinamic,
+                în funcție de nevoi.</td>
+        </tr>
+        <tr>
+            <td>Hashtable</td>
+            <td> Reprezintă o colecție de perechi cheie/valoare organizate
+                în funcție de codul hash al cheii.</td>
+        </tr>
+        <tr>
+            <td>Queue &lt;T&gt;</td>
+            <td>Reprezintă o colecție de obiecte de tipul "primul intrat, primul ieșit" (FIFO).</td>
+        </tr>
+        <tr>
+            <td>Stack &lt;T&gt;</td>
+            <td>Reprezintă o colecție de obiecte de tipul "ultimul intrat, primul ieșit" (LIFO).</td>
+        </tr>
+    </table>Spațiul de nume System.Collections.Specialized oferă clase specializate
+    și puternic tipizate de colecții, cum ar fi colecții doar de șiruri de caractere și dicționare hibride și cu liste
+    înlănțuite.
+
+
+    <h3>Implementarea unei colecții de perechi cheie/valoare</h3>
+    Dicționarul generic Dictionary&lt;TKey, TValue&gt;
+    permite accesul la elementele dintr-o colecție prin utilizarea
+    cheii fiecărui element. Fiecare adăugare în dicționar constă dintr-o
+    valoare și cheia sa asociată. Recuperarea unei valori prin utilizarea
+    cheii sale este rapidă datorită faptului că clasa Dictionary este implementată
+    ca o tabelă hash.
+    <br><br>
+    Următorul exemplu creează o colecție Dictionary și parcurge dicționarul utilizând o
+    instrucțiune foreach
+
+    <pre> <code>
+    private static void IterateThruDictionary()
+    {
+        Dictionary&lt;string, Element&gt; elements = BuildDictionary();
+
+        foreach (KeyValuePair&lt;string, Element&gt; kvp in elements)
+        {
+            Element theElement = kvp.Value;
+
+            Console.WriteLine("key: " + kvp.Key);
+            Console.WriteLine("values: " + theElement.Symbol + " " +
+                theElement.Name + " " + theElement.AtomicNumber);
+        }
+    }
+
+    private static Dictionary&lt;string, Element&gt; BuildDictionary()
+    {
+        var elements = new Dictionary&lt;string, Element&gt;();
+
+        AddToDictionary(elements, "K", "Potassium", 19);
+        AddToDictionary(elements, "Ca", "Calcium", 20);
+        AddToDictionary(elements, "Sc", "Scandium", 21);
+        AddToDictionary(elements, "Ti", "Titanium", 22);
+
+        return elements;
+    }
+
+    private static void AddToDictionary(Dictionary&lt;string, Element&gt; elements,
+        string symbol, string name, int atomicNumber)
+    {
+        Element theElement = new Element();
+
+        theElement.Symbol = symbol;
+        theElement.Name = name;
+        theElement.AtomicNumber = atomicNumber;
+
+        elements.Add(key: theElement.Symbol, value: theElement);
+    }
+
+    public class Element
+    {
+        public string Symbol { get; set; }
+        public string Name { get; set; }
+        public int AtomicNumber { get; set; }
+    }
+   </code> </pre>
+
+    Pentru a utiliza în schimb un inițializator de colecție pentru a construi
+    colecția Dictionary, puteți înlocui metodele BuildDictionary și AddToDictionary
+    cu următoarea metodă.
+    <pre> <code>
+    private static Dictionary&lt;string, Element&gt; BuildDictionary2()
+    {
+        return new Dictionary&lt;string, Element&gt;
+        {
+            {"K",
+                new Element() { Symbol="K", Name="Potassium", AtomicNumber=19}},
+            {"Ca",
+                new Element() { Symbol="Ca", Name="Calcium", AtomicNumber=20}},
+            {"Sc",
+                new Element() { Symbol="Sc", Name="Scandium", AtomicNumber=21}},
+            {"Ti",
+                new Element() { Symbol="Ti", Name="Titanium", AtomicNumber=22}}
+        };
+    }
+   </code></pre>
+    Următorul exemplu folosește metoda ContainsKey și proprietatea Item[] a
+    Dicționarelor pentru a găsi rapid un element după cheie. Proprietatea
+    Item vă permite să accesați un element din colecția elements utilizând
+    elements[symbol] în C#.
+    <pre> <code>
+    private static void FindInDictionary(string symbol)
+    {
+        Dictionary&lt;string, Element&gt; elements = BuildDictionary();
+
+        if (elements.ContainsKey(symbol) == false)
+        {
+            Console.WriteLine(symbol + " not found");
+        }
+        else
+        {
+            Element theElement = elements[symbol];
+            Console.WriteLine("found: " + theElement.Name);
+        }
+    }
+   </code> </pre>
+    Următorul exemplu folosește în schimb metoda TryGetValue
+    pentru a găsi rapid un element după cheie.
+
+    <pre> <code>
+    private static void FindInDictionary2(string symbol)
+    {
+        Dictionary&lt;string, Element&gt; elements = BuildDictionary();
+
+        Element theElement = null;
+        if (elements.TryGetValue(symbol, out theElement) == false)
+            Console.WriteLine(symbol + " not found");
+        else
+            Console.WriteLine("found: " + theElement.Name);
+    }
+    </code> </pre>
+    <h3>Accesarea unei colecții folosind LINQ </h3>
+
+    LINQ (Interogare Integrată în Limbaj) poate fi utilizat pentru a accesa colecțiile.
+    Interogările LINQ oferă capabilități de filtrare, sortare și grupare.
+    <br><br>
+    Următorul exemplu rulează o interogare LINQ asupra unei liste generice.
+    Interogarea LINQ returnează o altă colecție care conține rezultatele.
+
+    <pre> <code>
+    private static void ShowLINQ()
+    {
+        List&lt;Element&gt; elements = BuildList();
+    
+        // LINQ Query.
+        var subset = from theElement in elements
+                     where theElement.AtomicNumber &lt; 22
+                     orderby theElement.Name
+                     select theElement;
+    
+        foreach (Element theElement in subset)
+        {
+            Console.WriteLine(theElement.Name + " " + theElement.AtomicNumber);
+        }
+    
+        // Output:
+        //  Calcium 20
+        //  Potassium 19
+        //  Scandium 21
+    }
+    
+    private static List&lt;Element&gt; BuildList()
+    {
+        return new List&lt;Element&gt;
+        {
+            { new Element() { Symbol="K", Name="Potassium", AtomicNumber=19}},
+            { new Element() { Symbol="Ca", Name="Calcium", AtomicNumber=20}},
+            { new Element() { Symbol="Sc", Name="Scandium", AtomicNumber=21}},
+            { new Element() { Symbol="Ti", Name="Titanium", AtomicNumber=22}}
+        };
+    }
+    
+    public class Element
+    {
+        public string Symbol { get; set; }
+        public string Name { get; set; }
+        public int AtomicNumber { get; set; }
+    }
+  </code></pre>
+
+    <h3>Sortarea unei colecții</h3>
+
+    Următorul exemplu ilustrează o procedură de sortare a unei colecții.
+    Exemplul sortează instanțele clasei Car care sunt stocate într-o List&lt;T&gt;.
+    Clasa Car implementează interfața IComparable&lt;T&gt;, care necesită implementarea
+    metodei CompareTo.
+    <br><br>
+    Fiecare apel al metodei CompareTo face o singură comparație care este utilizată
+    pentru sortare. Codul scris de utilizator în metoda CompareTo returnează o valoare
+    pentru fiecare comparație între obiectul curent și un alt obiect. Valoarea
+    returnată este mai mică decât zero dacă obiectul curent este mai mic decât
+    celălalt obiect, mai mare decât zero dacă obiectul curent este mai mare decât
+    celălalt obiect și zero dacă sunt egale. Aceasta vă permite să definiți în cod
+    criteriile pentru mai mare decât, mai mic decât și egal.
+    <br><br>
+    În metoda ListCars, instrucțiunea cars.Sort() sortează lista.
+    Această apelare a metodei Sort a List&lt;T&gt; determină ca metoda CompareTo
+    să fie apelată automat pentru obiectele Car din List.
+    <pre> <code>
+    private static void ListCars()
+    {
+        var cars = new List&lt;Car&gt;
+        {
+            { new Car() { Name = "car1", Color = "blue", Speed = 20}},
+            { new Car() { Name = "car2", Color = "red", Speed = 50}},
+            { new Car() { Name = "car3", Color = "green", Speed = 10}},
+            { new Car() { Name = "car4", Color = "blue", Speed = 50}},
+            { new Car() { Name = "car5", Color = "blue", Speed = 30}},
+            { new Car() { Name = "car6", Color = "red", Speed = 60}},
+            { new Car() { Name = "car7", Color = "green", Speed = 50}}
+        };
+
+        // Sort the cars by color alphabetically, and then by speed
+        // in descending order.
+        cars.Sort();
+
+        // View all of the cars.
+        foreach (Car thisCar in cars)
+        {
+            Console.Write(thisCar.Color.PadRight(5) + " ");
+            Console.Write(thisCar.Speed.ToString() + " ");
+            Console.Write(thisCar.Name);
+            Console.WriteLine();
+        }
+
+        // Output:
+        //  blue  50 car4
+        //  blue  30 car5
+        //  blue  20 car1
+        //  green 50 car7
+        //  green 10 car3
+        //  red   60 car6
+        //  red   50 car2
+    }
+
+    public class Car : IComparable&lt;Car&gt;
+    {
+        public string Name { get; set; }
+        public int Speed { get; set; }
+        public string Color { get; set; }
+
+        public int CompareTo(Car other)
+        {
+            // A call to this method makes a single comparison that is
+            // used for sorting.
+
+            // Determine the relative order of the objects being compared.
+            // Sort by color alphabetically, and then by speed in
+            // descending order.
+
+            // Compare the colors.
+            int compare;
+            compare = String.Compare(this.Color, other.Color, true);
+
+            // If the colors are the same, compare the speeds.
+            if (compare == 0)
+            {
+                compare = this.Speed.CompareTo(other.Speed);
+
+                // Use descending order for speed.
+                compare = -compare;
+            }
+
+            return compare;
+        }
+    }
+</code></pre>
+
+    <h3>Definirea unei colecții personalizate</h3>
+    Puteți defini o colecție prin implementarea interfeței IEnumerable&lt;T&gt; sau IEnumerable.
+    <br><br>
+    Deși puteți defini o colecție personalizată, de obicei este mai bine să utilizați
+    colecțiile incluse în .NET, care sunt descrise în tipurile de colecții în articolul
+    anterior.
+    <br><br>
+    Următorul exemplu definește o clasă de colecție personalizată numită AllColors.
+    Această clasă implementează interfața IEnumerable, care necesită implementarea
+    metodei GetEnumerator.
+    <br><br>
+    Metoda GetEnumerator returnează o instanță a clasei ColorEnumerator. ColorEnumerator
+    implementează interfața IEnumerator, care necesită implementarea proprietății Current,
+    metodei MoveNext și metodei Reset.
+    <pre> <code>
+    private static void ListColors()
+    {
+        var colors = new AllColors();
+
+        foreach (Color theColor in colors)
+        {
+            Console.Write(theColor.Name + " ");
+        }
+        Console.WriteLine();
+        // Output: red blue green
+    }
+
+    // Collection class.
+    public class AllColors : System.Collections.IEnumerable
+    {
+        Color[] _colors =
+        {
+            new Color() { Name = "red" },
+            new Color() { Name = "blue" },
+            new Color() { Name = "green" }
+        };
+
+        public System.Collections.IEnumerator GetEnumerator()
+        {
+            return new ColorEnumerator(_colors);
+
+            // Instead of creating a custom enumerator, you could
+            // use the GetEnumerator of the array.
+            //return _colors.GetEnumerator();
+        }
+
+        // Custom enumerator.
+        private class ColorEnumerator : System.Collections.IEnumerator
+        {
+            private Color[] _colors;
+            private int _position = -1;
+
+            public ColorEnumerator(Color[] colors)
+            {
+                _colors = colors;
+            }
+
+            object System.Collections.IEnumerator.Current
+            {
+                get
+                {
+                    return _colors[_position];
+                }
+            }
+
+            bool System.Collections.IEnumerator.MoveNext()
+            {
+                _position++;
+                return (_position &lt; _colors.Length);
+            }
+
+            void System.Collections.IEnumerator.Reset()
+            {
+                _position = -1;
+            }
+        }
+    }
+
+    // Element class.
+    public class Color
+    {
+        public string Name { get; set; }
+    }
+</code></pre>
+
+    <h3>Iteratori</h3>
+
+    Un iterator este folosit pentru a efectua o iterație personalizată peste o colecție.
+    Un iterator poate fi o metodă sau un accesoriu get. Un iterator utilizează o instrucțiune
+    yield return pentru a returna fiecare element al colecției unul câte unul.
+    <br><Br>
+    Pentru a apela un iterator, se folosește o instrucțiune foreach. Fiecare iterație a
+    buclei foreach apelează iteratorul. Când se ajunge la o instrucțiune yield return în
+    iterator, se returnează o expresie, iar locația curentă în cod este reținută.
+    Execuția este repornită de la acea locație data viitoare când iteratorul este apelat.
+    <br><BR>
+    <br><br>
+    Exemplul următor utilizează o metodă iterator. Metoda iterator are
+    o instrucțiune yield return care este în interiorul unei bucle for. În metoda
+    ListEvenNumbers, fiecare iterație a corpului instrucțiunii foreach creează o apelare
+    către metoda iterator, care trece la următoarea instrucțiune yield return.
+    <pre> <code>
+    private static void ListEvenNumbers()
+    {
+        foreach (int number in EvenSequence(5, 18))
+        {
+            Console.Write(number.ToString() + " ");
+        }
+        Console.WriteLine();
+        // Output: 6 8 10 12 14 16 18
+    }
+
+    private static IEnumerable&lt;int&gt; EvenSequence(
+        int firstNumber, int lastNumber)
+    {
+        // Yield even numbers in the range.
+        for (var number = firstNumber; number &lt;= lastNumber; number++)
+        {
+            if (number % 2 == 0)
+            {
+                yield return number;
+            }
+        }
+    }
+ </code>   </pre>
+    </p>
+
+
+    <h1>5.9 Iteratori</h1>
+    <p>
+        Un iterator poate fi folosit pentru a parcurge colecții, cum ar fi liste și tablouri.
+        <br><br>
+        O metodă iterator sau un accesoriu get este folosit pentru a realiza o iterație
+        personalizată peste o colecție. O metodă iterator utilizează instrucțiunea yield
+        return pentru a returna fiecare element unul câte unul. Când se ajunge la o instrucțiune
+        yield return, locația curentă în cod este reținută. Execuția este reluată de la acea
+        locație data viitoare când este apelată funcția iterator.
+        <br><br>
+        Pentru a utiliza un iterator în codul client, se folosește o instrucțiune foreach
+        sau o interogare LINQ.
+        <br><br>
+        În exemplul următor, prima iterație a buclei foreach determină ca execuția să
+        continue în metoda iterator SomeNumbers până când este atinsă prima instrucțiune
+        yield return. Această iterație returnează o valoare de 3, iar locația curentă în
+        metoda iterator este reținută. La următoarea iterație a buclei, execuția în metoda
+        iterator continuă de unde a rămas, oprindu-se din nou când ajunge la o instrucțiune
+        yield return. Această iterație returnează o valoare de 5, iar locația curentă în metoda
+        iterator este din nou reținută. Buclele se încheie când se ajunge la sfârșitul metodei
+        iterator.
+    <pre> <code>
+    static void Main()
+    {
+        foreach (int number in SomeNumbers())
+        {
+            Console.Write(number.ToString() + " ");
+        }
+        // Output: 3 5 8
+        Console.ReadKey();
+    }
+
+    public static System.Collections.IEnumerable SomeNumbers()
+    {
+        yield return 3;
+        yield return 5;
+        yield return 8;
+    }
+     </code>   </pre>
+
+    Tipul de returnare al unei metode iterator sau a unui accesoriu
+    get poate fi IEnumerable, IEnumerable&lt;T&gt;,
+    IEnumerator sau IEnumerator&lt;T&gt;.
+    <br><br>
+    Se poate utiliza instrucțiunea yield break pentru a încheia iterația.
+    <br><br>
+    Notă
+    <br>
+    Pentru toate exemplele din acest subiect, cu excepția exemplului Simple Iterator, sunt necesare directivele
+    using pentru namespace-urile System.Collections și System.Collections.Generic.
+
+    </p>
+    <h2>Iteratori simpli</h2>
+    <p>
+        Exemplul următor conține o singură instrucțiune yield return care se
+        află într-un for loop. În metoda Main, fiecare iterație a corpului instrucțiunii
+        foreach creează un apel la funcția iterator, care continuă la următoarea
+        instrucțiune yield return.
+    <pre> <code>
+    static void Main()
+    {
+        foreach (int number in EvenSequence(5, 18))
+        {
+            Console.Write(number.ToString() + " ");
+        }
+        // Output: 6 8 10 12 14 16 18
+        Console.ReadKey();
+    }
+        
+    public static System.Collections.Generic.IEnumerable&lt;int&gt;
+        EvenSequence(int firstNumber, int lastNumber)
+    {
+        // Yield even numbers in the range.
+        for (int number = firstNumber; number &lt;= lastNumber; number++)
+        {
+            if (number % 2 == 0)
+            {
+                yield return number;
+            }
+        }
+    }
+    </code></pre>
+    </p>
+
+    <h2>Crearea unei clase de colecții</h2>
+    <p>În exemplul următor, clasa DaysOfTheWeek implementează interfața IEnumerable,
+        care necesită o metodă GetEnumerator. Compilatorul apelează implicit metoda
+        GetEnumerator, care returnează un obiect de tipul IEnumerator.
+        <br><br>
+        Metoda GetEnumerator returnează fiecare șir de caractere pe rând folosind
+        instrucțiunea yield return.
+    <pre> <code>
+    static void Main()
+    {
+        DaysOfTheWeek days = new DaysOfTheWeek();
+    
+        foreach (string day in days)
+        {
+            Console.Write(day + " ");
+        }
+        // Output: Sun Mon Tue Wed Thu Fri Sat
+        Console.ReadKey();
+    }
+    
+    public class DaysOfTheWeek : IEnumerable
+    {
+        private string[] days = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+    
+        public IEnumerator GetEnumerator()
+        {
+            for (int index = 0; index &lt; days.Length; index++)
+            {
+                // Yield each day of the week.
+                yield return days[index];
+            }
+        }
+    }
+</code></pre>
+    ÎN exemplul următor se creează o clasă Zoo care conține o colecție de animale.
+    <br><Br>
+    Instrucțiunea foreach care face referire la instanța clasei (theZoo) apelează
+    implicit metoda GetEnumerator. Instrucțiunile foreach care fac referire la
+    proprietățile Birds și Mammals folosesc metoda iterator numită AnimalsForType.
+    <pre> <code>
+    static void Main()
+    {
+        Zoo theZoo = new Zoo();
+    
+        theZoo.AddMammal("Whale");
+        theZoo.AddMammal("Rhinoceros");
+        theZoo.AddBird("Penguin");
+        theZoo.AddBird("Warbler");
+    
+        foreach (string name in theZoo)
+        {
+            Console.Write(name + " ");
+        }
+        Console.WriteLine();
+        // Output: Whale Rhinoceros Penguin Warbler
+    
+        foreach (string name in theZoo.Birds)
+        {
+            Console.Write(name + " ");
+        }
+        Console.WriteLine();
+        // Output: Penguin Warbler
+    
+        foreach (string name in theZoo.Mammals)
+        {
+            Console.Write(name + " ");
+        }
+        Console.WriteLine();
+        // Output: Whale Rhinoceros
+    
+        Console.ReadKey();
+    }
+    
+    public class Zoo : IEnumerable
+    {
+        // Private members.
+        private List&lt;Animal&gt; animals = new List&lt;Animal&gt;();
+    
+        // Public methods.
+        public void AddMammal(string name)
+        {
+            animals.Add(new Animal { Name = name, Type = Animal.TypeEnum.Mammal });
+        }
+    
+        public void AddBird(string name)
+        {
+            animals.Add(new Animal { Name = name, Type = Animal.TypeEnum.Bird });
+        }
+    
+        public IEnumerator GetEnumerator()
+        {
+            foreach (Animal theAnimal in animals)
+            {
+                yield return theAnimal.Name;
+            }
+        }
+    
+        // Public members.
+        public IEnumerable Mammals
+        {
+            get { return AnimalsForType(Animal.TypeEnum.Mammal); }
+        }
+    
+        public IEnumerable Birds
+        {
+            get { return AnimalsForType(Animal.TypeEnum.Bird); }
+        }
+    
+        // Private methods.
+        private IEnumerable AnimalsForType(Animal.TypeEnum type)
+        {
+            foreach (Animal theAnimal in animals)
+            {
+                if (theAnimal.Type == type)
+                {
+                    yield return theAnimal.Name;
+                }
+            }
+        }
+    
+        // Private class.
+        private class Animal
+        {
+            public enum TypeEnum { Bird, Mammal }
+    
+            public string Name { get; set; }
+            public TypeEnum Type { get; set; }
+        }
+    }
+</code></pre>
+    </p>
+
+    <h2>Utilizarea iteratorilor cu o listă generică</h2>
+    <p>
+        În exemplul următor, clasa generică Stack&lt;T&gt; implementează
+        interfața generică IEnumerable&lt;T&gt;. Metoda Push
+        atribuie valori unui tablou de tipul T.
+        Metoda GetEnumerator returnează valorile din tablou folosind
+        instrucțiunea yield return.
+        <br><br>
+        În plus față de metoda generică GetEnumerator, trebuie implementată
+        și metoda GetEnumerator
+        non-generică. Acest lucru se datorează faptului că IEnumerable&lt;T&gt;
+        moștenește din IEnumerable.
+        Implementarea non-generică se bazează pe implementarea generică.
+        <br><br>
+        Exemplul utilizează iteratori cu nume pentru a suporta diferite
+        moduri de iterare prin aceeași
+        colecție de date. Acești iteratori cu nume sunt proprietățile
+        TopToBottom și BottomToTop și metoda
+        TopN.
+        <br><br>
+        Proprietatea BottomToTop utilizează un iterator într-un accesoriu get.
+    <pre><code>
+    static void Main()
+    {
+        Stack&lt;int&gt; theStack = new Stack&lt;int&gt;();
+            
+        //  Add items to the stack.
+             for (int number = 0; number &lt;= 9; number++)
+            {
+                theStack.Push(number);
+            }
+            
+            // Retrieve items from the stack.
+            // foreach is allowed because theStack implements IEnumerable&lt;int&gt;.
+            foreach (int number in theStack)
+            {
+                Console.Write("{0} ", number);
+            }
+            Console.WriteLine();
+            // Output: 9 8 7 6 5 4 3 2 1 0
+            
+            // foreach is allowed, because theStack.TopToBottom returns IEnumerable(Of Integer).
+            foreach (int number in theStack.TopToBottom)
+            {
+                Console.Write("{0} ", number);
+            }
+            Console.WriteLine();
+            // Output: 9 8 7 6 5 4 3 2 1 0
+            
+            foreach (int number in theStack.BottomToTop)
+            {
+                Console.Write("{0} ", number);
+            }
+            Console.WriteLine();
+            // Output: 0 1 2 3 4 5 6 7 8 9
+            
+            foreach (int number in theStack.TopN(7))
+            {
+                Console.Write("{0} ", number);
+            }
+            Console.WriteLine();
+            // Output: 9 8 7 6 5 4 3
+            
+            Console.ReadKey();
+        }
+            
+        public class Stack&lt;T&gt; : IEnumerable&lt;T&gt;
+        {
+            private T[] values = new T[100];
+            private int top = 0;
+            
+            public void Push(T t)
+            {
+                values[top] = t;
+                top++;
+            }
+            public T Pop()
+            {
+                top--;
+                return values[top];
+            }
+            
+            // This method implements the GetEnumerator method. It allows
+            // an instance of the class to be used in a foreach statement.
+            public IEnumerator&lt;T&gt; GetEnumerator()
+            {
+                for (int index = top - 1; index &gt;= 0; index--)
+                {
+                    yield return values[index];
+                }
+            }
+            
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return GetEnumerator();
+            }
+            
+            public IEnumerable&lt;T&gt; TopToBottom
+            {
+                get { return this; }
+            }
+            
+            public IEnumerable&lt;T&gt; BottomToTop
+            {
+                get
+                {
+                    for (int index = 0; index &lt;= top - 1; index++)
+                    {
+                        yield return values[index];
+                    }
+                }
+            }
+            
+            public IEnumerable&lt;T&gt; TopN(int itemsFromTop)
+            {
+                // Return less than itemsFromTop if necessary.
+                int startIndex = itemsFromTop &gt;= top ? 0 : top - itemsFromTop;
+            
+                for (int index = top - 1; index &gt;= startIndex; index--)
+                {
+                    yield return values[index];
+                }
+            }
+            
+    }
+       </code> </pre>
+    </p>
+
+    <h2>Informații de sintaxă</h2>
+    <p>
+        Un iterator poate fi definit ca o metodă sau un accesoriu get.
+        Un iterator nu poate fi definit într-un eveniment, constructor de instanță,
+        constructor static sau într-un finalizator static.
+        <br><br>
+        Trebuie să existe o conversie implicită între tipul
+        expresiei din instrucțiunea yield return și argumentul de
+        tip pentru IEnumerable&lt;T&gt; returnat de iterator.
+        <br><br>
+        În C#, o metodă de iterator nu poate avea parametri in, ref sau out.
+        <br><br>
+        În C#, cuvântul cheie yield nu este rezervat și are semnificație
+        specială doar atunci când este utilizat
+        înaintea cuvintelor cheie return sau break.
+    </p>
+
+    <h2>Implementarea tehnică</h2>
+    <p>
+        Deși scrieți un iterator ca o metodă, compilatorul îl traduce
+        într-o clasă imbricată care, în efect, este o mașină de stare.
+        Această clasă urmărește poziția iteratorului atâta timp cât bucla
+        foreach din codul client continuă.
+        <br><br>
+        Pentru a vedea ce face compilatorul, puteți utiliza instrumentul Ildasm.exe
+        pentru a vizualiza codul de limbaj intermediar Microsoft generat pentru o metodă iterator.
+        <br><br>
+        Când creați un iterator pentru o clasă sau o structură, nu trebuie să implementați
+        întregul interface IEnumerator. Când compilatorul detectează iteratorul, generează
+        automat metodele Current, MoveNext și Dispose ale interfeței IEnumerator
+        sau IEnumerator&lt;T&gt;.
+        <br><br>
+        La fiecare iterație succesivă a buclei foreach (sau apelului direct la
+        IEnumerator.MoveNext), corpul următor al codului iteratorului este reluat
+        după instrucțiunea yield return anterioară. Apoi continuă până la următoarea
+        instrucțiune yield return până la sfârșitul corpului iteratorului sau până când
+        este întâlnită o instrucțiune yield break.
+        <br><br>
+        Iteratoarele nu suportă metoda IEnumerator.Reset. Pentru a reitera de la început,
+        trebuie să obțineți un nou iterator. Apelarea metodei Reset pe iteratorul returnat
+        de o metodă iterator aruncă o excepție NotSupportedException.
+    </p>
+
+    <h2>Utilizarea iteratorilor</h2>
+    <p>
+        Iteratoarele permit menținerea simplității unui loop foreach
+        atunci când este necesar să utilizați cod complex pentru a
+        popula o secvență de liste. Acest lucru poate fi util atunci
+        când doriți să faceți următoarele:
+    <ul>
+        <li>Modificați secvența listei după prima iterație a loop-ului foreach.</li>
+
+        <li>Evitați încărcarea completă a unei liste mari înainte de prima iterație a
+            unui loop foreach. Un exemplu ar fi o extragere paginată pentru a încărca un
+            lot de rânduri de tabel. Un alt exemplu este metoda EnumerateFiles,
+            care implementează iteratoare în .NET.</li>
+
+        <li>Încapsulați construirea listei în iterator. În metoda iteratorului,
+            puteți construi lista și apoi returna fiecare rezultat într-un loop.</li>
+    </ul>
+    </p>
+</body>
