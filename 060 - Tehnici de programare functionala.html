@@ -1,5 +1,1875 @@
+<!DOCTYPE html>
+  <body>
+        
+    <h1>Tehnici de programare functionala</h1>
+    
+    <h2>
+      6.1 Potrivirea de tipare
+    </h2>
 
-<h1>Tehnici de programare functionala</h1>
+    <p>
+      Potrivirea de tipare este o tehnica prin care se testeaza o expresie pentru a determina daca are anumite caracteristici. Potrivirea de tipare in C# ofera o sintaxa mai concisa pentru testarea expresiilor si pentru a actiona atunci cand o expresie se potriveste. Expresia is sustine potrivirea de tipare pentru a testa o expresie si a declara conditionat o noua variabila pentru rezultatul acelei expresii. Expresia switch  va permite sa efectuati actiuni pe baza primului tipar potrivit pentru o expresie. Aceste doua expresii sustin un bogat vocabular de tipare.
+    </p>
+    
+    <p>
+      Acest laborator ofera o prezentare general a scenariilor in care puteti utiliza potrivirea de tipare. Aceste tehnici pot imbunatati lizibilitatea si corectitudinea codului pe care il scrieti. Pentru mai multe detalii puteti consulta articolul despre tipare din referinta limbajului.
+    </p>
 
-<p>
-</p>
+    <h3>
+      Verificari pentru NULL
+    </h3>
+
+    <p>
+      Unul dintre cele mai frecvente scenarii pentru potrivirea tiparelor este de a ne asigura ca valorile nu sunt nule. Puteti testa si converti un tip de valoare nullabil la tipul sau de baza, in acelasi timp testand pentru valoarea null, folosind urmatorul exemplu:
+    </p>
+
+    <pre><code>
+              int? maybe = 12;
+
+              if (maybe is int number)
+              {
+                  Console.WriteLine($"The nullable int 'maybe' has the value {number}");
+              }
+              else
+              {
+                  Console.WriteLine("The nullable int 'maybe' doesn't hold a value");
+              }
+    </code></pre>
+
+    <p>
+      Codul anterior este un tipar de declaratie pentru a testa tipul variabilei si a o atribui unei noi variabile. Regulile limbajului fac ca aceasta tehnica sa fie mai sigura decat multe altele. Variabila number este accesibila si atribuita doar in partea adevarata a instructiunii if. Daca incercati sa o accesati in alta parte, fie in blocul else, fie dupa blocul if, compilatorul emite o eroare. In al doilea rand, pentru ca nu utilizati ==, acest tipar functioneaza cand un tip supraincarca operatorul ==. Acest lucru il face o modalitate ideala de a verifica valorile de referinta nule, adaugand tiparul not:
+    </p>
+ 
+    <pre><code>
+      string? message = "This is not the null string";
+
+      if (message is not null)
+      {
+          Console.WriteLine(message);
+      }
+    </code></pre>
+
+    <p>
+      Exemplul anterior a folosit un tipar constant pentru a compara variabile cu null. not este un tipar logic care se potriveste atunci cand tiparul negat nu se potriveste.
+    </p>
+
+    <h3>
+      Teste de tip
+    </h3>
+
+    <p>
+      Un alt uz comun pentru potrivirea de tipare este de a testa o variabilă pentru a vedea dacă se potrivește cu un anumit tip. De exemplu, următorul cod testează dacă o variabilă este non-null și implementează interfața System.Collections.Generic.IList&lt;T&gt;. Dacă este, utilizează proprietatea ICollection&lt;T&gt;.Count pe acea listă pentru a găsi indexul din mijloc. Tiparul de declarație nu se potrivește cu o valoare null, indiferent de tipul de la compilare al variabilei. Codul de mai jos se protejează împotriva valorilor nule, în plus față de protejarea împotriva unui tip care nu implementează IList. 
+    </p>
+
+    <pre><code>
+      public static T MidPoint&lt;T&gt;(IEnumerable&lt;T&gt; sequence)
+        {
+            if (sequence is IList&lt;T&gt; list)
+            {
+                return list[list.Count / 2];
+            }
+            else if (sequence is null)
+            {
+                throw new ArgumentNullException(nameof(sequence), "Sequence can't be null.");
+            }
+            else
+            {
+                int halfLength = sequence.Count() / 2 - 1;
+                if (halfLength < 0) halfLength = 0;
+                return sequence.Skip(halfLength).First();
+            }
+        }
+    </code></pre>
+
+    <p>
+      Aceleași teste pot fi aplicate într-o expresie switch pentru a testa o variabilă împotriva mai multor tipuri diferite. Puteți utiliza această informație pentru a crea algoritmi mai buni bazându-vă pe tipul specific de la timpul de execuție.
+    </p>
+
+    <h3>
+      Compararea valorilor discrete
+    </h3>
+
+    <p>
+      De asemenea, puteți testa o variabilă pentru a găsi o potrivire cu valori specifice. Codul următor prezintă un exemplu în care testați o valoare împotriva tuturor valorilor posibile declarate într-o enumerare:
+    </p>
+
+    <pre><code>
+      public State PerformOperation(Operation command) =>
+      command switch
+      {
+          Operation.SystemTest => RunDiagnostics(),
+          Operation.Start => StartSystem(),
+          Operation.Stop => StopSystem(),
+          Operation.Reset => ResetToReady(),
+          _ => throw new ArgumentException("Invalid enum value for command", nameof(command)),
+      };
+    </code></pre>
+
+    <p>
+      Exemplul anterior demonstrează o metodă de distribuire bazată pe valoarea unei enumerări. Cazul final _ este un model de eliminare care se potrivește cu toate valorile. Acesta gestionează orice condiții de eroare în cazul în care valoarea nu se potrivește cu una dintre valorile enum definite. Dacă omiteți acest caz de comutare, compilatorul va avertiza că nu ați gestionat toate valorile posibile de intrare. La momentul rulării, expresia de comutare aruncă o excepție dacă obiectul examinat nu se potrivește cu niciunul dintre cazurile de comutare. În loc de un set de valori enum, puteți utiliza constante numerice. De asemenea, puteți utiliza această tehnică similară pentru valorile constante de șir de caractere care reprezintă comenzile:
+    </p>
+
+    <pre><code>
+      public State PerformOperation(string command) =>
+      command switch
+      {
+          "SystemTest" => RunDiagnostics(),
+          "Start" => StartSystem(),
+          "Stop" => StopSystem(),
+          "Reset" => ResetToReady(),
+          _ => throw new ArgumentException("Invalid string value for command", nameof(command)),
+      };
+    </code></pre>
+
+    <p>
+      Exemplul anterior arată același algoritm, dar utilizează valori de șir de caractere în loc de o enumerare. Ați utiliza acest scenariu dacă aplicația dvs. răspunde la comenzi textuale în loc de un format de date regulat. Începând cu C# 11, puteți utiliza, de asemenea, un Span&lt;char&gt; sau un ReadOnlySpan&lt;char&gt; pentru a testa valorile constante de șir de caractere, așa cum este ilustrat în exemplul următor:
+    </p>
+
+    <pre><code>
+      public State PerformOperation(ReadOnlySpan&lt;char&gt; command) =>
+        command switch
+        {
+            "SystemTest" => RunDiagnostics(),
+            "Start" => StartSystem(),
+            "Stop" => StopSystem(),
+            "Reset" => ResetToReady(),
+            _ => throw new ArgumentException("Invalid string value for command", nameof(command)),
+        };
+    </code></pre>
+
+    <p>
+      În toate aceste exemple, modelul de eliminare asigură că gestionați fiecare intrare. Compilatorul vă ajută prin faptul că se asigură că fiecare valoare posibilă de intrare este gestionată.
+    </p>
+
+    <h3>
+      Modele de relație
+    </h3>
+
+    <p>
+      Puteți utiliza modele de relație pentru a testa cum o valoare se compară cu constante. De exemplu, următorul cod returnează starea apei în funcție de temperatura în Fahrenheit:
+    </p>
+
+    <pre><code>
+      string WaterState(int tempInFahrenheit) =>
+      tempInFahrenheit switch
+      {
+          (> 32) and (< 212) => "liquid",
+          < 32 => "solid",
+          > 212 => "gas",
+          32 => "solid/liquid transition",
+          212 => "liquid / gas transition",
+      };
+    </code></pre>
+
+    <p>
+      Codul anterior demonstrează, de asemenea, modelul logic conjunctiv and pentru a verifica că ambele modele de relație se potrivesc. Puteți utiliza, de asemenea, un model disjunctiv or pentru a verifica că fiecare model se potrivește. Cele două modele de relație sunt înconjurate de paranteze, pe care le puteți utiliza în jurul oricărui model pentru claritate. Ultimele două ramuri switch gestionează cazurile pentru punctul de topire și punctul de fierbere. Fără aceste două ramuri, compilatorul vă avertizează că logica dvs. nu acoperă fiecare intrare posibilă.
+    </p>
+
+    <p>
+      Codul anterior demonstrează, de asemenea, modelul logic conjunctiv pentru a verifica că ambele modele de relație se potrivesc. Puteți utiliza, de asemenea, un model disjunctiv sau pentru a verifica că fiecare model se potrivește. Cele două modele de relație sunt înconjurate de paranteze, pe care le puteți utiliza în jurul oricărui model pentru claritate. Ultimele două ramuri switch gestionează cazurile pentru punctul de topire și punctul de fierbere. Fără aceste două ramuri, compilatorul vă avertizează că logica dvs. nu acoperă fiecare intrare posibilă.
+    </p>
+
+    <pre><code>
+      string WaterState2(int tempInFahrenheit) =>
+      tempInFahrenheit switch
+      {
+          < 32 => "solid",
+          32 => "solid/liquid transition",
+          < 212 => "liquid",
+          212 => "liquid / gas transition",
+          _ => "gas",
+  };
+    </code></pre>
+
+    <p>
+      Lecția cheie în acest lucru și orice altă refacere sau reordonare este aceea că compilatorul validează faptul că ați acoperit toate intrările.
+    </p>
+
+    <h3>
+      Intrări multiple
+    </h3>
+
+    <p>
+      Toate modelele pe care le-ați văzut până acum au verificat o singură intrare. Puteți scrie modele care examinează mai multe proprietăți ale unui obiect. Luați în considerare următoarea înregistrare de comandă Order:
+    </p>
+
+    <pre><code>
+      public record Order(int Items, decimal Cost);
+    </code></pre>
+
+    <p>
+      Tipul de înregistrare pozițional precedent declară doi membri la poziții explicite. Primul este Items (articolele), apoi Costul comenzii Cost. Pentru mai multe informații, consultați Records.
+    </p>
+
+    <p>
+      Următorul cod examinează numărul de articole și valoarea comenzii pentru a calcula un preț redus:
+    </p>
+
+    <pre><code>
+      public decimal CalculateDiscount(Order order) =>
+      order switch
+      {
+          { Items: > 10, Cost: > 1000.00m } => 0.10m,
+          { Items: > 5, Cost: > 500.00m } => 0.05m,
+          { Cost: > 250.00m } => 0.02m,
+          null => throw new ArgumentNullException(nameof(order), "Can't calculate discount on null order"),
+          var someObject => 0m,
+      };
+    </code></pre>
+
+    <p>
+      Primele două cazuri verifică două proprietăți ale comenzii Order. Al treilea verifică doar costul. Următorul verifică valoarea nulă, iar ultimul se potrivește cu orice altă valoare. Dacă tipul Order definește o metodă Deconstruct potrivită, puteți omite numele proprietăților din model și puteți utiliza deconstrucția pentru a examina proprietățile:
+    </p>
+
+    <pre><code>
+      public decimal CalculateDiscount(Order order) =>
+      order switch
+      {
+          ( > 10,  > 1000.00m) => 0.10m,
+          ( > 5, > 50.00m) => 0.05m,
+          { Cost: > 250.00m } => 0.02m,
+          null => throw new ArgumentNullException(nameof(order), "Can't calculate discount on null order"),
+          var someObject => 0m,
+      };
+    </code></pre>
+
+    <p>
+      Codul precedent demonstrează modelul pozițional în care proprietățile sunt deconstruite pentru expresie.
+    </p>
+
+    <h3>
+      Listă de modele
+    </h3>
+
+    <p>
+      Puteți verifica elementele dintr-o listă sau un array utilizând un model de listă (list pattern). Un model de listă oferă o modalitate de a aplica un model la orice element dintr-o secvență. În plus, puteți aplica modelul de ignorare (_) pentru a se potrivi cu orice element sau puteți aplica un model de tranșare (slice pattern) pentru a se potrivi cu zero sau mai multe elemente.
+    </p>
+
+    <p>
+      Modelele de listă sunt o unealtă valoroasă atunci când datele nu urmează o structură regulată. Puteți utiliza potrivirea de modele (pattern matching) pentru a testa forma și valorile datelor în loc să le transformați într-un set de obiecte.
+    </p>
+
+    <p>
+      Să luăm în considerare următorul fragment dintr-un fișier text care conține tranzacții bancare:
+    </p>
+
+
+    <pre><code>
+      04-01-2020, DEPOSIT,    Initial deposit,            2250.00
+      04-15-2020, DEPOSIT,    Refund,                      125.65
+      04-18-2020, DEPOSIT,    Paycheck,                    825.65
+      04-22-2020, WITHDRAWAL, Debit,           Groceries,  255.73
+      05-01-2020, WITHDRAWAL, #1102,           Rent, apt, 2100.00
+      05-02-2020, INTEREST,                                  0.65
+      05-07-2020, WITHDRAWAL, Debit,           Movies,      12.57
+      04-15-2020, FEE,                                       5.55
+    </code></pre>
+
+    <p>
+      Este un format CSV, dar unele rânduri au mai multe coloane decât altele. Mai rău pentru procesare, o coloană din tipul WITHDRAWAL conține text generat de utilizator și poate conține o virgulă în text. Un model de listă care include modelul de abandon, modelul constant și modelul var pentru a captura valoarea procesează date în acest format:
+    </p>
+
+    <pre><code>
+      decimal balance = 0m;
+      foreach (string[] transaction in ReadRecords())
+      {
+          balance += transaction switch
+          {
+              [_, "DEPOSIT", _, var amount]     => decimal.Parse(amount),
+              [_, "WITHDRAWAL", .., var amount] => -decimal.Parse(amount),
+              [_, "INTEREST", var amount]       => decimal.Parse(amount),
+              [_, "FEE", var fee]               => -decimal.Parse(fee),
+              _                                 => throw new InvalidOperationException($"Record {string.Join(", ", transaction)} is not in the expected format!"),
+          };
+          Console.WriteLine($"Record: {string.Join(", ", transaction)}, New balance: {balance:C}");
+      }
+    </code></pre>
+    
+    <p>
+      Exemplul anterior preia un vector de string-uri, unde fiecare element este un câmp din rând. Expresia switch se bazează pe al doilea câmp, care determină tipul de tranzacție, și numărul de coloane rămase. Fiecare rând asigură că datele sunt în formatul corect. Modelul de eliminare (_) trece peste primul câmp, cu data tranzacției. Al doilea câmp se potrivește cu tipul de tranzacție. Alte elemente rămase trec peste câmpul cu suma. Ultima potrivire utilizează modelul var pentru a captura reprezentarea sub forma de string a sumei. Expresia calculează suma de adăugat sau de scăzut din sold.
+    </p>
+
+    <p>
+      Modelele de listă vă permit să potriviți forma unui șir de elemente de date. Folosiți modelele de eliminare și de tăiere pentru a potrivi locația elementelor. Folosiți alte modele pentru a potrivi caracteristici despre elementele individuale.
+    </p>
+
+    <p>
+      Acest laborator a prezentat un tur al tipurilor de cod pe care le puteți scrie cu potrivirea modelului în C#. Articolele următoare arată mai multe exemple de utilizare a modelelor în scenarii și vocabularul complet de modele disponibile pentru a fi utilizat.
+    </p>
+        
+    <h2>
+      6.2 Eliminarea
+    </h2>
+
+    <p>
+      Discard-urile sunt variabile folosite intenționat în codul aplicației, dar care nu sunt utilizate. Ele sunt echivalente cu variabilele neatribuite; nu au o valoare. Un discard comunică intenția compilatorului și a celor care citesc codul tău: ai avut intenția să ignori rezultatul unei expresii. Poți dori să ignori rezultatul unei expresii, unu sau mai mulți membri ai unei expresii tuplu, un parametru out al unei metode sau ținta unei expresii de potrivire a tiparelor.
+    </p>
+
+    <p>
+      Discard-urile clarifică intenția codului tău. Un discard indică faptul că codul nostru nu folosește niciodată variabila. Ele îmbunătățesc lizibilitatea și mentenabilitatea codului.
+    </p>
+
+    <p>
+      Se indică faptul că o variabilă este un discard atribuindu-i cratima de jos (_) ca nume. De exemplu, următorul apel al metodei returnează un tuplu în care primele două valori sunt discard-uri. area este o variabilă declarată anterior, setată la a treia componentă returnată de GetCityInformation:
+    </p>
+
+    <pre><code>
+      (_, _, area) = city.GetCityInformation(cityName);
+    </code></pre>
+
+    <p>
+      Începând cu C# 9.0, poți utiliza discard-urile pentru a specifica parametrii de intrare neutilizați ai unei expresii lambda. Pentru mai multe informații, vezi secțiunea Parametrii de intrare ai unei expresii lambda din articolul Expresii lambda.
+    </p>
+
+    <p>
+      Când _ este un discard valid, încercarea de a obține valoarea acestuia sau de a-l utiliza într-o operațiune de atribuire generează eroarea de compilare CS0103, "Numele '_' nu există în contextul curent". Această eroare apare deoarece _ nu primește o valoare și nici măcar nu i se atribuie un spațiu de stocare. Dacă ar fi o variabilă reală, nu ai putea să scapi mai mult de o valoare, așa cum s-a întâmplat în exemplul anterior.
+    </p>
+
+    <h3>
+      Deconstrucția tuplelor
+    </h3>
+
+    <p>
+      Discard-urile sunt utile în lucrul cu tuple atunci când codul aplicației folosește unele elemente din tuplu, dar ignoră altele. De exemplu, metoda QueryCityDataForYears returnează un tuplu cu numele unui oraș, suprafața sa, un an, populația orașului pentru acel an, un al doilea an și populația orașului pentru acel al doilea an. Exemplul arată schimbarea populației între acei doi ani. Din datele disponibile în tuplu, nu ne preocupă suprafața orașului, iar numele orașului și cele două date sunt cunoscute la momentul design-ului. Ca rezultat, suntem interesați doar de cele două valori ale populației stocate în tuplu și putem trata valorile rămase ca fiind discard-uri.
+    </p>
+
+    <pre><code>
+      var (_, _, _, pop1, _, pop2) = QueryCityDataForYears("New York City", 1960, 2010);
+
+      Console.WriteLine($"Population change, 1960 to 2010: {pop2 - pop1:N0}");
+      
+      static (string, double, int, int, int, int) QueryCityDataForYears(string name, int year1, int year2)
+      {
+          int population1 = 0, population2 = 0;
+          double area = 0;
+      
+          if (name == "New York City")
+          {
+              area = 468.48;
+              if (year1 == 1960)
+              {
+                  population1 = 7781984;
+              }
+              if (year2 == 2010)
+              {
+                  population2 = 8175133;
+              }
+              return (name, area, year1, population1, year2, population2);
+          }
+      
+          return ("", 0, 0, 0, 0, 0);
+      }
+      // The example displays the following output:
+      //      Population change, 1960 to 2010: 393,149
+    </code></pre>
+
+    <p>
+      Pentru mai multe informații despre deconstrucția tuplelor cu discard-uri, vezi articolul Deconstrucția tuplurilor și altor tipuri.
+    </p>
+
+    <p>
+      Metoda Deconstruct a unei clase, structuri sau interfețe îți permite, de asemenea, să preiei și să deconstruiești un set specific de date dintr-un obiect. Poți folosi discard-urile atunci când ești interesat să lucrezi doar cu un subset din valorile deconstruite. Exemplul următor deconstruiește un obiect Person în patru șiruri de caractere (prenumele și numele, orașul și statul), dar elimină numele de familie și statul.
+    </p>
+
+    <pre><code>
+      using System;
+
+      namespace Discards
+      {
+          public class Person
+          {
+              public string FirstName { get; set; }
+              public string MiddleName { get; set; }
+              public string LastName { get; set; }
+              public string City { get; set; }
+              public string State { get; set; }
+      
+              public Person(string fname, string mname, string lname,
+                            string cityName, string stateName)
+              {
+                  FirstName = fname;
+                  MiddleName = mname;
+                  LastName = lname;
+                  City = cityName;
+                  State = stateName;
+              }
+      
+              // Return the first and last name.
+              public void Deconstruct(out string fname, out string lname)
+              {
+                  fname = FirstName;
+                  lname = LastName;
+              }
+      
+              public void Deconstruct(out string fname, out string mname, out string lname)
+              {
+                  fname = FirstName;
+                  mname = MiddleName;
+                  lname = LastName;
+              }
+      
+              public void Deconstruct(out string fname, out string lname,
+                                      out string city, out string state)
+              {
+                  fname = FirstName;
+                  lname = LastName;
+                  city = City;
+                  state = State;
+              }
+          }
+          class Example
+          {
+              public static void Main()
+              {
+                  var p = new Person("John", "Quincy", "Adams", "Boston", "MA");
+      
+                  // Deconstruct the person object.
+                  var (fName, _, city, _) = p;
+                  Console.WriteLine($"Hello {fName} of {city}!");
+                  // The example displays the following output:
+                  //      Hello John of Boston!
+              }
+          }
+      }
+    </code></pre>
+
+    <p>
+      Pentru mai multe informații despre deconstrucția tipurilor definite de utilizator cu discard-uri, vezi articolul Deconstrucția tuplurilor și altor tipuri.
+    </p>
+
+    <h3>
+      Potrivirea de tipare cu switch
+    </h3>
+
+    <p>
+      Modelul discard poate fi utilizat în potrivirea de modele cu expresia switch. Orice expresie, inclusiv null, se potrivește întotdeauna cu modelul discard.
+    </p>
+
+    <p>
+      Exemplul următor definește o metodă ProvidesFormatInfo care utilizează o expresie switch pentru a determina dacă un obiect oferă o implementare IFormatProvider și testează dacă obiectul este nul. De asemenea, utilizează modelul discard pentru a gestiona obiecte non-nule de orice alt tip.
+    </p>
+
+    <pre><code>
+    object?[] objects = { CultureInfo.CurrentCulture,
+            CultureInfo.CurrentCulture.DateTimeFormat,
+            CultureInfo.CurrentCulture.NumberFormat,
+            new ArgumentException(), null };
+    foreach (var obj in objects)
+    ProvidesFormatInfo(obj);
+
+    static void ProvidesFormatInfo(object? obj) =>
+    Console.WriteLine(obj switch
+    {
+    IFormatProvider fmt => $"{fmt.GetType()} object",
+    null => "A null object reference: Its use could result in a NullReferenceException",
+    _ => "Some object type without format information"
+    });
+    // The example displays the following output:
+    //    System.Globalization.CultureInfo object
+    //    System.Globalization.DateTimeFormatInfo object
+    //    System.Globalization.NumberFormatInfo object
+    //    Some object type without format information
+    //    A null object reference: Its use could result in a NullReferenceException
+    </code></pre>
+
+    
+
+    <h3>
+      Apelarea metodelor cu parametri out
+    </h3>
+
+    <p>
+      La apelarea metodei Deconstruct pentru a deconstrui un tip definit de utilizator (o instanță a unei clase, structuri sau interfețe), poți elimina valorile argumentelor individuale out. Dar poți elimina și valoarea argumentelor out la apelarea oricărei metode cu un parametru out.
+    </p>
+
+    <p>
+      Exemplul următor apelează metoda DateTime.TryParse(String, out DateTime) pentru a determina dacă reprezentarea sub formă de șir a unei date este validă în cultura curentă. Deoarece exemplul se preocupă doar de validarea șirului de dată și nu de parsarea acestuia pentru a extrage data, argumentul out al metodei este un discard.
+    </p>
+
+    <pre><code>
+    string[] dateStrings = {"05/01/2018 14:57:32.8", "2018-05-01 14:57:32.8",
+          "2018-05-01T14:57:32.8375298-04:00", "5/01/2018",
+          "5/01/2018 14:57:32.80 -07:00",
+          "1 May 2018 2:57:32.8 PM", "16-05-2018 1:00:32 PM",
+          "Fri, 15 May 2018 20:10:57 GMT" };
+    foreach (string dateString in dateStrings)
+    {
+    if (DateTime.TryParse(dateString, out _))
+    Console.WriteLine($"'{dateString}': valid");
+    else
+    Console.WriteLine($"'{dateString}': invalid");
+    }
+    // The example displays output like the following:
+    //       '05/01/2018 14:57:32.8': valid
+    //       '2018-05-01 14:57:32.8': valid
+    //       '2018-05-01T14:57:32.8375298-04:00': valid
+    //       '5/01/2018': valid
+    //       '5/01/2018 14:57:32.80 -07:00': valid
+    //       '1 May 2018 2:57:32.8 PM': valid
+    //       '16-05-2018 1:00:32 PM': invalid
+    //       'Fri, 15 May 2018 20:10:57 GMT': invalid
+    </code></pre>
+
+    
+
+    <h3>
+      Un discard independent
+    </h3>
+
+    <p>
+      Puteți folosi un discard independent pentru a indica orice variabilă pe care alegeți să o ignorați. Un uzual tipic este de a folosi o atribuire pentru a asigura că un argument nu este null. În codul următor este folosit un discard pentru a forța o atribuire. Partea dreaptă a atribuirii folosește operatorul de coalescență la null pentru a arunca o excepție System.ArgumentNullException când argumentul este null. Codul nu are nevoie de rezultatul atribuirii, astfel că acesta este ignorat. Expresia forțează o verificare null. Discard-ul clarifică intenția: rezultatul atribuirii nu este necesar sau folosit.
+    </p>
+
+    <pre><code>
+      public static void Method(string arg)
+      {
+          _ = arg ?? throw new ArgumentNullException(paramName: nameof(arg), message: "arg can't be null");
+      
+          // Do work with arg.
+      }
+    </code></pre>
+
+    <p>
+      Exemplul următor utilizează un discard independent pentru a ignora obiectul Task returnat de o operație asincronă. Atribuirea task-ului are efectul de a suprima excepția pe care operația o aruncă în momentul în care aceasta se finalizează. Aceasta face ca intenția dvs. să fie clară: doriți să ignorați Task-ul și să ignorați orice erori generate de acea operație asincronă.
+    </p>
+
+    <pre><code>
+      private static async Task ExecuteAsyncMethods()
+      {
+          Console.WriteLine("About to launch a task...");
+          _ = Task.Run(() =>
+          {
+              var iterations = 0;
+              for (int ctr = 0; ctr < int.MaxValue; ctr++)
+                  iterations++;
+              Console.WriteLine("Completed looping operation...");
+              throw new InvalidOperationException();
+          });
+          await Task.Delay(5000);
+          Console.WriteLine("Exiting after 5 second delay");
+      }
+      // The example displays output like the following:
+      //       About to launch a task...
+      //       Completed looping operation...
+      //       Exiting after 5 second delay
+    </code></pre>
+
+    <p>
+      Fără a atribui sarcina unui discard, următorul cod generează o eroare de compilare.
+    </p>
+
+    <pre><code>
+      private static async Task ExecuteAsyncMethods()
+      {
+          Console.WriteLine("About to launch a task...");
+          // CS4014: Because this call is not awaited, execution of the current method continues before the call is completed.
+          // Consider applying the 'await' operator to the result of the call.
+          Task.Run(() =>
+          {
+              var iterations = 0;
+              for (int ctr = 0; ctr < int.MaxValue; ctr++)
+                  iterations++;
+              Console.WriteLine("Completed looping operation...");
+              throw new InvalidOperationException();
+          });
+          await Task.Delay(5000);
+          Console.WriteLine("Exiting after 5 second delay");
+    </code></pre>
+
+    
+
+    <p>
+      _ este de asemenea un identificator valid. Atunci când este folosit în afara unui context suportat, _ este tratat nu ca un discard, ci ca o variabilă validă. Dacă un identificator numit _ este deja în domeniul de aplicare, utilizarea lui _ ca un discard independent poate duce la:
+    </p>
+
+    <ul>
+
+      <li>
+        <p>
+          Modificarea accidentală a valorii variabilei _ aflată în scop prin atribuirea acesteia valorii intenționate pentru discard. De exemplu:
+        </p>
+
+        <pre><code>
+          private static void ShowValue(int _)
+          {
+             byte[] arr = { 0, 0, 1, 2 };
+             _ = BitConverter.ToInt32(arr, 0);
+             Console.WriteLine(_);
+          }
+           // The example displays the following output:
+           //       33619968
+        </code></pre>
+      </li>
+
+      <li>
+        <p>
+          O eroare de compilator pentru încălcarea siguranței de tipuri. De exemplu:
+        </p>
+
+        <pre><code>
+          private static bool RoundTrips(int _)
+          {
+             string value = _.ToString();
+             int newValue = 0;
+             _ = Int32.TryParse(value, out newValue);
+             return _ == newValue;
+          }
+          // The example displays the following compiler error:
+          //      error CS0029: Cannot implicitly convert type 'bool' to 'int'
+        </code></pre>
+      </li>
+
+      <li>
+        <p>
+          Eroare de compilator CS0136, "O variabilă locală sau un parametru numit '_' nu poate fi declarat în acest domeniu de aplicare deoarece numele este utilizat într-un domeniu local închis pentru a defini o variabilă locală sau un parametru." De exemplu:
+        </p>
+        
+        <pre><code>
+          public void DoSomething(int _)
+          {
+           var _ = GetValue(); // Error: cannot declare local _ when one is already in scope
+          }
+          // The example displays the following compiler error:
+          // error CS0136:
+          //       A local or parameter named '_' cannot be declared in this scope
+          //       because that name is used in an enclosing local scope
+          //       to define a local or parameter
+        </code></pre>
+      </li>
+    </ul>
+
+
+ 
+        
+    <h2>6.3 Deconstruirea tuplelor si a altor tipuri</h2>
+
+    <p>
+      Un tuplu oferă o modalitate ușoară de a obține mai multe valori dintr-un apel de metodă. Dar odată ce obțineți tuplul, trebuie să gestionați elementele individuale. Lucrul pe baza elementelor este stângaci, așa cum arată următorul exemplu. Metoda QueryCityData returnează un tuplu de trei elemente, iar fiecare dintre elementele sale este atribuit unei variabile într-o operație separată.
+    </p>
+    
+    <pre><code>
+      public class Example
+      {
+          public static void Main()
+          {
+              var result = QueryCityData("New York City");
+      
+              var city = result.Item1;
+              var pop = result.Item2;
+              var size = result.Item3;
+      
+               // Do something with the data.
+          }
+      
+          private static (string, int, double) QueryCityData(string name)
+          {
+              if (name == "New York City")
+                  return (name, 8175133, 468.48);
+      
+              return ("", 0, 0);
+          }
+      }
+    </code></pre>
+
+    <p>
+      Recuperarea mai multor valori de câmpuri și proprietăți dintr-un obiect poate fi la fel de dificilă: trebuie să atribuiți o valoare de câmp sau de proprietate unei variabile pe baza fiecărui membru în parte.
+    </p>
+
+    <p>
+      Puteți recupera mai multe elemente dintr-o tuplă sau puteți recupera mai multe valori de câmp, proprietate și valori calculate dintr-un obiect într-o singură operație de deconstrucție. Pentru a deconstrui o tuplă, atribuiți elementele sale la variabile individuale. Când deconstruiți un obiect, atribuiți valori selectate la variabile individuale.
+    </p>
+
+    
+
+    <h3>
+      Tuple
+    </h3>
+
+    <p>
+      C# oferă suport încorporat pentru deconstruirea tuplurilor, ceea ce vă permite să desfaceți toate elementele unei tuple într-o singură operație. Sintaxa generală pentru deconstruirea unei tuple este similară cu sintaxa pentru definirea uneia: încadrați variabilele la care fiecare element trebuie atribuit între paranteze în partea stângă a unei declarații de atribuire. De exemplu, următoarea declarație atribuie elementele unei tupluri de patru variabile separate:
+    </p>
+
+    <pre><code>
+      var (name, address, city, zip) = contact.GetAddressInfo();
+    </code></pre>
+
+    <p>
+      Există trei moduri de a deconstrui un tuplu:
+    </p>
+
+    <ul>
+      <li>
+        <p>
+          Se pot declara explicit tipurile de date ale fiecarui camp in paranteze. Exemplul urmator foloseste aceasta abordare pentru a deconstrui tripla returnata de metoda QueryCityData.
+        </p>
+
+        <pre><code >
+          public static void Main()
+          {
+              (string city, int population, double area) = QueryCityData("New York City");
+          
+              // Do something with the data.
+          }
+        </code></pre>
+      </li>
+
+      <li>
+        <p>
+          Poți folosi cuvântul cheie var pentru a permite C# să deducă tipul fiecărei variabile în parte. Cuvântul cheie var se plasează în exteriorul parantezelor. Exemplul următor folosește deducerea de tip când se deconstruiește trei elemente din tuplul returnat de metoda QueryCityData.
+        </p>
+        <pre><code >
+          public static void Main()
+          {
+              var (city, population, area) = QueryCityData("New York City");
+          
+              // Do something with the data.
+          }
+        </code></pre>
+
+        <p>
+          Puteți folosi, de asemenea, cuvântul cheie var individual pentru oricare dintre declarațiile de variabile din interiorul parantezelor sau pentru toate acestea.
+        </p>
+
+        <pre><code >
+          public static void Main()
+          {
+              (string city, var population, var area) = QueryCityData("New York City");
+          
+              // Do something with the data.
+          }
+        </code></pre>
+
+        <p>
+          Aceasta este o abordare dificilă și nu este recomandată.
+        </p>
+      </li>
+
+      <li>
+        <p>
+          În cele din urmă, puteți deconstrui tuplul în variabile care au fost deja declarate.
+        </p>
+        <pre>
+          <code>
+            public static void Main()
+            {
+                string city = "Raleigh";
+                int population = 458880;
+                double area = 144.8;
+            
+                (city, population, area) = QueryCityData("New York City");
+            
+                // Do something with the data.
+            }
+          </code>
+        </pre>
+      </li>
+
+      <li>
+        <p>
+          Începând cu C# 10, puteți combina declarația de variabile și atribuirea într-o deconstrucție.
+        </p>
+
+        <pre>
+          <code>
+            public static void Main()
+            {
+                string city = "Raleigh";
+                int population = 458880;
+            
+                (city, population, double area) = QueryCityData("New York City");
+            
+                // Do something with the data.
+            }
+          </code>
+        </pre>
+      </li>
+    </ul>
+
+    <p>
+      Nu puteți specifica un tip specific în afara parantezelor, chiar dacă fiecare câmp din tuplu are același tip. Acest lucru generează eroarea de compilator CS8136, "Forma 'var (...)' a deconstrucției nu permite un tip specific pentru 'var'.".
+    </p>
+
+    <p>
+      Trebuie să atribuiți fiecare element al tuplului la o variabilă. Dacă omiteți oricare dintre elemente, compilatorul generează eroarea CS8132, "Nu se poate deconstrui un tuplu de 'x' elemente în 'y' variabile."
+    </p>
+
+    <h3>
+      Elemente de tuplu cu discard-uri
+    </h3>
+
+    <p>
+      Adesea, când deconstruiți o tuplă, sunteți interesat doar de valorile unor elemente. Puteți profita de suportul C# pentru discard-uri, care sunt variabile doar pentru scriere ale căror valori ați ales să le ignorați. Un discard este ales de un caracter de subliniere ("_") într-o atribuire. Puteți renunța la câte valori doriți; toate sunt reprezentate de un singur discard, _.
+    </p>
+
+    <p>
+      Următorul exemplu ilustrează utilizarea de tupluri cu discard-uri. Metoda QueryCityDataForYears returnează o tuplă cu șase elemente, cu numele unui oraș, suprafața sa, un an, populația orașului pentru acel an, un al doilea an și populația orașului pentru acel al doilea an. Exemplul arată modificarea populației dintre acei doi ani. Din datele disponibile din tuplă, nu ne interesează suprafața orașului, și cunoaștem numele orașului și cele două date la momentul de proiectare. Ca rezultat, suntem interesați doar de cele două valori ale populației stocate în tuplă și putem trata valorile rămase ca discard-uri.
+    </p>
+
+    <pre>
+      <code>
+        using System;
+
+        public class ExampleDiscard
+        {
+            public static void Main()
+            {
+                var (_, _, _, pop1, _, pop2) = QueryCityDataForYears("New York City", 1960, 2010);
+        
+                Console.WriteLine($"Population change, 1960 to 2010: {pop2 - pop1:N0}");
+            }
+        
+            private static (string, double, int, int, int, int) QueryCityDataForYears(string name, int year1, int year2)
+            {
+                int population1 = 0, population2 = 0;
+                double area = 0;
+        
+                if (name == "New York City")
+                {
+                    area = 468.48;
+                    if (year1 == 1960)
+                    {
+                        population1 = 7781984;
+                    }
+                    if (year2 == 2010)
+                    {
+                        population2 = 8175133;
+                    }
+                    return (name, area, year1, population1, year2, population2);
+                }
+        
+                return ("", 0, 0, 0, 0, 0);
+            }
+        }
+        // The example displays the following output:
+        //      Population change, 1960 to 2010: 393,149
+      </code>
+    </pre>
+
+    <h3>
+      Tipuri definite de utilizator
+    </h3>
+
+    <p>
+      C# nu oferă suport integrat pentru deconstruirea tipurilor non-tuple în afara tipurilor record și DictionaryEntry. Cu toate acestea, în calitate de autor al unei clase, structuri sau interfețe, puteți permite instanțelor tipului să fie deconstruite prin implementarea unei sau mai multor metode Deconstruct. Metoda returnează void, iar fiecare valoare de deconstruit este indicată printr-un parametru out în semnătura metodei. De exemplu, următoarea metodă Deconstruct a clasei Person returnează numele de botez, prenumele și numele de familie.
+    </p>
+
+    <pre>
+      <code>
+        public void Deconstruct(out string fname, out string mname, out string lname)
+      </code>
+    </pre>
+
+    <p>
+      Poti apoi deconstrui o instanta a clasei Person numita p cu o asignare ca in urmatorul cod:
+    </p>
+
+    <pre>
+      <code>
+        var (fName, mName, lName) = p;
+      </code>
+    </pre>
+
+    <p>
+      Exemplul următor suprascrie metoda Deconstruct pentru a returna diverse combinații de proprietăți ale unui obiect Person. Suprascrierile individuale returnează:
+    </p>
+
+    <ul>
+      <li>Un prenume și un nume.</li>
+      <li>Un prenume, un nume de mijloc și un nume.</li>
+      <li>Un prenume, un nume, un nume de oraș și un nume de stat.</li>
+    </ul>
+
+    <pre>
+      <code>
+        using System;
+
+        public class Person
+        {
+            public string FirstName { get; set; }
+            public string MiddleName { get; set; }
+            public string LastName { get; set; }
+            public string City { get; set; }
+            public string State { get; set; }
+        
+            public Person(string fname, string mname, string lname,
+                          string cityName, string stateName)
+            {
+                FirstName = fname;
+                MiddleName = mname;
+                LastName = lname;
+                City = cityName;
+                State = stateName;
+            }
+        
+            // Return the first and last name.
+            public void Deconstruct(out string fname, out string lname)
+            {
+                fname = FirstName;
+                lname = LastName;
+            }
+        
+            public void Deconstruct(out string fname, out string mname, out string lname)
+            {
+                fname = FirstName;
+                mname = MiddleName;
+                lname = LastName;
+            }
+        
+            public void Deconstruct(out string fname, out string lname,
+                                    out string city, out string state)
+            {
+                fname = FirstName;
+                lname = LastName;
+                city = City;
+                state = State;
+            }
+        }
+        
+        public class ExampleClassDeconstruction
+        {
+            public static void Main()
+            {
+                var p = new Person("John", "Quincy", "Adams", "Boston", "MA");
+        
+                // Deconstruct the person object.
+                var (fName, lName, city, state) = p;
+                Console.WriteLine($"Hello {fName} {lName} of {city}, {state}!");
+            }
+        }
+        // The example displays the following output:
+        //    Hello John Adams of Boston, MA!
+      </code>
+    </pre>
+  
+    <p>
+      Mai multe metode Deconstruct care au același număr de parametri sunt ambigue. Trebuie să fiți atenți să definiți metode Deconstruct cu diferite numere de parametri, sau "aritate". Metodele Deconstruct cu același număr de parametri nu pot fi distinse în timpul rezolvării suprasarcinilor.
+    </p>
+
+    <h3>
+      Tipul definit de utilizator cu eliminări
+    </h3>
+
+    <p>
+      La fel ca și în cazul tuplurilor, puteți utiliza variabilele de tip discard pentru a ignora elemente selectate returnate de o metodă Deconstruct. Fiecare variabilă discard este definită cu numele "_" și o singură operație de deconstrucție poate include mai multe variabile de tip discard.
+    </p>
+
+    <p>
+      Următorul exemplu deconstruiește un obiect Person în patru șiruri de caractere (prenumele și numele, orașul și statul), dar ignora numele de familie și statul.
+    </p>
+
+    <pre>
+      <code>
+        // Deconstruct the person object.
+        var (fName, _, city, _) = p;
+        Console.WriteLine($"Hello {fName} of {city}!");
+        // The example displays the following output:
+        //      Hello John of Boston!
+      </code>
+    </pre>
+
+    <h3>
+      Metode de extensie pentru tipuri definite de utilizator
+    </h3>
+
+    <p>
+      Dacă nu ați creat o clasă, o structură sau o interfață, puteți totuși să deconstruiți obiecte ale acelui tip prin implementarea unei sau mai multor metode de extensie Deconstruct care să returneze valorile în care sunteți interesat.
+    </p>
+
+    <p>
+      Exemplul următor definește două metode de extensie Deconstruct pentru clasa System.Reflection.PropertyInfo. Prima metoda returnează un set de valori care indică caracteristicile proprietății, inclusiv tipul său, dacă este statică sau instanță, dacă este numai pentru citire și dacă are index. A doua metoda indică accesibilitatea proprietății. Deoarece accesibilitatea accessorilor get și set poate fi diferită, valorile Booleene indică dacă proprietatea are separați accessorii get și set și, în caz afirmativ, dacă au aceeași accesibilitate. Dacă există doar un singur accessor sau atât accessorul get, cât și cel set au aceeași accesibilitate, variabila access indică accesibilitatea proprietății în ansamblu. În caz contrar, accesibilitatea accessorilor get și set este indicată de variabilele getAccess și setAccess.
+    </p>
+
+    <pre>
+      <code>
+        using System;
+        using System.Collections.Generic;
+        using System.Reflection;
+        
+        public static class ReflectionExtensions
+        {
+            public static void Deconstruct(this PropertyInfo p, out bool isStatic,
+                                           out bool isReadOnly, out bool isIndexed,
+                                           out Type propertyType)
+            {
+                var getter = p.GetMethod;
+        
+                // Is the property read-only?
+                isReadOnly = ! p.CanWrite;
+        
+                // Is the property instance or static?
+                isStatic = getter.IsStatic;
+        
+                // Is the property indexed?
+                isIndexed = p.GetIndexParameters().Length > 0;
+        
+                // Get the property type.
+                propertyType = p.PropertyType;
+            }
+        
+            public static void Deconstruct(this PropertyInfo p, out bool hasGetAndSet,
+                                           out bool sameAccess, out string access,
+                                           out string getAccess, out string setAccess)
+            {
+                hasGetAndSet = sameAccess = false;
+                string getAccessTemp = null;
+                string setAccessTemp = null;
+        
+                MethodInfo getter = null;
+                if (p.CanRead)
+                    getter = p.GetMethod;
+        
+                MethodInfo setter = null;
+                if (p.CanWrite)
+                    setter = p.SetMethod;
+        
+                if (setter != null && getter != null)
+                    hasGetAndSet = true;
+        
+                if (getter != null)
+                {
+                    if (getter.IsPublic)
+                        getAccessTemp = "public";
+                    else if (getter.IsPrivate)
+                        getAccessTemp = "private";
+                    else if (getter.IsAssembly)
+                        getAccessTemp = "internal";
+                    else if (getter.IsFamily)
+                        getAccessTemp = "protected";
+                    else if (getter.IsFamilyOrAssembly)
+                        getAccessTemp = "protected internal";
+                }
+        
+                if (setter != null)
+                {
+                    if (setter.IsPublic)
+                        setAccessTemp = "public";
+                    else if (setter.IsPrivate)
+                        setAccessTemp = "private";
+                    else if (setter.IsAssembly)
+                        setAccessTemp = "internal";
+                    else if (setter.IsFamily)
+                        setAccessTemp = "protected";
+                    else if (setter.IsFamilyOrAssembly)
+                        setAccessTemp = "protected internal";
+                }
+        
+                // Are the accessibility of the getter and setter the same?
+                if (setAccessTemp == getAccessTemp)
+                {
+                    sameAccess = true;
+                    access = getAccessTemp;
+                    getAccess = setAccess = String.Empty;
+                }
+                else
+                {
+                    access = null;
+                    getAccess = getAccessTemp;
+                    setAccess = setAccessTemp;
+                }
+            }
+        }
+        
+        public class ExampleExtension
+        {
+            public static void Main()
+            {
+                Type dateType = typeof(DateTime);
+                PropertyInfo prop = dateType.GetProperty("Now");
+                var (isStatic, isRO, isIndexed, propType) = prop;
+                Console.WriteLine($"\nThe {dateType.FullName}.{prop.Name} property:");
+                Console.WriteLine($"   PropertyType: {propType.Name}");
+                Console.WriteLine($"   Static:       {isStatic}");
+                Console.WriteLine($"   Read-only:    {isRO}");
+                Console.WriteLine($"   Indexed:      {isIndexed}");
+        
+                Type listType = typeof(List<>);
+                prop = listType.GetProperty("Item",
+                                            BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
+                var (hasGetAndSet, sameAccess, accessibility, getAccessibility, setAccessibility) = prop;
+                Console.Write($"\nAccessibility of the {listType.FullName}.{prop.Name} property: ");
+        
+                if (!hasGetAndSet | sameAccess)
+                {
+                    Console.WriteLine(accessibility);
+                }
+                else
+                {
+                    Console.WriteLine($"\n   The get accessor: {getAccessibility}");
+                    Console.WriteLine($"   The set accessor: {setAccessibility}");
+                }
+            }
+        }
+        // The example displays the following output:
+        //       The System.DateTime.Now property:
+        //          PropertyType: DateTime
+        //          Static:       True
+        //          Read-only:    True
+        //          Indexed:      False
+        //
+        //       Accessibility of the System.Collections.Generic.List`1.Item property: public
+      </code>
+    </pre>
+
+
+    <h3>
+      Metoda de extensie pentru tipurile sistemului
+    </h3>
+
+    <p>
+      Câteva tipuri de sistem furnizează metoda Deconstruct ca o facilitate. De exemplu, tipul System.Collections.Generic.KeyValuePair&lt;TKey,TValue&gt; furnizează această funcționalitate. Când iterați peste un System.Collections.Generic.Dictionary&lt;TKey,TValue&gt;, fiecare element este un KeyValuePair&lt;TKey, TValue&gt; și poate fi deconstruit. Luați în considerare următorul exemplu:
+    </p>
+
+    <pre>
+      <code>
+        Dictionary<string, int> snapshotCommitMap = new(StringComparer.OrdinalIgnoreCase)
+          {
+              ["https://github.com/dotnet/docs"] = 16_465,
+              ["https://github.com/dotnet/runtime"] = 114_223,
+              ["https://github.com/dotnet/installer"] = 22_436,
+              ["https://github.com/dotnet/roslyn"] = 79_484,
+              ["https://github.com/dotnet/aspnetcore"] = 48_386
+          };
+          
+          foreach (var (repo, commitCount) in snapshotCommitMap)
+          {
+              Console.WriteLine(
+                  $"The {repo} repository had {commitCount:N0} commits as of November 10th, 2021.");
+          }
+      </code>
+    </pre>
+
+    <p>
+      Puteți adăuga o metodă Deconstruct la tipurile de sistem care nu au una. Luați în considerare următorul exemplu de metodă de extensie:
+    </p>
+
+    <pre>
+      <code>
+        public static class NullableExtensions
+        {
+            public static void Deconstruct&lt;T&gt;(
+                this T? nullable,
+                out bool hasValue,
+                out T value) where T : struct
+            {
+                hasValue = nullable.HasValue;
+                value = nullable.GetValueOrDefault();
+            }
+        }
+      </code>
+    </pre>
+
+    <p>
+      Acest metodă de extensie permite tuturor tipurilor Nullable&lt;T&gt; să fie dezasamblate într-o pereche de (bool hasValue, T value). Exemplul următor prezintă codul care utilizează această metodă de extensie:
+    </p>
+
+    <pre>
+      <code>
+        DateTime? questionableDateTime = default;
+        var (hasValue, value) = questionableDateTime;
+        Console.WriteLine(
+            $"{{ HasValue = {hasValue}, Value = {value} }}");
+        
+        questionableDateTime = DateTime.Now;
+        (hasValue, value) = questionableDateTime;
+        Console.WriteLine(
+            $"{{ HasValue = {hasValue}, Value = {value} }}");
+        
+        // Example outputs:
+        // { HasValue = False, Value = 1/1/0001 12:00:00 AM }
+        // { HasValue = True, Value = 11/10/2021 6:11:45 PM }
+      </code>
+    </pre>
+
+    <h3>Tipurile record</h3>
+
+    <p>
+      Când declarați un tip de record utilizând doi sau mai mulți parametri poziționali, compilatorul creează un metoda Deconstruct cu un parametru de tip out pentru fiecare parametru pozițional în declarația de tip record. Pentru mai multe informații, consultați sintaxa pozițională pentru definirea proprietăților și comportamentul de deconstruire înregistrări derivate.
+    </p>
+
+  <h2>6.4 Tutorial potrivire de tipare</h2>
+
+  <p>
+    Folosiți potrivirea de modele pentru a construi algoritmi orientați de tip și de date.
+  </p>
+
+  <p>
+    Puteți scrie funcționalități care se comportă ca și cum ați extins tipurile care pot fi în alte biblioteci. Un alt mod de utilizare a modelului este de a crea funcționalități pe care o necesită aplicația dvs., care nu este o caracteristică fundamentală a tipului care este extins.
+  </p>
+
+  <p>
+    În acest articol, veți învăța:
+  </p>
+  <ul>
+    <li>
+      Să recunoașteți situațiile în care ar trebui utilizată potrivirea de modele.
+    </li>
+
+    <li>
+      Să utilizați expresiile de potrivire a modelelor pentru a implementa comportamentul bazat pe tipuri și valori de proprietăți.
+    </li>
+    <li>
+      Să combinați potrivirea de modele cu alte tehnici pentru a crea algoritmi completați.
+    </li>
+  </ul>
+
+    <h3>Cerințe preliminare</h3>
+
+    <ul>
+      <li>Recomandăm utilizarea Visual Studio pentru Windows sau Mac. Puteți descărca o versiune gratuită de pe pagina de descărcări Visual Studio. Visual Studio include SDK-ul .NET.</li>
+      <li>De asemenea, puteți utiliza editorul Visual Studio Code. Va trebui să instalați cel mai recent SDK .NET separat.</li>
+      <li>Dacă preferați un alt editor, trebuie să instalați cel mai recent SDK .NET.</li>
+    </ul>
+
+    <h3>Scenariile pentru potrivirea modelelor.</h3>
+
+    <p>
+      Dezvoltarea modernă include adesea integrarea datelor din mai multe surse și prezentarea informațiilor și a ideilor din aceste date într-o singură aplicație coerentă. Echipa dumneavoastră nu va avea control sau acces pentru toate tipurile care reprezintă datele primite.
+    </p>
+
+    <p>
+      Designul clasic orientat pe obiecte ar presupune crearea de tipuri în aplicația dumneavoastră care să reprezinte fiecare tip de date din acele surse de date multiple. Apoi, aplicația dumneavoastră ar lucra cu aceste noi tipuri, ar construi ierarhii de moștenire, ar crea metode virtuale și ar implementa abstractizări. Aceste tehnici funcționează, iar uneori sunt cele mai bune instrumente. În alte cazuri, puteți scrie mai puțin cod. Puteți scrie cod mai clar folosind tehnici care separă datele de operațiile care manipulează acele date.
+    </p>
+
+    <p>
+      În acest articol, veți crea și explora o aplicație care primește date de la mai multe surse externe pentru un singur scenariu. Veți vedea cum potrivirea modelelor oferă o modalitate eficientă de a consuma și procesa acele date în moduri care nu făceau parte din sistemul original.
+    </p>
+
+    <p>
+      Să luăm în considerare un mare oraș metropolitan care utilizează taxe și prețuri în funcție de orele de vârf pentru a gestiona traficul. Scrieți o aplicație care calculează taxe pentru un vehicul în funcție de tipul său. Îmbunătățirile ulterioare includ prețurile bazate pe numărul de ocupanți din vehicul. Îmbunătățirile suplimentare adaugă prețuri bazate pe timp și ziua săptămânii.
+    </p>
+
+    <p>
+      Pornind de la această scurtă descriere, ați putea să schițați rapid o ierarhie de obiecte pentru a modela acest sistem. Cu toate acestea, datele dumneavoastră provin din surse multiple, precum alte sisteme de gestionare a înregistrării vehiculelor. Aceste sisteme oferă clase diferite pentru a modela acele date și nu aveți un singur model de obiecte pe care să îl puteți utiliza. În acest tutorial, veți folosi aceste clase simplificate pentru a modela datele vehiculelor din aceste sisteme externe, așa cum este arătat în următorul cod:
+    </p>
+
+    <pre>
+      <code>
+      namespace ConsumerVehicleRegistration
+      {
+          public class Car
+          {
+              public int Passengers { get; set; }
+          }
+      }
+
+      namespace CommercialRegistration
+      {
+          public class DeliveryTruck
+          {
+              public int GrossWeightClass { get; set; }
+          }
+      }
+
+      namespace LiveryRegistration
+      {
+          public class Taxi
+          {
+              public int Fares { get; set; }
+          }
+
+          public class Bus
+          {
+              public int Capacity { get; set; }
+              public int Riders { get; set; }
+          }
+      }
+      </code>
+    </pre>
+
+    <h3>Designuri de potrivire a modelelor</h3>
+
+    <p>Scenariul utilizat în acest tutorial evidențiază tipurile de probleme pentru care potrivirea modelelor este bine adaptată să rezolve:</p>
+
+    <ul>
+      <li>Obiectele cu care trebuie să lucrați nu sunt într-o ierarhie de obiecte care se potrivește cu obiectivele dumneavoastră. S-ar putea să lucrați cu clase care fac parte din sisteme nesemnificative.</li>
+      <li>Funcționalitatea pe care o adăugați nu face parte din abstracția de bază pentru aceste clase. Taxa plătită de un vehicul se schimbă pentru diferite tipuri de vehicule, dar taxa nu este o funcție de bază a vehiculului.</li>
+    </ul>
+
+    <p>Când forma datelor și operațiile pe aceste date nu sunt descrise împreună, caracteristicile de potrivire a modelelor din C# fac mai ușor lucrul cu acestea.</p>
+
+    <h3>Implementați calculul de bază al taxei de trecere.</h3>
+
+    <p>Cel mai simplu calcul al taxei de trecere depinde doar de tipul vehiculului:</p>
+
+    <ul>
+      <li>Un automobil costă 2,00 dolari.</li>
+      <li>Un automobil costă 2,00 dolari.</li>
+      <li>Un autobuz costă 5,00 dolari.</li>
+      <li>Un camion de livrare costă 10,00 dolari.</li>
+    </ul>
+    
+    <p>
+      Creați o nouă clasă TollCalculator și implementați potrivirea modelelor pe tipul de vehicul pentru a obține suma taxei. Codul următor prezintă implementarea inițială a TollCalculator.
+    </p>
+
+    <pre>
+      <code>
+        using System;
+        using CommercialRegistration;
+        using ConsumerVehicleRegistration;
+        using LiveryRegistration;
+
+        namespace Calculators;
+
+        public class TollCalculator
+        {
+            public decimal CalculateToll(object vehicle) =>
+                vehicle switch
+            {
+                Car c           => 2.00m,
+                Taxi t          => 3.50m,
+                Bus b           => 5.00m,
+                DeliveryTruck t => 10.00m,
+                { }             => throw new ArgumentException(message: "Not a known vehicle type", paramName: nameof(vehicle)),
+                null            => throw new ArgumentNullException(nameof(vehicle))
+            };
+        }
+      </code>
+    </pre>
+
+    <p>
+      Codul anterior utilizează o expresie switch (nu este același lucru cu o declarație switch) care testează modelul de declarație. O expresie switch începe cu variabila, vehicle în codul anterior, urmată de cuvântul cheie switch. Urmează apoi toate brațele switch-ului între acolade. Expresia switch aduce alte rafinamente sintactice în jurul instrucțiunii switch. Cuvântul cheie case este omis, iar rezultatul fiecărui braț este o expresie. Ultimele două brațe arată o nouă caracteristică a limbajului. Brațul { } case se potrivește cu orice obiect nenul care nu s-a potrivit cu niciun braț anterior. Acest braț prinde orice tipuri incorecte trecute la această metodă. Brațul { } case trebuie să urmeze cazurile pentru fiecare tip de vehicul. Dacă ordinea ar fi inversată, brațul { } ar lua prioritate. În cele din urmă, modelul de constantă null detectează când null este trecut la această metodă. Modelul null poate fi ultimul deoarece celelalte modele se potrivesc doar cu un obiect nenul al tipului corect.
+    </p>
+
+    <p>Puteți testa acest cod folosind următorul cod în Program.cs:</p>
+
+    <pre>
+      <code>
+        using System;
+        using CommercialRegistration;
+        using ConsumerVehicleRegistration;
+        using LiveryRegistration;
+
+        using toll_calculator;
+
+        var tollCalc = new TollCalculator();
+
+        var car = new Car();
+        var taxi = new Taxi();
+        var bus = new Bus();
+        var truck = new DeliveryTruck();
+
+        Console.WriteLine($"The toll for a car is {tollCalc.CalculateToll(car)}");
+        Console.WriteLine($"The toll for a taxi is {tollCalc.CalculateToll(taxi)}");
+        Console.WriteLine($"The toll for a bus is {tollCalc.CalculateToll(bus)}");
+        Console.WriteLine($"The toll for a truck is {tollCalc.CalculateToll(truck)}");
+
+        try
+        {
+            tollCalc.CalculateToll("this will fail");
+        }
+        catch (ArgumentException e)
+        {
+            Console.WriteLine("Caught an argument exception when using the wrong type");
+        }
+        try
+        {
+            tollCalc.CalculateToll(null!);
+        }
+        catch (ArgumentNullException e)
+        {
+            Console.WriteLine("Caught an argument exception when using null");
+        }
+      </code>
+    </pre>
+
+    <p>Acest cod este inclus în proiectul de început, dar este comentat. Eliminați comentariile și puteți testa ceea ce ați scris.</p>
+
+    <p>
+      Începeți să vedeți cum pot ajuta modelele să creați algoritmi în care codul și datele sunt separate. Expresia switch testează tipul și produce valori diferite în funcție de rezultate. Dar asta este doar începutul.
+    </p>
+
+    <h3>Adăugați prețurile de ocupanță</h3>
+
+    <p>
+      Autoritatea de taxare a impozitelor vrea să încurajeze vehiculele să circule la capacitate maximă. Au decis să perceapă mai mult atunci când vehiculele au mai puțini pasageri și să încurajeze vehiculele pline prin oferirea unor tarife mai mici:
+    </p>
+
+    <ul>
+      <li>Mașinile și taxiurile fără pasageri plătesc un supliment de 0,50 dolari.</li>
+      <li>Mașinile și taxiurile cu doi pasageri primesc o reducere de 0,50 dolari.</li>
+      <li>Mașinile și taxiurile cu trei sau mai mulți pasageri primesc o reducere de 1,00 dolar.</li>
+      <li>Autobuzele care sunt mai puțin de 50% pline plătesc un supliment de 2,00 dolari.</li>
+      <li>Autobuzele care sunt mai mult de 90% pline primesc o reducere de 1,00 dolar.</li>
+    </ul>
+
+    <p>
+      Aceste reguli pot fi implementate folosind un model de proprietate în aceeași expresie switch. Un model de proprietate compară o valoare de proprietate cu o valoare constantă. Modelul de proprietate examinează proprietățile obiectului odată ce tipul a fost determinat. Un singur caz pentru o mașină se extinde la patru cazuri diferite:
+    </p>
+
+    <pre>
+      <code>
+        vehicle switch
+        {
+            Car {Passengers: 0} => 2.00m + 0.50m,
+            Car {Passengers: 1} => 2.0m,
+            Car {Passengers: 2} => 2.0m - 0.50m,
+            Car                 => 2.00m - 1.0m,
+
+            // ...
+        };
+      </code>
+    </pre>
+
+    <p>Primele trei cazuri testează tipul ca fiind un Car și verifică valoarea proprietății Passengers. Dacă ambele se potrivesc, expresia respectivă este evaluată și returnată.</p>
+
+    <p>De asemenea, veți extinde cazurile pentru taxiuri într-un mod similar:</p>
+
+    <pre>
+      <code>
+        vehicle switch
+        {
+            // ...
+
+            Taxi {Fares: 0}  => 3.50m + 1.00m,
+            Taxi {Fares: 1}  => 3.50m,
+            Taxi {Fares: 2}  => 3.50m - 0.50m,
+            Taxi             => 3.50m - 1.00m,
+
+            // ...
+        };
+      </code>
+    </pre>
+
+    <p>Implementați regulile de ocupare extinzând cazurile pentru autobuze, așa cum este arătat în exemplul următor:</p>
+
+    <pre>
+      <code>
+        vehicle switch
+        {
+            // ...
+
+            Bus b when ((double)b.Riders / (double)b.Capacity) < 0.50 => 5.00m + 2.00m,
+            Bus b when ((double)b.Riders / (double)b.Capacity) > 0.90 => 5.00m - 1.00m,
+            Bus => 5.00m,
+
+            // ...
+        };
+      </code>
+    </pre>
+
+    <p>Autoritatea de taxare nu este preocupată de numărul de pasageri din camioanele de livrare. În schimb, ajustează valoarea taxei în funcție de clasa de greutate a camioanelor astfel:</p>
+
+    <ul>
+      <li>Camioanele de peste 5000 de lbs sunt taxate cu un supliment de 5,00 $. </li>
+      <li>Camioanele usoare sub 3000 de lbs beneficiaza de o reducere de 2,00 $.</li>
+    </ul>
+
+    <p>Regula respectivă este implementată cu următorul cod:</p>
+
+    <pre>
+      <code>
+        vehicle switch
+        {
+            // ...
+        
+            DeliveryTruck t when (t.GrossWeightClass > 5000) => 10.00m + 5.00m,
+            DeliveryTruck t when (t.GrossWeightClass < 3000) => 10.00m - 2.00m,
+            DeliveryTruck => 10.00m,
+        };
+      </code>
+    </pre>
+
+    <p>Codul precedent arată clauza when a unui braț switch. Folosiți clauza when pentru a testa condiții care nu sunt egalitate pe o proprietate. Când veți fi terminat, veți avea o metodă care arată mult ca următorul cod:</p>
+
+    <pre>
+      <code>
+        vehicle switch
+        {
+            Car {Passengers: 0}        => 2.00m + 0.50m,
+            Car {Passengers: 1}        => 2.0m,
+            Car {Passengers: 2}        => 2.0m - 0.50m,
+            Car                        => 2.00m - 1.0m,
+        
+            Taxi {Fares: 0}  => 3.50m + 1.00m,
+            Taxi {Fares: 1}  => 3.50m,
+            Taxi {Fares: 2}  => 3.50m - 0.50m,
+            Taxi             => 3.50m - 1.00m,
+        
+            Bus b when ((double)b.Riders / (double)b.Capacity) < 0.50 => 5.00m + 2.00m,
+            Bus b when ((double)b.Riders / (double)b.Capacity) > 0.90 => 5.00m - 1.00m,
+            Bus => 5.00m,
+        
+            DeliveryTruck t when (t.GrossWeightClass > 5000) => 10.00m + 5.00m,
+            DeliveryTruck t when (t.GrossWeightClass < 3000) => 10.00m - 2.00m,
+            DeliveryTruck => 10.00m,
+        
+            { }     => throw new ArgumentException(message: "Not a known vehicle type", paramName: nameof(vehicle)),
+            null    => throw new ArgumentNullException(nameof(vehicle))
+        };
+      </code>
+    </pre>
+
+    <p>Multe dintre aceste ramuri switch sunt exemple de modele recursive. De exemplu, Car { Passengers: 1 } arată un model constant în interiorul unui model de proprietate.</p>
+
+    <p>Acest cod arată cum se pot folosi switch-uri înlănțuite pentru a face codul mai puțin repetitiv. Atât clasa Car cât și clasa Taxi au patru brațe diferite în exemplele anterioare. În ambele cazuri, se poate crea un tipar de declarație care alimentează un tipar constant. Această tehnică este ilustrată în următorul cod:</p>
+
+    <pre>
+      <code>
+        public decimal CalculateToll(object vehicle) =>
+        vehicle switch
+        {
+            Car c => c.Passengers switch
+            {
+                0 => 2.00m + 0.5m,
+                1 => 2.0m,
+                2 => 2.0m - 0.5m,
+                _ => 2.00m - 1.0m
+            },
+    
+            Taxi t => t.Fares switch
+            {
+                0 => 3.50m + 1.00m,
+                1 => 3.50m,
+                2 => 3.50m - 0.50m,
+                _ => 3.50m - 1.00m
+            },
+    
+            Bus b when ((double)b.Riders / (double)b.Capacity) < 0.50 => 5.00m + 2.00m,
+            Bus b when ((double)b.Riders / (double)b.Capacity) > 0.90 => 5.00m - 1.00m,
+            Bus b => 5.00m,
+    
+            DeliveryTruck t when (t.GrossWeightClass > 5000) => 10.00m + 5.00m,
+            DeliveryTruck t when (t.GrossWeightClass < 3000) => 10.00m - 2.00m,
+            DeliveryTruck t => 10.00m,
+    
+            { }  => throw new ArgumentException(message: "Not a known vehicle type", paramName: nameof(vehicle)),
+            null => throw new ArgumentNullException(nameof(vehicle))
+        };
+      </code>
+    </pre>
+
+    <p>În exemplul anterior, folosirea unei expresii recursive înseamnă că nu trebuie să repetați brațele pentru mașinile și taxiurile care conțin brațe copil care testează valoarea proprietății. Această tehnică nu este utilizată pentru brațele Bus și DeliveryTruck deoarece acele brațe testează intervale pentru proprietate, nu valori discrete.</p>
+
+    <h3>Adăugați prețuri de vârf</h3>
+
+    <p>Pentru ultima caracteristică, autoritatea de taxare dorește să adauge o taxare de vârf sensibilă la timp. În timpul orelor de vârf dimineața și seara, taxele sunt dublate. Această regulă afectează doar traficul într-o singură direcție: spre oraș dimineața și din oraș în timpul vârfului de seară. În timpul altor perioade ale zilei de lucru, tarifele cresc cu 50%. În timpul nopții târzii și dimineața devreme, tarifele sunt reduse cu 25%. În timpul weekendului, tariful este normal, indiferent de timp. Acest lucru poate fi exprimat folosind o serie de declarații if și else, după cum urmează:</p>
+
+    <pre>
+      <code>
+        public decimal PeakTimePremiumIfElse(DateTime timeOfToll, bool inbound)
+        {
+            if ((timeOfToll.DayOfWeek == DayOfWeek.Saturday) ||
+                (timeOfToll.DayOfWeek == DayOfWeek.Sunday))
+            {
+                return 1.0m;
+            }
+            else
+            {
+                int hour = timeOfToll.Hour;
+                if (hour < 6)
+                {
+                    return 0.75m;
+                }
+                else if (hour < 10)
+                {
+                    if (inbound)
+                    {
+                        return 2.0m;
+                    }
+                    else
+                    {
+                        return 1.0m;
+                    }
+                }
+                else if (hour < 16)
+                {
+                    return 1.5m;
+                }
+                else if (hour < 20)
+                {
+                    if (inbound)
+                    {
+                        return 1.0m;
+                    }
+                    else
+                    {
+                        return 2.0m;
+                    }
+                }
+                else // Overnight
+                {
+                    return 0.75m;
+                }
+            }
+        }
+      </code>
+    </pre>
+
+    <p>Codul anterior funcționează corect, dar nu este ușor de citit. Trebuie să parcurgeți toate cazurile de intrare și instrucțiunile if imbricate pentru a înțelege codul. În schimb, veți utiliza potrivirea de modele pentru această funcționalitate, dar o veți integra cu alte tehnici. Ați putea construi o singură expresie de potrivire a modelelor care să ia în considerare toate combinațiile de direcție, ziua săptămânii și ora. Rezultatul ar fi o expresie complicată. Ar fi greu de citit și de înțeles. Acest lucru face dificilă asigurarea corectitudinii. În schimb, combinați aceste metode pentru a construi o tuplă de valori care descrie succint toate aceste stări. Apoi utilizați potrivirea de modele pentru a calcula un multiplicator pentru taxa. Tupla conține trei condiții discrete:</p>
+
+    <ul>
+      <li>Ziua este fie o zi lucratoare, fie un weekend.</li>
+      <li>Intervalul de timp in care se colecteaza taxa de trecere.</li>
+      <li>Directia este spre oras sau dinspre oras.</li>
+    </ul>
+
+    <p>Tabelul următor arată combinațiile de valori de intrare și multiplicatorul de preț de vârf:</p>
+
+    
+    <table>
+      <tr>
+        <td>Zi</td>
+        <td>Perioada zilei</td>
+        <td>Direcție</td>
+        <td>Multiplicator</td>
+      </tr>
+      <tr>
+        <td>Lucrătoare</td>
+        <td>Goana dimineții</td>
+        <td>Intrare</td>
+        <td>x2.00</td>
+      </tr>
+      <tr>
+        <td>Lucrătoare</td>
+        <td>Goana dimineții</td>	
+        <td>Ieșire</td>	
+        <td>x1.00</td>
+      </tr>
+      <tr>
+        <td>Lucrătoare</td>	
+        <td>în timpul zilei</td>	
+        <td>Intrare</td>	
+        <td>x1.50</td>
+      </tr>
+      <tr>
+        <td>Lucrătoare</td>	
+        <td>în timpul zilei</td>	
+        <td>Ieșire</td>	
+        <td>x1.50</td>
+      </tr>
+      <tr>
+        <td>Lucrătoare</td>	
+        <td>evening rush</td>	
+        <td>Intrare</td>	
+        <td>x1.00</td>
+      </tr>
+      <tr>
+        <td>Lucrătoare</td>	
+        <td>evening rush</td>	
+        <td>Ieșire</td>	
+        <td>x2.00</td>
+      </tr>
+      <tr>
+        <td>Lucrătoare</td>	
+        <td>overnight</td>	
+        <td>Intrare</td>	
+        <td>x0.75</td>
+      </tr>
+      <tr>
+        <td>Lucrătoare</td>	
+        <td>overnight</td>	
+        <td>Ieșire</td>	
+        <td>x0.75</td>
+      </tr>
+      <tr>
+        <td>Weekend</td>	
+        <td>Goana dimineții</td>	
+        <td>Intrare</td>	
+        <td>x1.00</td>
+      </tr>
+      <tr>
+        <td>Weekend</td>	
+        <td>Goana dimineții</td>	
+        <td>Ieșire</td>	
+        <td>x1.00</td>
+      </tr>
+      <tr>
+        <td>Weekend</td>	
+        <td>în timpul zilei</td>	
+        <td>Intrare</td>	
+        <td>x1.00</td>
+      </tr>
+      <tr>
+        <td>Weekend</td>	
+        <td>în timpul zilei</td>	
+        <td>Ieșire</td>	
+        <td>x1.00</td>
+      </tr>
+      <tr>
+        <td>Weekend</td>	
+        <td>Aglomerație de seară</td>	
+        <td>Intrare</td>	
+        <td>x1.00</td>
+      </tr>
+      <tr>
+        <td>Weekend</td>	
+        <td>Aglomerație de seară</td>	
+        <td>Ieșire</td>	
+        <td>x1.00</td>
+      </tr>
+      <tr>
+        <td>Weekend</td>	
+        <td>overnight</td>	
+        <td>Intrare</td>	
+        <td>x1.00</td>
+      </tr>
+      <tr>
+        <td>Weekend</td>	
+        <td>overnight</td>	
+        <td>Ieșire</td>	
+        <td>x1.00</td>
+      </tr>
+    </table>
+
+    <p>Există 16 combinații diferite ale celor trei variabile. Prin combinarea unora dintre condiții, veți simplifica expresia switch finală.</p>
+
+    <p>Sistemul care colectează taxele utilizează o structură DateTime pentru momentul la care a fost colectată taxa. Construiți metodele membrilor care creează variabilele din tabela anterioară. Următoarea funcție utilizează o expresie switch de potrivire a modelului pentru a exprima dacă un DateTime reprezintă un weekend sau o zi lucrătoare:</p>
+
+    <pre>
+      <code>
+        private static bool IsWeekDay(DateTime timeOfToll) =>
+        timeOfToll.DayOfWeek switch
+        {
+            DayOfWeek.Monday    => true,
+            DayOfWeek.Tuesday   => true,
+            DayOfWeek.Wednesday => true,
+            DayOfWeek.Thursday  => true,
+            DayOfWeek.Friday    => true,
+            DayOfWeek.Saturday  => false,
+            DayOfWeek.Sunday    => false
+        };
+      </code>
+    </pre>
+
+    <p>Această metodă este corectă, dar este repetitivă. Puteți simplifica codul, așa cum este arătat mai jos:</p>
+
+    <pre>
+      <code>
+        private static bool IsWeekDay(DateTime timeOfToll) =>
+        timeOfToll.DayOfWeek switch
+        {
+            DayOfWeek.Saturday => false,
+            DayOfWeek.Sunday => false,
+            _ => true
+        };
+      </code>
+    </pre>
+
+    <p>În continuare, adăugați o funcție similară pentru a categorisi timpul în blocuri:</p>
+
+    <pre>
+      <code>
+        private enum TimeBand
+        {
+            MorningRush,
+            Daytime,
+            EveningRush,
+            Overnight
+        }
+        
+        private static TimeBand GetTimeBand(DateTime timeOfToll) =>
+            timeOfToll.Hour switch
+            {
+                < 6 or > 19 => TimeBand.Overnight,
+                < 10 => TimeBand.MorningRush,
+                < 16 => TimeBand.Daytime,
+                _ => TimeBand.EveningRush,
+            };
+      </code>
+    </pre>
+
+    <p>
+      Adăugați o enumerare privată pentru a converti fiecare interval de timp într-o valoare discretă. Apoi, metoda GetTimeBand folosește modele relaționale și modele conjunctive sau, ambele adăugate în C# 9.0. Un model relațional vă permite să testați o valoare numerică folosind <, >, <= sau >=. Modelul sau testează dacă o expresie se potrivește cu unul sau mai multe modele. Puteți utiliza, de asemenea, un model și pentru a vă asigura că o expresie se potrivește cu două modele distincte, și un model not pentru a testa dacă o expresie nu se potrivește cu un model.
+    </p>
+
+    <p>
+      După ce ați creat acele metode, puteți utiliza o altă expresie switch cu modelul tuplului pentru a calcula prețul premium. Ați putea construi o expresie switch cu toate cele 16 ramuri:
+    </p>
+
+    <pre>
+      <code>
+        public decimal PeakTimePremiumFull(DateTime timeOfToll, bool inbound) =>
+        (IsWeekDay(timeOfToll), GetTimeBand(timeOfToll), inbound) switch
+        {
+            (true, TimeBand.MorningRush, true) => 2.00m,
+            (true, TimeBand.MorningRush, false) => 1.00m,
+            (true, TimeBand.Daytime, true) => 1.50m,
+            (true, TimeBand.Daytime, false) => 1.50m,
+            (true, TimeBand.EveningRush, true) => 1.00m,
+            (true, TimeBand.EveningRush, false) => 2.00m,
+            (true, TimeBand.Overnight, true) => 0.75m,
+            (true, TimeBand.Overnight, false) => 0.75m,
+            (false, TimeBand.MorningRush, true) => 1.00m,
+            (false, TimeBand.MorningRush, false) => 1.00m,
+            (false, TimeBand.Daytime, true) => 1.00m,
+            (false, TimeBand.Daytime, false) => 1.00m,
+            (false, TimeBand.EveningRush, true) => 1.00m,
+            (false, TimeBand.EveningRush, false) => 1.00m,
+            (false, TimeBand.Overnight, true) => 1.00m,
+            (false, TimeBand.Overnight, false) => 1.00m,
+        };
+      </code>
+    </pre>
+
+
+    <p>
+      Codul de mai sus funcționează, dar poate fi simplificat. Toate cele opt combinații pentru weekend au aceeași taxă de trecere. Puteți înlocui toate cele opt cu următoarea linie de cod:
+    </p>
+
+    <pre>
+      <code>
+        (false, _, _) => 1.0m,
+      </code>
+    </pre>
+
+    <p>
+      Atât traficul de intrare, cât și cel de ieșire au același multiplicator în timpul zilei și în orele de noapte din timpul săptămânii. Cele patru ramuri switch pot fi înlocuite cu următoarele două linii de cod:
+    </p>
+
+    <pre>
+      <code>
+        (true, TimeBand.Overnight, _) => 0.75m,
+        (true, TimeBand.Daytime, _)   => 1.5m,
+      </code>
+    </pre>
+
+    <p>
+      Codul ar trebui să arate astfel după cele două modificări:
+    </p>
+
+    <pre>
+      <code>
+        public decimal PeakTimePremium(DateTime timeOfToll, bool inbound) =>
+        (IsWeekDay(timeOfToll), GetTimeBand(timeOfToll), inbound) switch
+        {
+            (true, TimeBand.MorningRush, true)  => 2.00m,
+            (true, TimeBand.MorningRush, false) => 1.00m,
+            (true, TimeBand.Daytime,     _)     => 1.50m,
+            (true, TimeBand.EveningRush, true)  => 1.00m,
+            (true, TimeBand.EveningRush, false) => 2.00m,
+            (true, TimeBand.Overnight,   _)     => 0.75m,
+            (false, _,                   _)     => 1.00m,
+        };
+      </code>
+    </pre>
+
+    <p>
+      În cele din urmă, puteți elimina cele două ore de vârf care plătesc prețul regulat. După ce eliminați acele ramuri, puteți înlocui false cu o respingere (_) în ultima ramură switch. Veți avea următoarea metodă finalizată:
+    </p>
+
+    <pre>
+      <code>
+        public decimal PeakTimePremium(DateTime timeOfToll, bool inbound) =>
+        (IsWeekDay(timeOfToll), GetTimeBand(timeOfToll), inbound) switch
+        {
+            (true, TimeBand.Overnight, _) => 0.75m,
+            (true, TimeBand.Daytime, _) => 1.5m,
+            (true, TimeBand.MorningRush, true) => 2.0m,
+            (true, TimeBand.EveningRush, false) => 2.0m,
+            _ => 1.0m,
+        };
+      </code>
+    </pre>
+
+    <p>
+      Acest exemplu evidențiază una dintre avantajele potrivirii de modele: ramurile modelelor sunt evaluate în ordine. Dacă le rearanjați astfel încât o ramură anterioară să gestioneze unul dintre cazurile ulterioare, compilatorul vă avertizează cu privire la codul inaccesibil. Aceste reguli de limbaj au făcut mai ușoară realizarea simplificărilor anterioare cu încredere că codul nu s-a schimbat.
+    </p>
+
+    <p>
+      Potrivirea de modele face anumite tipuri de cod mai ușor de citit și oferă o alternativă la tehnici orientate pe obiecte atunci când nu puteți adăuga cod la clasele dvs. Norul face ca datele și funcționalitatea să trăiască separat. Forma datelor și operațiunile asupra lor nu sunt neapărat descrise împreună. În acest tutorial, ați consumat date existente în moduri complet diferite față de funcția lor originală. Potrivirea de modele v-a dat posibilitatea de a scrie funcționalitate care a înlocuit aceste tipuri, chiar dacă nu le-ați putut extinde.
+    </p>
+
+    
+  </body>
+</html>
