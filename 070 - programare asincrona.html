@@ -1,5 +1,476 @@
 
 <h1>Programare asincrona</h1>
 
-<p>
-</p>
+<h2>7.7 Procesarea sarcinilor asincrone pe măsură ce acestea sunt finalizate</h2>
+
+<p>Prin utilizarea Task.WhenAny, puteți să începeți mai multe sarcini în același timp și să le procesați una câte una pe măsură ce sunt finalizate, în loc să le procesați în ordinea în care au fost începute.</p>
+
+<p>Exemplul următor utilizează o interogare pentru a crea o colecție de sarcini. Fiecare sarcină descarcă conținutul unui site web specificat. În fiecare iterație a unei bucle while, o apelare așteptată la WhenAny returnează sarcina din colecția de sarcini care termină prima descărcarea. Acea sarcină este eliminată din colecție și procesată. Buclele se repetă până când colecția nu mai conține sarcini.</p>
+
+<h3>Precondiții</h3>
+
+<p>Puteți urma acest tutorial, utilizând una dintre următoarele opțiuni:</p>
+
+<ul>
+    <li>Visual Studio 2022 cu mediul de lucru desktop .NET instalat. SDK-ul .NET este instalat automat atunci când selectați această încărcare.</li>
+    <li>SDK-ul .NET cu un editor de cod la alegere, cum ar fi Visual Studio Code.</li>
+</ul>
+
+<h3>Crearea unui exemplu de aplicație</h3>
+
+<p>Creați o nouă aplicație de tip consolă .NET Core. Puteți să creați una folosind comanda dotnet new console sau din Visual Studio.</p>
+
+<p>Deschideți fișierul Program.cs în editorul de cod și înlocuiți codul existent cu următorul cod:</p>
+
+<pre><code>
+    using System.Diagnostics;
+
+    namespace ProcessTasksAsTheyFinish;
+
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            Console.WriteLine("Hello World!");
+        }
+    }
+</code></pre>
+
+<h3>Adăugare câmpuri</h3>
+
+<p>În definiția clasei Program, adăugați următoarele două câmpuri:</p>
+
+<pre><code>
+    static readonly HttpClient s_client = new HttpClient
+    {
+        MaxResponseContentBufferSize = 1_000_000
+    };
+    
+    static readonly IEnumerable&lt;string&gt; s_urlList = new string[]
+    {
+        "https://learn.microsoft.com",
+        "https://learn.microsoft.com/aspnet/core",
+        "https://learn.microsoft.com/azure",
+        "https://learn.microsoft.com/azure/devops",
+        "https://learn.microsoft.com/dotnet",
+        "https://learn.microsoft.com/dynamics365",
+        "https://learn.microsoft.com/education",
+        "https://learn.microsoft.com/enterprise-mobility-security",
+        "https://learn.microsoft.com/gaming",
+        "https://learn.microsoft.com/graph",
+        "https://learn.microsoft.com/microsoft-365",
+        "https://learn.microsoft.com/office",
+        "https://learn.microsoft.com/powershell",
+        "https://learn.microsoft.com/sql",
+        "https://learn.microsoft.com/surface",
+        "https://learn.microsoft.com/system-center",
+        "https://learn.microsoft.com/visualstudio",
+        "https://learn.microsoft.com/windows",
+        "https://learn.microsoft.com/xamarin"
+    };
+</code></pre>
+
+<p>HttpClient oferă posibilitatea de a trimite cereri HTTP și de a primi răspunsuri HTTP. s_urlList păstrează toate URL-urile pe care aplicația planifică să le proceseze.</p>
+
+<h3>Actualizarea punctului de intrare al aplicației</h3>
+
+<p>Punctul principal de intrare în aplicația de tip consolă este metoda Main. Înlocuiți metoda existentă cu următoarea metodă:</p>
+
+<pre><code>
+    static Task Main() => SumPageSizesAsync();
+</code></pre>
+
+<p>Noua metodă Main actualizată este acum considerată o metodă Async, care permite un punct de intrare asincron în executabil. Acesta este exprimat ca o apelare a metodei SumPageSizesAsync.</p>
+
+<h3>Crearea metodei asincrone de calcul al dimensiunilor paginilor</h3>
+
+<p>Sub metoda Main, adăugați metoda SumPageSizesAsync:</p>
+
+<pre><code>
+    static async Task SumPageSizesAsync()
+    {
+        var stopwatch = Stopwatch.StartNew();
+
+        IEnumerable&lt;Task&lt;int&gt;&gt; downloadTasksQuery =
+            from url in s_urlList
+            select ProcessUrlAsync(url, s_client);
+
+        List&lt;Task&lt;int&gt;&gt; downloadTasks = downloadTasksQuery.ToList();
+
+        int total = 0;
+        while (downloadTasks.Any())
+        {
+            Task&lt;int&gt; finishedTask = await Task.WhenAny(downloadTasks);
+            downloadTasks.Remove(finishedTask);
+            total += await finishedTask;
+        }
+
+        stopwatch.Stop();
+
+        Console.WriteLine($"\nTotal bytes returned:  {total:#,#}");
+        Console.WriteLine($"Elapsed time:          {stopwatch.Elapsed}\n");
+    }
+</code></pre>
+
+<p>Bucla while înlătură una dintre task-uri în fiecare iterație. După ce fiecare task s-a terminat, bucla se încheie. Metoda începe prin instanțierea și pornirea unui cronometru Stopwatch. Apoi include o interogare care, atunci când este executată, creează o colecție de task-uri. Fiecare apel al metodei ProcessUrlAsync din codul următor returnează un Task&lt;TResult&gt;, unde TResult este un număr întreg:</p>
+
+<pre><code>
+    IEnumerable&lt;Task&lt;int&gt;&gt; downloadTasksQuery =
+        from url in s_urlList
+        select ProcessUrlAsync(url, s_client);
+</code></pre>
+
+<p>Datorită execuției amânate cu LINQ, apelați Enumerable.ToList pentru a începe fiecare task</p>
+
+<pre><code>
+    List&lt;Task&lt;int&gt;&gt; downloadTasks = downloadTasksQuery.ToList();
+</code></pre>
+.
+<p>Bucla while efectuează următorii pași pentru fiecare task din colecție:</p>
+
+<p>1. Așteaptă un apel la WhenAny pentru a identifica primul task din colecție care a terminat descărcarea.</p>
+
+<pre><code>
+    Task&lt;int&gt; finishedTask = await Task.WhenAny(downloadTasks);
+</code></pre>
+
+<p>2. Înlătură acel task din colecție.</p>
+
+<pre><code>
+    downloadTasks.Remove(finishedTask);
+</code></pre>
+
+<p>3. Așteaptă finishedTask, care este returnat de un apel la ProcessUrlAsync. Variabila finishedTask este un Task&lt;TResult&gt; unde TResult este un număr întreg. Task-ul este deja complet, dar se așteaptă pentru a obține lungimea site-ului descărcat, așa cum arată exemplul următor. Dacă task-ul a întâmpinat o problemă, await va arunca prima sub-excepție stocată în AggregateException, spre deosebire de citirea proprietății Task&lt;TResult&gt;.Result, care ar arunca AggregateException.</p>
+
+<pre><code>
+    total += await finishedTask;
+</code></pre>
+
+<h3>Adăugarea metodei de procesare</h3>
+
+<p>Adăugați următoarea metodă ProcessUrlAsync sub metoda SumPageSizesAsync:</p>
+
+<pre><code>
+    static async Task&lt;int&gt; ProcessUrlAsync(string url, HttpClient client)
+        {
+            byte[] content = await client.GetByteArrayAsync(url);
+            Console.WriteLine($"{url,-60} {content.Length,10:#,#}");
+        
+            return content.Length;
+        }
+</code></pre>
+
+<p>Pentru orice URL dat, metoda va utiliza instanța clientului furnizată pentru a obține răspunsul ca un byte[]. Lungimea este returnată după ce URL-ul și lungimea sunt scrise în consolă.</p>
+
+<p>Rulați programul de mai multe ori pentru a verifica că lungimile descărcate nu apar întotdeauna în aceeași ordine.</p>
+
+<p>Atenție! Puteți utiliza WhenAny într-un ciclu, așa cum este descris în exemplul dat, pentru a rezolva probleme care implică un număr mic de sarcini. Cu toate acestea, alte abordări sunt mai eficiente dacă aveți un număr mare de sarcini de procesat. Pentru mai multe informații și exemple, consultați "Procesarea sarcinilor pe măsură ce acestea sunt finalizate".</p>
+
+<h3>Exemplu complet</h3>
+
+<p>Următorul cod conține textul complet al fișierului Program.cs pentru exemplul de mai sus.</p>
+
+<pre><code>
+    using System.Diagnostics;
+
+    HttpClient s_client = new()
+    {
+        MaxResponseContentBufferSize = 1_000_000
+    };
+    
+    IEnumerable&lt;string&gt; s_urlList = new string[]
+    {
+        "https://docs.microsoft.com",
+        "https://docs.microsoft.com/aspnet/core",
+        "https://docs.microsoft.com/azure",
+        "https://docs.microsoft.com/azure/devops",
+        "https://docs.microsoft.com/dotnet",
+        "https://docs.microsoft.com/dynamics365",
+        "https://docs.microsoft.com/education",
+        "https://docs.microsoft.com/enterprise-mobility-security",
+        "https://docs.microsoft.com/gaming",
+        "https://docs.microsoft.com/graph",
+        "https://docs.microsoft.com/microsoft-365",
+        "https://docs.microsoft.com/office",
+        "https://docs.microsoft.com/powershell",
+        "https://docs.microsoft.com/sql",
+        "https://docs.microsoft.com/surface",
+        "https://docs.microsoft.com/system-center",
+        "https://docs.microsoft.com/visualstudio",
+        "https://docs.microsoft.com/windows",
+        "https://docs.microsoft.com/xamarin"
+    };
+    
+    await SumPageSizesAsync();
+    
+    async Task SumPageSizesAsync()
+    {
+        var stopwatch = Stopwatch.StartNew();
+    
+        IEnumerable&lt;Task&lt;int&gt;&gt; downloadTasksQuery =
+            from url in s_urlList
+            select ProcessUrlAsync(url, s_client);
+    
+        List&lt;Task&lt;int&gt;&gt; downloadTasks = downloadTasksQuery.ToList();
+    
+        int total = 0;
+        while (downloadTasks.Any())
+        {
+            Task&lt;int&gt; finishedTask = await Task.WhenAny(downloadTasks);
+            downloadTasks.Remove(finishedTask);
+            total += await finishedTask;
+        }
+    
+        stopwatch.Stop();
+    
+        Console.WriteLine($"\nTotal bytes returned:    {total:#,#}");
+        Console.WriteLine($"Elapsed time:              {stopwatch.Elapsed}\n");
+    }
+    
+    static async Task&lt;int&gt; ProcessUrlAsync(string url, HttpClient client)
+    {
+        byte[] content = await client.GetByteArrayAsync(url);
+        Console.WriteLine($"{url,-60} {content.Length,10:#,#}");
+    
+        return content.Length;
+    }
+    
+    // Example output:
+    // https://docs.microsoft.com                                      132,517
+    // https://docs.microsoft.com/powershell                            57,375
+    // https://docs.microsoft.com/gaming                                33,549
+    // https://docs.microsoft.com/aspnet/core                           88,714
+    // https://docs.microsoft.com/surface                               39,840
+    // https://docs.microsoft.com/enterprise-mobility-security          30,903
+    // https://docs.microsoft.com/microsoft-365                         67,867
+    // https://docs.microsoft.com/windows                               26,816
+    // https://docs.microsoft.com/xamarin                               57,958
+    // https://docs.microsoft.com/dotnet                                78,706
+    // https://docs.microsoft.com/graph                                 48,277
+    // https://docs.microsoft.com/dynamics365                           49,042
+    // https://docs.microsoft.com/office                                67,867
+    // https://docs.microsoft.com/system-center                         42,887
+    // https://docs.microsoft.com/education                             38,636
+    // https://docs.microsoft.com/azure                                421,663
+    // https://docs.microsoft.com/visualstudio                          30,925
+    // https://docs.microsoft.com/sql                                   54,608
+    // https://docs.microsoft.com/azure/devops                          86,034
+    
+    // Total bytes returned:    1,454,184
+    // Elapsed time:            00:00:01.1290403
+</code></pre>
+
+<br>
+
+<h2>7.8 Accesul asincron la fișiere</h2>
+
+<p>Puteți utiliza funcția asincronă pentru a accesa fișiere. Prin utilizarea acestei funcții, puteți apela metode asincrone fără a utiliza funcții de apel invers sau împărțirea codului în mai multe metode sau expresii lambda. Pentru a face codul sincron să devină asincron, trebuie doar să apelați o metodă asincronă în loc de una sincronă și să adăugați câteva cuvinte cheie în cod.</p>
+
+<p>Puteți lua în considerare următoarele motive pentru adăugarea asincronismului în apelurile de acces la fișiere:</p>
+
+<ul>
+    <li>Asincronismul face aplicațiile UI mai receptive deoarece firul UI care lansează operația poate efectua alte lucrări. Dacă firul UI trebuie să execute cod care durează mult timp (de exemplu, mai mult de 50 de milisecunde), interfața utilizator poate îngheța până când I/O este complet și firul UI poate procesa din nou introducerea tastaturii și a mouse-ului și alte evenimente.</li>
+    <li>Asincronismul îmbunătățește scalabilitatea ASP.NET și a altor aplicații bazate pe server prin reducerea necesității de a utiliza fire de execuție. Dacă aplicația utilizează un fir dedicat pentru fiecare răspuns și sunt gestionate simultan o mie de cereri, sunt necesare o mie de fire de execuție. Operațiile asincrone adesea nu trebuie să utilizeze un fir de execuție în timpul așteptării. Acestea utilizează firul existent de completare I/O doar pentru o perioadă scurtă la sfârșit.</li>
+    <li>Latența unei operațiuni de acces la fișiere poate fi foarte mică în condițiile actuale, dar poate crește foarte mult în viitor. De exemplu, un fișier poate fi mutat pe un server care se află la celălalt capăt al lumii.</li>
+    <li>Suprapunerea adăugată prin utilizarea funcției Async este mică.</li>
+    <li>Sarcinile asincrone pot fi ușor executate în paralel.</li>
+</ul>
+
+<h3>Folosirea claselor adecvate</h3>
+
+<p>Exemplele simple din acest subiect demonstrează utilizarea funcțiilor File.WriteAllTextAsync și File.ReadAllTextAsync. Pentru a avea un control mai precis asupra operațiilor de I/O ale fișierelor, utilizați clasa FileStream, care are o opțiune ce permite ca I/O-ul asincron să se producă la nivelul sistemului de operare. Prin utilizarea acestei opțiuni, puteți evita blocarea unui fir de execuție din pool-ul de fire în multe cazuri. Pentru a activa această opțiune, specificați argumentul useAsync=true sau options=FileOptions.Asynchronous în apelul constructorului.</p>
+
+<p>Nu puteți utiliza această opțiune cu StreamReader și StreamWriter dacă le deschideți direct prin specificarea căii fișierului. Cu toate acestea, puteți utiliza această opțiune dacă le furnizați un Stream pe care clasa FileStream l-a deschis. Apelurile asincrone sunt mai rapide în aplicațiile UI, chiar dacă un fir din pool-ul de fire este blocat, deoarece firul UI nu este blocat în timpul așteptării.</p>
+
+<h3>Scrierea textului</h3>
+
+<p>Exemplele următoare scriu text într-un fișier. La fiecare declanșare a unei instrucțiuni await, metoda iese imediat. După finalizarea operațiilor de I/O a fișierului, metoda revine la instrucțiunea care urmează după instrucțiunea await. Modificatorul async este inclus în definiția metodelor care utilizează instrucțiunea await.</p>
+
+<h3>Exemplu simplu</h3>
+
+<pre><code>
+    public async Task SimpleWriteAsync()
+    {
+        string filePath = "simple.txt";
+        string text = $"Hello World";
+    
+        await File.WriteAllTextAsync(filePath, text);
+    }
+</code></pre>
+
+<h3>Exemplu de control finit</h3>
+
+<pre><code>
+    public async Task ProcessWriteAsync()
+    {
+        string filePath = "temp.txt";
+        string text = $"Hello World{Environment.NewLine}";
+    
+        await WriteTextAsync(filePath, text);
+    }
+    
+    async Task WriteTextAsync(string filePath, string text)
+    {
+        byte[] encodedText = Encoding.Unicode.GetBytes(text);
+    
+        using var sourceStream =
+            new FileStream(
+                filePath,
+                FileMode.Create, FileAccess.Write, FileShare.None,
+                bufferSize: 4096, useAsync: true);
+    
+        await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
+    }
+</code></pre>
+
+<p>Exemplul original conține instrucțiunea await sourceStream.WriteAsync(encodedText, 0, encodedText.Length);, care este o contracție a următoarelor două instrucțiuni:</p>
+
+<pre><code>
+    Task theTask = sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
+    await theTask;
+</code></pre>
+
+<p>Prima instrucțiune returnează o sarcină și determină începerea procesării fișierului. A doua instrucțiune, împreună cu await, face ca metoda să iasă imediat și să returneze o altă sarcină. Când procesarea fișierului se va finaliza mai târziu, execuția va reveni la instrucțiunea care urmează după await.</p>
+
+<h3>Citirea textului</h3>
+
+<p>Următorul exemplu citește textul dintr-un fișier</p>
+
+<h3>Exemplu simplu</h3>
+
+<pre><code>
+    public async Task SimpleReadAsync()
+    {
+        string filePath = "simple.txt";
+        string text = await File.ReadAllTextAsync(filePath);
+    
+        Console.WriteLine(text);
+    }
+</code></pre>
+
+<h3>Exemplu de control finit</h3>
+
+<p>Textul este memorat și, în acest caz, plasat într-un StringBuilder. Spre deosebire de exemplul anterior, evaluarea await produce o valoare. Metoda ReadAsync returnează un Task&lt;Int32&gt;, deci evaluarea await produce o valoare Int32 numRead după finalizarea operației. Pentru mai multe informații, consultați Tipuri de returnare asincronă (C#).</p>
+
+<pre><code>
+    public async Task ProcessReadAsync()
+    {
+        try
+        {
+            string filePath = "temp.txt";
+            if (File.Exists(filePath) != false)
+            {
+                string text = await ReadTextAsync(filePath);
+                Console.WriteLine(text);
+            }
+            else
+            {
+                Console.WriteLine($"file not found: {filePath}");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+    
+    async Task&lt;string&gt; ReadTextAsync(string filePath)
+    {
+        using var sourceStream =
+            new FileStream(
+                filePath,
+                FileMode.Open, FileAccess.Read, FileShare.Read,
+                bufferSize: 4096, useAsync: true);
+    
+        var sb = new StringBuilder();
+    
+        byte[] buffer = new byte[0x1000];
+        int numRead;
+        while ((numRead = await sourceStream.ReadAsync(buffer, 0, buffer.Length)) != 0)
+        {
+            string text = Encoding.Unicode.GetString(buffer, 0, numRead);
+            sb.Append(text);
+        }
+    
+        return sb.ToString();
+    }
+</code></pre>
+
+<h3> I/O asincron paralel</h3>
+
+<p>Următoarele exemple demonstrează procesarea paralelă prin scrierea a 10 fișiere text.</p>
+
+<h3>Exemplu simplu</h3>
+
+<p>Următoarele exemple demonstrează procesarea paralelă prin scrierea a 10 fișiere text.</p>
+
+<pre><code>
+    public async Task SimpleParallelWriteAsync()
+    {
+        string folder = Directory.CreateDirectory("tempfolder").Name;
+        IList&lt;Task&gt; writeTaskList = new List&lt;Taskglt;();
+    
+        for (int index = 11; index <= 20; ++ index)
+        {
+            string fileName = $"file-{index:00}.txt";
+            string filePath = $"{folder}/{fileName}";
+            string text = $"In file {index}{Environment.NewLine}";
+    
+            writeTaskList.Add(File.WriteAllTextAsync(filePath, text));
+        }
+    
+        await Task.WhenAll(writeTaskList);
+    }
+</code></pre>
+
+<h3>Exemplu de control finit</h3>
+
+<p>Pentru fiecare fișier, metoda WriteAsync returnează o sarcină care este apoi adăugată la o listă de sarcini. Declarația await Task.WhenAll(tasks); iese din metodă și continuă în interiorul metodei când procesarea fișierelor este completă pentru toate sarcinile.</p>
+
+<p>Exemplul închide toate instanțele FileStream într-un bloc finally după ce sarcinile sunt completate. Dacă fiecare FileStream ar fi fost creat într-o instrucțiune using, FileStream-ul ar putea fi eliminat înainte ca sarcina să fie completă.</p>
+
+<p>Orice creștere a performanței provine aproape în întregime din procesarea paralelă și nu din procesarea asincronă. Avantajele asincronismului sunt că nu blochează mai multe fire de execuție și că nu blochează firul interfeței de utilizator.</p>
+
+<pre><code>
+    public async Task ProcessMultipleWritesAsync()
+    {
+        IList<FileStream> sourceStreams = new List<FileStream>();
+    
+        try
+        {
+            string folder = Directory.CreateDirectory("tempfolder").Name;
+            IList&lt;Task&gt; writeTaskList = new List&lt;Task&gt;();
+    
+            for (int index = 1; index <= 10; ++ index)
+            {
+                string fileName = $"file-{index:00}.txt";
+                string filePath = $"{folder}/{fileName}";
+    
+                string text = $"In file {index}{Environment.NewLine}";
+                byte[] encodedText = Encoding.Unicode.GetBytes(text);
+    
+                var sourceStream =
+                    new FileStream(
+                        filePath,
+                        FileMode.Create, FileAccess.Write, FileShare.None,
+                        bufferSize: 4096, useAsync: true);
+    
+                Task writeTask = sourceStream.WriteAsync(encodedText, 0, encodedText.Length);
+                sourceStreams.Add(sourceStream);
+    
+                writeTaskList.Add(writeTask);
+            }
+    
+            await Task.WhenAll(writeTaskList);
+        }
+        finally
+        {
+            foreach (FileStream sourceStream in sourceStreams)
+            {
+                sourceStream.Close();
+            }
+        }
+    }
+</code></pre>
+
+<p>Atunci când utilizați metodele WriteAsync și ReadAsync, puteți specifica un CancellationToken, pe care îl puteți utiliza pentru a anula operația în mijlocul fluxului. Pentru mai multe informații, consultați "Anularea în firele de execuție gestionate".</p>
