@@ -1,5 +1,1256 @@
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-GLhlTQ8iRABdZLl6O3oVMWSktQOp6b7In1Zl3/Jr59b6EGGoI1aFkw7cmDA6j6gD" crossorigin="anonymous">
+</head>
 
-<h1>Sistemul de tipuri</h1>
+
+<h1>2. Sistemul de tipuri</h1>
+
+<h2>2.5 Introducere în tipurile de înregistrări din C#</h2>
 
 <p>
+    O înregistrare în C# este o clasă sau o structură care oferă o sintaxă și un comportament special pentru
+    lucrul cu modelele de date.
+</p>
+
+<h3>Când se folosesc înregistrările</h3>
+<p>
+    Luați în considerare utilizarea unei înregistrări în locul unei clase sau structuri în următoarele scenarii:
+</p>
+<ul>
+    <li>Doriți să definiți un model de date care depinde de egalitatea valorilor.</li>
+    <li>Doriți să definiți un tip pentru care obiectele sunt imuabile.</li>
+</ul>
+
+<h4>Egalitatea valorilor</h4>
+<p>
+    În cazul înregistrărilor, egalitatea valorilor înseamnă că două variabile de tipul înregistrare sunt egale dacă
+    tipurile se potrivesc și dacă toate valorile proprietăților și câmpurilor se potrivesc. Pentru alte tipuri de
+    referință, cum ar fi clasele, egalitatea înseamnă egalitatea referințelor. Mai exact, două variabile de tip
+    clasă sunt egale dacă se referă la același obiect. Metodele și operatorii care determină egalitatea a două
+    instanțe de înregistrare utilizează egalitatea valorilor.
+</p>
+<p>
+    Nu toate modelele de date funcționează bine cu egalitatea valorilor. De exemplu, Entity Framework Core depinde
+    de egalitatea referințelor pentru a se asigura că utilizează o singură instanță a unui tip de entitate pentru
+    ceea ce, din punct de vedere conceptual, este o singură entitate. Din acest motiv, tipurile de înregistrări nu
+    sunt adecvate pentru a fi utilizate ca tipuri de entități în Entity Framework Core.
+</p>
+
+<h4>Imuabilitatea</h4>
+<p>
+    Un tip imuabil este un tip care vă împiedică să modificați valorile proprietăților sau ale câmpurilor unui obiect
+    după ce acesta a fost instanțiat. Imuabilitatea poate fi utilă atunci când aveți nevoie ca un tip să fie thread-safe
+    sau când vă bazați pe faptul că un cod hash rămâne același într-un tabel de dispersie. Înregistrările oferă o
+    sintaxă concisă pentru crearea și lucrul cu tipuri imuabile.
+</p>
+<p>
+    Imutabilitatea nu este adecvată pentru toate scenariile de date. Entity Framework Core, de exemplu, nu permite
+    actualizarea cu tipuri de entități imuabile.
+</p>
+
+<h3>Cum diferă înregistrările de clase și structuri</h3>
+<p>
+    Aceeași sintaxă care declară și instanțiază clasele sau structurile poate fi utilizată pentru înregistrări. Trebuie
+    doar să înlocuiți cuvântul cheie <code>class</code> cu <code>record</code> sau să utilizați <code>record sturct</code>
+    în loc de <code>struct</code>. De asemenea, aceeași sintaxă pentru exprimarea relațiilor de moștenire este acceptată
+    de clasele record. Înregistrările diferă de clase în următoarele moduri:
+</p>
+<ul>
+    <li>Puteți utiliza parametri poziționali pentru a crea și a instanția un tip cu proprietăți imuabile.</li>
+    <li>
+        Aceleași metode și operatori care indică egalitatea sau inegalitatea referințelor în clase (cum ar fi
+        <code>Object.Equals(Object)</code> și <code>==</code>) indică egalitatea sau inegalitatea valorilor în
+        înregistrări.
+    </li>
+    <li>Puteți utiliza o expresie with pentru a crea o copie a unui obiect imuabil cu valori noi în proprietățile selectate.</li>
+    <li>
+        Metoda <code>ToString</code> a unei înregistrări creează un șir de caractere formatat care afișează numele
+        tipuluiunui obiect, precum și numele și valorile tuturor proprietăților sale publice.
+    </li>
+    <li>
+        O înregistrare poate moșteni o altă înregistrare. O înregistrare nu poate moșteni o clasă, iar o clasă nu poate
+        moșteni o înregistrare.
+    </li>
+</ul>
+<p>
+    Structurile de înregistrare diferă de structuri deoarece compilatorul sintetizează metodele pentru egalitate și <code>ToString</code>.
+    Compilatorul sintetizează o metodă <code>Deconstruct</code> pentru structurile de înregistrări poziționale.
+</p>
+
+<h3>Exemple</h3>
+<p>
+    Următorul exemplu definește o înregistrare publică care utilizează parametri poziționali pentru a declara și a
+    instanția o înregistrare. Apoi, imprimă numele tipului și valorile proprietăților:
+</p>
+<pre>
+    <code>
+        public record Person(string FirstName, string LastName);
+
+        public static void Main()
+        {
+            Person person = new("Nancy", "Davolio");
+            Console.WriteLine(person);
+            // Afișează: Person { FirstName = Nancy, LastName = Davolio }
+        }
+    </code>
+</pre>
+<p>Următorul exemplu demonstrează egalitatea valorilor în înregistrări:</p>
+<pre>
+    <code>
+        public record Person(string FirstName, string LastName, string[] PhoneNumbers);
+
+        public static void Main()
+        {
+            var phoneNumbers = new string[2];
+            Person person1 = new("Nancy", "Davolio", phoneNumbers);
+            Person person2 = new("Nancy", "Davolio", phoneNumbers);
+            Console.WriteLine(person1 == person2); // afișează: True
+
+            person1.PhoneNumbers[0] = "555-1234";
+            Console.WriteLine(person1 == person2); // afișează: True
+
+            Console.WriteLine(ReferenceEquals(person1, person2)); // afișează: False
+        }
+    </code>
+</pre>
+<p>
+    Următorul exemplu demonstrează utilizarea unei expresii with pentru a copia un obiect imuabil și a-i modifica
+    una dintre proprietăți:
+</p>
+<pre>
+    <code>
+        public record Person(string FirstName, string LastName)
+        {
+            public string[] PhoneNumbers { get; init; }
+        }
+
+        public static void Main()
+        {
+            Person person1 = new("Nancy", "Davolio") { PhoneNumbers = new string[1] };
+            Console.WriteLine(person1);
+            // afișează Person { FirstName = Nancy, LastName = Davolio, PhoneNumbers = System.String[] }
+
+            Person person2 = person1 with { FirstName = "John" };
+            Console.WriteLine(person2);
+            // afișează Person { FirstName = John, LastName = Davolio, PhoneNumbers = System.String[] }
+            Console.WriteLine(person1 == person2); // afișează: False
+
+            person2 = person1 with { PhoneNumbers = new string[1] };
+            Console.WriteLine(person2);
+            // afișează Person { FirstName = Nancy, LastName = Davolio, PhoneNumbers = System.String[] }
+            Console.WriteLine(person1 == person2); // afișează: False
+
+            person2 = person1 with { };
+            Console.WriteLine(person1 == person2); // afișează: True
+        }
+    </code>
+</pre>
+
+
+<h2>2.6 Interfețe - definirea comportamentului pentru mai multe tipuri</h2>
+
+<p>
+    O interfață conține definiții pentru un grup de funcționalități conexe pe care o clasă neabstractă sau o structură trebuie să le implementeze.
+    O interfață poate defini metode statice, care trebuie să aibă o implementare. De asemenea, o interfață poate defini o implementare implicită
+    pentru membri.
+    O interfață nu poate declara date instanță, cum ar fi câmpuri, proprietăți autoimplementate sau evenimente de tip proprietate.
+</p>
+
+<p>
+    Prin utilizarea interfețelor, puteți, de exemplu, să includeți într-o clasă comportamente din mai multe surse. Această capacitate este
+    importantă în C# deoarece limbajul nu acceptă moștenirea multiplă a claselor. În plus, trebuie să folosiți o interfață dacă doriți
+    să simulați moștenirea structurilor, deoarece acestea nu pot moșteni efectiv de la o altă structură sau clasă.
+</p>
+<p>
+    O interfață se definețe folosind cuvântul cheie <code>interface</code>, după cum arată exemplul următor.
+</p>
+
+<pre>
+    <code>
+        interface IEquatable&ltT&gt
+            {
+                bool Equals(T obj);
+            }
+    </code>
+</pre>
+<p>
+    Numele unei interfețe trebuie să fie un nume valid de identificator C#. Prin convenție, numele interfețelor încep cu un <code>I</code> mare.
+</p>
+<p>
+    Orice clasă sau structură care implementează interfața <code>IEquatable&ltT&gt</code> trebuie să conțină o definiție pentru o metodă 
+    <code>Equals</code> care să corespundă semnăturii specificate de interfață. Prin urmare, puteți presupune că o clasă care implementează
+    <code>IEquatable&ltT&gt</code> va conține o metodă <code>Equals</code> cu ajutorul căreia o instanță a clasei poate determina dacă este egală
+    cu o altă instanță a aceleiași clase.
+</p>
+<p>
+    Definiția <code>IEquatable&ltT&gt</code> nu prevede o implementare pentru <code>Equals</code>. O clasă sau o structură poate implementa mai
+    multe interfețe, dar o clasă poate moșteni doar dintr-o singură clasă.
+</p>
+<p>
+    Interfețele pot conține metode de instanță, proprietăți, evenimente, indexatori sau orice combinație a acestor patru tipuri de membri.
+    Interfețele pot conține constructori statici, câmpuri, constante sau operatori. Începând cu C# 11, membrii interfeței care nu sunt
+    câmpuri pot fi declarați de tipul <code>static abstract</code>. O interfață nu poate conține câmpuri de instanță, contructori instanță sau =
+    finalizatori. Membrii interfeței sunt publici în mod implicit și puteți specifica în mod explicit modificatorii de acces,
+    cum ar fi <code>public</code>, <code>internal</code>, <code>private</code>, <code>protected internal</code> sau <code>private protected</code>.
+    Un membru privat trebuie să aibă o implementare implicită.
+</p>
+<p>
+    Pentru a implementa un membru al unei interfețe, membrul corespunzător al clasei care implementează trebuie
+    să fie public, să nu fie static și să aibă același nume și semnătură ca și membrul interfeței.
+</p>
+<h6>Notă</h6>
+<p>
+    Atunci când o interfață declară membri statici, un tip care implementează interfața respectivă poate declara,
+    de asemenea, membri statici cu aceeași semnătură. Aceștia sunt distincți și identificați în mod unic de membrul
+    care declară tipul. Membrul static declarat într-un tip nu suprascrie membrul static declarat în interfață.
+</p>
+<p>
+    O clasă sau o structură care implementează o interfață trebuie să furnizeze o implementare pentru toți membrii
+    declarați care nu au o implementare implicită furnizată de interfață. Cu toate acestea, în cazul în care o
+    clasă de bază implementează o interfață, orice clasă derivată din clasa de bază moștenește acea implementare.
+</p>
+<p>
+    Următorul exemplu prezintă o implementare a interfeței <code>IEquatable&ltT&gt</code>. Clasa care o implementează,
+    <code>Car</code>, trebuie să furnizeze o implementare a metodei <code>Equals</code>.
+</p>
+<pre>
+    <code>
+        public class Car : IEquatable&ltCar&gt
+            {
+                public string? Make { get; set; }
+                public string? Model { get; set; }
+                public string? Year { get; set; }
+            
+                // Implementarea interfeței IEquatable&ltT&gt
+                public bool Equals(Car? car)
+                {
+                    return (this.Make, this.Model, this.Year) ==
+                        (car?.Make, car?.Model, car?.Year);
+                }
+            }
+    </code>
+</pre>
+<p>
+    Proprietățile și indexorii unei clase pot defini accesori suplimentari pentru o proprietate sau un indexor
+    definit într-o interfață. De exemplu, o interfață poate declara o proprietate care are un accesor <code>get</code>.
+    Clasa care implementează interfața poate declara aceeași proprietate, având atât un accesor <code>get</code>, cât și
+    unul <code>set</code>. Cu toate acestea, în cazul în care proprietatea sau indexatorul utilizează o implementare
+    explicită, accesorii trebuie să se potrivească.
+</p>
+<p>
+    Interfețele pot moșteni o interfața sau mai multe interfețe. Interfața derivată moștenește membrii din
+    interfețele de bază. O clasă care implementează o interfață derivată trebuie să implementeze toți membrii din
+    interfața derivată, inclusiv toți membrii interfețelor de bază ale interfeței derivate. Clasa respectivă poate
+    fi convertită implicit la interfața derivată sau la oricare dintre interfețele de bază ale acesteia. O clasă
+    poate include o interfață de mai multe ori prin clasele de bază pe care le moștenește sau prin interfețe
+    moștenite de alte interfețe. Cu toate acestea, clasa poate furniza o implementare a unei interfețe doar o
+    singură dată și doar dacă clasa declară interfața ca parte a definiției clasei <code>(class ClassName : InterfaceName)</code>.
+    În cazul în care interfața este moștenită deoarece ați moștenit o clasă de bază care implementează interfața,
+    clasa de bază va asigura implementarea membrilor interfeței. Cu toate acestea, clasa derivată poate
+    reimplementa orice membri virtuali ai interfeței în loc să utilizeze implementarea moștenită. Atunci când
+    interfețele declară o implementare implicită a unei metode, orice clasă care implementează acea interfață
+    moștenește acea implementare (Este necesar un cast al instanței clasei la tipul interfeței pentru a accesa
+    implementarea implicită definită la nivelul membrului interfeței).
+</p>
+<p>
+    O clasă de bază poate, de asemenea, să implementeze membrii interfeței prin utilizarea membrilor virtuali.
+    În acest caz, o clasă derivată poate modifica comportamentul interfeței prin suprascrierea membrilor virtuali. 
+</p>
+<h3>Rezumat interfețe</h3>
+<p>
+    O interfață are următoarele proprietăți:
+    <ul>
+        <li>
+            În versiunile C# anterioare versiunii 8.0, o interfață este ca o clasă de bază abstractă care are numai membri
+            abstracți. O clasă sau o structură care implementează interfața trebuie să implementeze toți membrii acesteia.
+        </li>
+        <li>
+            Începând cu versiunea C# 8.0, o interfață poate defini implementări implicite pentru unii sau toți membrii săi.
+            O clasă sau o structură care implementează interfața nu trebuie să implementeze membrii care au implementări
+            implicite.
+        </li>
+        <li>
+            O interfață nu poate fi instanțiată direct. Membrii săi sunt implementați de orice clasă sau structură care
+            implementează interfața.
+        </li>
+        <li>
+            O clasă sau o structură poate implementa mai multe interfețe. O clasă poate moșteni o clasă de bază și,
+            totodată, poate implementa una sau mai multe interfețe.
+        </li>
+    </ul>
+</p>
+
+<h2>2.7 Clase și metode generice</h2>
+
+<p>
+    Genericitatea introduce în .NET conceptul de parametri de tip, care fac posibilă proiectarea de clase și metode care întârzie specificarea unuia
+    sau mai multor tipuri până când clasa sau metoda este declarată și instanțiată de codul client. De exemplu, prin utilizarea unui parametru de
+    tip generic <code>T</code>, puteți scrie o singură clasă pe care alte coduri client o pot utiliza fără a suporta costul sau riscul unor operații
+    de cast sau boxing în timpul execuției, așa cum se arată aici:
+</p>
+<pre>
+    <code>
+        // Declarare clasă generică.
+        public class GenericList&ltT&gt
+        {
+            public void Add(T input) { }
+        }
+        class TestGenericList
+        {
+            private class ExampleClass { }
+            static void Main()
+            {
+                // Declarare listă de tipul int.
+                GenericList&ltint&gt list1 = new GenericList&ltint&gt();
+                list1.Add(1);
+
+                // Declarare listă de tipul string.
+                GenericList&ltstring&gt list2 = new GenericList&ltstring&gt();
+                list2.Add("");
+
+                // Declarare listă de tipul ExampleClass.
+                GenericList&ltExampleClass&gt list3 = new GenericList&ltExampleClass&gt();
+                list3.Add(new ExampleClass());
+            }
+        }
+    </code>
+</pre>
+<p>
+    Clasele și metodele generice combină capacitatea de reutilizare, siguranța tipurilor și eficiența într-un mod în care nu o pot face omologii lor
+    ne-generici. Genericitatea este cel mai frecvent utilizată în cazul colecțiilor și al metodelor care operează cu acestea. Spațiul de nume
+    <code>System.Collections.Generic</code> conține mai multe clase de colecții bazate pe generice. Colecțiile ne-generice, cum ar fi
+    <code>ArrayList</code>, nu sunt recomandate și sunt menținute în scopuri de compatibilitate.
+</p>
+<p>
+    De asemenea, puteți crea tipuri și metode generice personalizate pentru a vă asigura propriile soluții generalizate și modele de proiectare
+    care sunt sigure din punct de vedere al tipurilor și eficiente. Următorul exemplu de cod prezintă o clasă generică simplă de liste legate în
+    scop demonstrativ. (În majoritatea cazurilor, ar trebui să utilizați clasa <code>List&ltT&gt</code> furnizată de .NET în loc să vă creați propria clasă).
+    Parametrul de tip <code>T</code> este utilizat în mai multe locuri în care, în mod normal, ar trebui să se utilizeze un tip concret pentru a indica
+    tipul elementului stocat în listă. Acesta este utilizat în următoarele moduri:
+</p>
+<ul>
+    <li>Ca tip al unui parametru de metodă al metodei <code>AddHead</code>.</li>
+    <li>Ca tipul returnat al proprietății <code>Data</code> din clasa imbricată <code>Node</code>.</li>
+    <li>Ca tip al membrului privat <code>data</code> al clasei imbricate.</li>
+</ul>
+<p>
+    <code>T</code> este disponibil pentru clasa imbricata <code>Node</code>. Atunci când <code>GenericList&ltT&gt</code> este instanțiată cu un tip concret, de
+    exemplu ca <code>GenericList&ltint&gt</code>, fiecare apariție a lui <code>T</code> va fi înlocuită cu <code>int</code>.
+</p>
+<pre>
+    <code>
+        // parametrul de tip între paranteze
+        public class GenericList&ltT&gt
+        {
+            // Clasa imbricata este, de asemenea, generică, având tipul T.
+            private class Node
+            {
+                // T folosit într-un constructor nongeneric.
+                public Node(T t)
+                {
+                    next = null;
+                    data = t;
+                }
+
+                private Node? next;
+                public Node? Next
+                {
+                    get { return next; }
+                    set { next = value; }
+                }
+
+                // T ca tip de date al unui membru privat.
+                private T data;
+
+                // T ca tip returnat al unei proprietăți.
+                public T Data
+                {
+                    get { return data; }
+                    set { data = value; }
+                }
+            }
+
+            private Node? head;
+
+            // constructor
+            public GenericList()
+            {
+                head = null;
+            }
+
+            // T ca parametru de tip al unei metode:
+            public void AddHead(T t)
+            {
+                Node n = new Node(t);
+                n.Next = head;
+                head = n;
+            }
+
+            public IEnumerator&ltT&gt GetEnumerator()
+            {
+                Node? current = head;
+
+                while (current != null)
+                {
+                    yield return current.Data;
+                    current = current.Next;
+                }
+            }
+        }
+    </code>
+</pre>
+<p>
+    Următorul exemplu de cod arată modul în care codul client utilizează clasa generică <code>GenericList&ltT&gt</code> pentru a crea o listă de
+    numere întregi. Prin simpla schimbare a argumentului de tip, codul de mai jos ar putea fi modificat cu ușurință pentru a crea liste de șiruri
+    de caractere sau orice alt tip personalizat:
+</p>
+<pre>
+    <code>
+        class TestGenericList
+        {
+            static void Main()
+            {
+                // int este argumentul de tip
+                GenericList&ltint&gt list = new GenericList&ltint&gt();
+
+                for (int x = 0; x &lt 10; x++)
+                {
+                    list.AddHead(x);
+                }
+
+                foreach (int i in list)
+                {
+                    System.Console.Write(i + " ");
+                }
+                System.Console.WriteLine("\nDone");
+            }
+        }
+    </code>
+</pre>
+
+<h3>Rezumat genericitate</h3>
+<ul>
+    <li>Utilizați tipuri generice pentru a maximiza reutilizarea codului, siguranța tipurilor și performanța.</li>
+    <li>Tipurile generice sunt folosite cel mai frecvent la crearea claselor de colecții.</li>
+    <li>
+        Biblioteca de clase .NET conține mai multe clase de colecții generice în spațiul de nume <code>System.Collections.Generic</code>.
+        Colecțiile generice ar trebui utilizate ori de câte ori este posibil în locul claselor precum <code>ArrayList</code> din spațiul de nume
+        <code>System.Collections</code>.
+    </li>
+    <li>Puteți să vă creați propriile interfețe generice, clase, metode, evenimente și delegați.</li>
+    <li>Clasele generice pot fi restricționate pentru a permite accesul la metode pentru anumite tipuri de date.</li>
+    <li>
+        Informațiile privind tipurile care sunt utilizate într-un tip de date generic pot fi obținute în timpul execuției
+        prin utilizarea mecanismului de reflecție.
+    </li>
+</ul>
+
+<h2>2.8 Tipuri anonime</h2>
+
+<p>
+    Tipurile anonime oferă o modalitate convenabilă de a încapsula un set de proprietăți read-only într-un
+    singur obiect fără a fi nevoie să se definească mai întâi în mod explicit un tip. Numele tipului este
+    generat de compilator și nu este disponibil la nivelul codului sursă. Tipul fiecărei proprietăți este
+    dedus de compilator.
+</p>
+<p>
+    Se creează tipuri anonime prin utilizarea operatorului <code>new</code> împreună cu un inițializator de obiect.
+</p>
+<p>
+    Următorul exemplu prezintă un tip anonim care este inițializat cu două proprietăți numite <code>Amount</code>
+    și <code>Message</code>.
+</p>
+<pre>
+    <code>
+        var v = new { Amount = 108, Message = "Hello" };
+
+        Console.WriteLine(v.Amount + v.Message);
+    </code>
+</pre>
+<p>
+    Tipurile anonime sunt utilizate de obicei în clauza de selecție a unei expresii de interogare pentru a
+    returna un subset de proprietăți din fiecare obiect din secvența sursă. 
+</p>
+<p>
+    Tipurile anonime conțin una sau mai multe proprietăți publice read-only. Nu sunt valide alte tipuri de
+    membri ai clasei, precum metodele sau evenimentele. Expresia utilizată pentru a inițializa o proprietate
+    nu poate fi <code>null</code>, o funcție anonimă sau un pointer.
+</p>
+<p>
+    Scenariul cel mai frecvent este acela de a inițializa un tip anonim cu proprietăți dintr-un alt tip. În
+    exemplul următor, să presupunem că există o clasă numită <code>Product</code>. Clasa <code>Product</code>
+    include proprietățile <code>Color</code> și <code>Price</code>, împreună cu alte proprietăți. Variabila
+    <code>products</code> este o colecție de obiecte <code>Product</code>. Declarația de tip anonim începe cu
+    cuvântul cheie <code>new</code>. Declarația inițializează un nou tip care utilizează doar două
+    proprietăți din <code>Product</code>. Utilizarea tipurilor anonime face ca o cantitate mai mică de date
+    să fie returnată în interogare.
+</p>
+<p>
+    Dacă nu specificați numele membrilor în tipul anonim, compilatorul atribuie membrilor tipului anonim
+    același nume ca și proprietății utilizate pentru a le inițializa. Puteți furniza un nume pentru o
+    proprietate care este inițializată cu o expresie, așa cum se arată în exemplul anterior. În exemplul
+    următor, numele proprietăților tipului anonim sunt <code>Color</code> și <code>Price</code>.
+</p>
+<pre>
+    <code>
+        var productQuery =
+            from prod in products
+            select new { prod.Color, prod.Price };
+
+        foreach (var v in productQuery)
+        {
+            Console.WriteLine("Color={0}, Price={1}", v.Color, v.Price);
+        }
+    </code>
+</pre>
+<h6>Sfat</h6>
+<p>
+    Puteți utiliza regula .NET IDE0037 pentru a impune dacă sunt preferate numele de membru deduse sau explicite.
+</p>
+<p>
+    De asemenea, este posibil să se definească un câmp prin intermediul unui obiect de alt tip: clasă,
+    structură sau chiar un alt tip anonim. Acest lucru se face prin utilizarea variabilei care conține acest
+    obiect, la fel ca în exemplul următor, în care două tipuri anonime sunt create folosind tipuri definite de
+    utilizator deja instanțiate. În ambele cazuri, câmpul <code>product</code> din tipurile anonime <code>shipment</code>
+    și <code>shipmentWithBonus</code> va fi de tip <code>Product</code> și va conține valorile implicite ale
+    fiecărui câmp. Iar câmpul <code>bonus</code> va fi de tip anonim creat de compilator.
+</p>
+<pre>
+    <code>
+        var product = new Product();
+        var bonus = new { note = "You won!" };
+        var shipment = new { address = "Nowhere St.", product };
+        var shipmentWithBonus = new { address = "Somewhere St.", product, bonus };
+    </code>
+</pre>
+<p>
+    De obicei, atunci când utilizați un tip anonim pentru a inițializa o variabilă, declarați variabila ca o
+    variabilă locală implicit tipizată, utilizând <code>var</code>. Numele tipului nu poate fi specificat în declarația
+    variabilei, deoarece numai compilatorul are acces la numele de bază al tipului anonim.
+</p>
+<p>
+    Puteți crea un tablou de elemente tipizate anonim prin combinarea unei variabile locale implicit tipizate
+    și a unui tablou implicit tipizat, după cum se arată în exemplul următor.
+</p>
+<pre>
+    <code>
+        var anonArray = new[] { new { name = "apple", diam = 4 }, new { name = "grape", diam = 1 }};
+    </code>
+</pre>
+<p>
+    Tipurile anonime sunt tipuri de clasă care derivă direct din <code>object</code> și care nu pot fi transformate în
+    niciun alt tip, cu excepția lui <code>object</code>. Compilatorul furnizează un nume pentru fiecare tip anonim, deși
+    aplicația dumneavoastră nu îl poate accesa. Din punctul de vedere al timpului de execuție (Common Language
+    Runtime), un tip anonim nu este diferit de orice alt tip de referință.
+</p>
+<p>
+    În cazul în care doi sau mai mulți inițializatori de obiecte anonime dintr-un ansamblu specifică o
+    secvență de proprietăți care se află în aceeași ordine și care au aceleași nume și tipuri, compilatorul
+    tratează obiectele ca fiind instanțe de același tip. Ele au în comun aceleași informații de tip generate
+    de compilator.
+</p>
+<p>
+    Tipurile anonime acceptă mutații nedistructive sub forma expresiilor <code>with</code>. Acest lucru vă
+    permite să creați o nouă instanță a unui tip anonim în care una sau mai multe proprietăți au valori noi:
+</p>
+<pre>
+    <code>
+        var apple = new { Item = "apples", Price = 1.35 };
+        var onSale = apple with { Price = 0.79 };
+        Console.WriteLine(apple);
+        Console.WriteLine(onSale);
+    </code>
+</pre>
+<p>
+    Nu puteți declara un câmp, o proprietate, un eveniment sau tipul de returnare al unei metode ca având un
+    tip anonim. În mod similar, nu puteți declara un parametru formal al unei metode, al unei proprietăți, al
+    unui constructor sau al unui indexor ca având un tip anonim. Pentru a transmite un tip anonim sau o
+    colecție care conține tipuri anonime ca argument al unei metode, puteți declara parametrul ca fiind de tip <code>object</code>.
+    Cu toate acestea, utilizarea <code>object</code> pentru tipurile anonime contravine scopului tipizării puternice. Dacă
+    trebuie să stocați rezultatele interogării sau să le transmiteți în afara limitei metodei, luați în
+    considerare utilizarea unei structuri sau clase cu nume obișnuit în locul unui tip anonim.
+</p>
+<p>
+    Deoarece metodele <code>Equals</code> și <code>GetHashCode</code> ale tipurilor anonime sunt definite în
+    funcție de metodele Equals și GetHashCode ale proprietăților, două instanțe ale aceluiași tip anonim sunt
+    egale numai dacă toate proprietățile lor sunt egale.
+</p>
+<p>
+    Tipurile anonime suprascriu metoda <code>ToString</code>, concatenând numele și rezultatul <code>ToString</code>
+    al fiecărei proprietăți înconjurate de acolade.
+</p>
+<pre>
+    <code>
+        var v = new { Title = "Hello", Age = 24 };
+
+        Console.WriteLine(v.ToString()); // "{ Title = Hello, Age = 24 }"
+    </code>
+</pre>
+
+<h2>2.9 Șiruri de caractere și literali de șiruri</h2>
+
+<p>
+    Un șir de caractere este un obiect de tip String a cărui valoare este text. Pe plan intern, textul este
+    stocat ca o colecție secvențială de obiecte <code>Char</code>, numai pentru citire. La sfârșitul unui șir de caractere
+    C# nu există un terminator de șir, prin urmare, un șir C# poate conține orice număr de caractere zero
+    încorporate ("\0"). Proprietatea <code>Length</code> a unui șir reprezintă numărul de obiecte Char pe care le conține,
+    nu numărul de caractere Unicode. Pentru a accesa punctele de cod Unicode individuale dintr-un șir,
+    utilizați obiectul <code>StringInfo</code>.
+</p>
+
+<h3>string vs System.String</h3>
+<p>
+    În C#, cuvântul cheie <code>string</code> este un alias pentru <code>String</code>. Prin urmare, <code>String</code>
+    și <code>string</code> sunt echivalente. Se recomandă utilizarea aliasului furnizat <code>string</code>,
+    deoarece acesta funcționează chiar și fără a utiliza <code>System</code>. Clasa <code>String</code> oferă
+    multe metode pentru crearea, manipularea și compararea în siguranță a șirurilor de caractere. În plus,
+    limbajul C# supraîncarcă unii operatori pentru a simplifica operațiile comune cu șiruri de caractere.
+</p>
+
+<h3>Declararea și inițializarea șirurilor de caractere</h3>
+<p>
+    Puteți declara și inițializa șirurile de caractere în diferite feluri, precum se arată în exemplul următor:
+</p>
+<pre>
+    <code>
+        // Declarare fără inițializare.
+        string message1;
+
+        // Inițializare cu null.
+        string message2 = null;
+
+        // Inițializare ca șir de caractere vid.
+        // Folosiți constanta Empty în loc de "".
+        string message3 = System.String.Empty;
+
+        // Initițializare cu un literal de string.
+        string oldPath = "c:\\Program Files\\Microsoft Visual Studio 8.0";
+
+        // Inițializare cu un literal de string verbatim.
+        string newPath = @"c:\Program Files\Microsoft Visual Studio 9.0";
+
+        // Folosiți System.String dacă preferați.
+        System.String greeting = "Hello World!";
+
+        // Pentru variabilele locale (adică în corpul unei metode) se poate utiliza tipizarea implicită.
+        var temp = "I'm still a strongly-typed System.String!";
+
+        // Folosiți un șir const pentru a preveni ca 'message4'
+        // să fie folosit pentru a stoca o altă valoare de șir.
+        const string message4 = "You can't get rid of me!";
+
+        // Folosiți constructorul String numai atunci când creați
+        // un șir de caractere dintr-un char*, char[] sau sbyte*.
+        char[] letters = { 'A', 'B', 'C' };
+        string alphabet = new string(letters);
+    </code>
+</pre>
+<p>
+    Operatorul <code>new</code> nu se utilizează pentru a crea un obiect șir de caractere, cu excepția cazului
+    în care se inițializează șirul de caractere cu un tablou de caractere.
+</p>
+<p>
+    Inițializați un șir de caractere cu valoarea constantă <code>Empty</code> pentru a crea un nou obiect
+    <code>String</code> al cărui șir de caractere este de lungime zero. Reprezentarea literală a unui șir de
+    lungime zero este <code>""</code>. Prin inițializarea șirurilor de caractere cu valoarea <code>Empty</code>
+    în loc de <code>null</code>, puteți reduce șansele de apariție a unei excepții <code>NullReferenceException</code>.
+    Utilizați metoda statică <code>IsNullOrEmpty(String)</code> pentru a verifica valoarea unui șir de caractere
+    înainte de a încerca să îl accesați.
+</p>
+
+<h3>Imuabilitatea șirurilor de caractere</h3>
+<p>
+    Obiectele de tip string sunt <i>imuabile</i>: nu pot fi modificate după ce au fost create. Toate metodele
+    <code>String</code> și toți operatorii C# care par să modifice un șir de caractere returnează de fapt
+    rezultatele într-un nou obiect <code>String</code>. În exemplul următor, atunci când conținutul lui <code>s1</code>
+    și <code>s2</code> este concatenat pentru a forma un singur șir, cele două șiruri originale nu sunt
+    modificate. Operatorul <code>+=</code> creează un nou șir de caractere care conține conținutul combinat.
+    Acest nou obiect este atribuit variabilei <code>s1</code>, iar obiectul original care a fost atribuit lui
+    <code>s1</code>, este eliberat în vederea colectării gunoiului deoarece nicio altă variabilă nu mai conține o referință la acesta.
+</p>
+<pre>
+    <code>
+        string s1 = "A string is more ";
+        string s2 = "than the sum of its chars.";
+
+        // Concatenează s1 și s2. Acest lucru creează de fapt un nou
+        // obiect șir de caractere și îl stochează în s1, eliberând
+        // referința la obiectul original.
+        s1 += s2;
+
+        System.Console.WriteLine(s1);
+        // Afișează: A string is more than the sum of its chars.
+    </code>
+</pre>
+<p>
+    Deoarece o "modificare" a unui șir de caractere este de fapt o nouă creare de șiruri, trebuie să fiți
+    precauți atunci când creați referințe la șiruri de caractere. Dacă creați o referință la un șir de
+    caractere, iar apoi "modificați" șirul original, referința va continua să indice obiectul original în loc
+    de noul obiect care a fost creat atunci când șirul a fost modificat. Codul următor ilustrează acest
+    comportament:
+</p>
+<pre>
+    <code>
+        string str1 = "Hello ";
+        string str2 = str1;
+        str1 += "World";
+
+        System.Console.WriteLine(str2);
+        //Afișează: Hello
+    </code>
+</pre>
+
+<h3>Literalii de șiruri de caractere între ghilimele</h3>
+<p>
+    Șirurile de caractere între ghilimele încep și se termină cu un singur caracter de ghilimele duble
+    (<code>"</code>) pe aceeași linie. Șirurile de caractere între ghilimele sunt cele mai potrivite pentru
+    șirurile care încap pe o singură linie și nu includ secvențe de scăpare. Un literal de șir între ghilimele
+    trebuie să includă caractere escape, așa cum se arată în exemplul următor:
+</p>
+<pre>
+    <code>
+        string columns = "Column 1\tColumn 2\tColumn 3";
+        //Afișează: Column 1        Column 2        Column 3
+
+        string rows = "Row 1\r\nRow 2\r\nRow 3";
+        /* Afișează:
+            Row 1
+            Row 2
+            Row 3
+        */
+
+        string title = "\"The \u00C6olean Harp\", by Samuel Taylor Coleridge";
+        //Afișează "The Æolean Harp", by Samuel Taylor Coleridge
+    </code>
+</pre>
+
+<h3>Șiruri literale de caractere literale verbatim</h3>
+<p>
+    Literalii de șiruri de caractere verbatim sunt mai convenabili pentru șiruri de caractere cu mai multe
+    linii, șiruri care conțin caractere backslash sau ghilimele duble înglobate. Șirurile Verbatim păstrează
+    caracterele de linie nouă ca parte a textului șirului. Utilizați ghilimele duble pentru a încorpora un
+    ghilimele în interiorul unui șir verbatim. Exemplul următor prezintă câteva utilizări comune pentru
+    șirurile verbatim:
+</p>
+<pre>
+    <code>
+        string title = "\"The \u00C6olean Harp\", by Samuel Taylor Coleridge";
+        //Afișează "The Æolean Harp", by Samuel Taylor Coleridge
+
+        string filePath = @"C:\Users\scoleridge\Documents\";
+        //Afișează C:\Users\scoleridge\Documents\
+
+        string text = @"My pensive SARA ! thy soft cheek reclined
+            Thus on mine arm, most soothing sweet it is
+            To sit beside our Cot,...";
+        /* Afișează:
+        My pensive SARA ! thy soft cheek reclined
+            Thus on mine arm, most soothing sweet it is
+            To sit beside our Cot,...
+        */
+
+        string quote = @"Her name was ""Sara.""";
+        //Afișează: Her name was "Sara."
+    </code>
+</pre>
+
+<h3>Șiruri literale brute</h3>
+<p>
+    Începând cu C# 11, puteți utiliza literali de șiruri de caractere brute pentru a crea mai ușor șiruri de
+    caractere cu mai multe linii sau pentru a utiliza orice caractere care necesită escape. Literalii de
+    șiruri brute elimină necesitatea de a utiliza vreodată secvențe escape. Puteți scrie șirul, inclusiv
+    formatarea spațiilor albe, așa cum doriți să apară la ieșire. Un literal de șir de caractere brut:
+</p>
+<ul>
+    <li>
+        Începe și se termină cu o secvență de cel puțin trei caractere de ghilimele duble (<code>"""</code>).
+        Sunt permise mai mult de trei caractere consecutive pentru a începe și a termina secvența, pentru a
+        putea accepta șiruri literale care conțin trei (sau mai multe) caractere de ghilimele repetate.
+    </li>
+    <li>
+        Literalii de șiruri de caractere brute pe o singură linie necesită caracterele de deschidere și
+        închidere a ghilimelelor pe aceeași linie.
+    </li>
+    <li>
+        Literalii de șiruri de caractere brute pe mai multe rânduri necesită atât caracterele de deschidere, cât
+        și cele de închidere a ghilimelelor pe propria linie.
+    </li>
+    <li>
+        În cazul literalilor de șiruri de caractere brute pe mai multe rânduri, orice spațiu alb din stânga
+        ghilimelelor de închidere este eliminat din toate rândurile literalului de șir brut.
+    </li>
+    <li>
+        În cazul șirurilor de caractere brute pe mai multe rânduri, spațiile albe care urmează ghilimelelor de
+        deschidere pe aceeași linie sunt ignorate.
+    </li>
+    <li>
+        În cazul literalelor de șiruri de caractere brute pe mai multe rânduri, în literalul de șir sunt incluse
+        numai liniile de spațiu alb care urmează ghilimelelor de deschidere.
+    </li>
+</ul>
+<p>
+    Următoarele exemple demonstrează aceste reguli:
+</p>
+<pre>
+    <code>
+        string singleLine = """Friends say "hello" as they pass by.""";
+        string multiLine = """
+            "Hello World!" is typically the first program someone writes.
+            """;
+        string embeddedXML = """
+            &ltelement attr = "content"&gt
+                &ltody style="normal"&gt
+                    Here is the main text
+                &lt/body&gt
+                &ltfooter&gt
+                    Excerpts from "An amazing story"
+                &lt/footer&gt
+            &lt/element&gt
+            """;
+        // Linia "&ltelement attr = "content"&gt" începe în prima coloană.
+        // Toate spațiile albe din stânga acestei coloane sunt eliminate din șir.
+
+        string rawStringLiteralDelimiter = """"
+            Șirurile literale brute sunt delimitate 
+            de un șir de cel puțin trei ghilimele duble,
+            astfel: """
+            """";
+    </code>
+</pre>
+<p>Următoarele exemple demonstrează erorile de compilare semnalate pe baza acestor reguli:</p>
+<pre>
+    <code>
+        // CS8997: Literal de șir de caractere brut nefinalizat.
+        var multiLineStart = """This
+            is the beginning of a string 
+            """;
+
+        // CS9000: Delimitatorul literalului de șir brut trebuie să fie pe propria linie.
+        var multiLineEnd = """
+            This is the beginning of a string """;
+
+        // CS8999: Linia nu începe cu același spațiu alb ca și linia de închidere
+        // a literalului de șir brut.
+        var noOutdenting = """
+            A line of text.
+        Trying to outdent the second line.
+            """;
+    </code>
+</pre>
+<p>
+    Primele două exemple nu sunt valide deoarece literalele de șiruri de caractere brute pe mai multe linii
+    necesită o secvență de ghilimele de deschidere și închidere pe propria linie. Cel de-al treilea exemplu
+    nu este valid deoarece textul este deplasat față de secvența de ghilimele de închidere.
+</p>
+<p>
+    Ar trebui să luați în considerare utilizarea de literali de șiruri brute atunci când generați text care
+    include caractere ce necesită secvențe escape atunci când utilizați literali de șiruri cotate sau literali
+    de șiruri verbatim. Șirurile literale brute de caractere vor fi mai ușor de citit pentru dvs. și pentru
+    alte persoane, deoarece se vor asemăna mai mult cu textul de ieșire. De exemplu, să luăm în considerare
+    următorul cod care include un șir de caractere JSON formatat:
+</p>
+<pre>
+    <code>
+        string jsonString = """
+        {
+        "Date": "2019-08-01T00:00:00-07:00",
+        "TemperatureCelsius": 25,
+        "Summary": "Hot",
+        "DatesAvailable": [
+            "2019-08-01T00:00:00-07:00",
+            "2019-08-02T00:00:00-07:00"
+        ],
+        "TemperatureRanges": {
+            "Cold": {
+            "High": 20,
+            "Low": -10
+            },
+            "Hot": {
+            "High": 60,
+            "Low": 20
+            }
+                    },
+        "SummaryWords": [
+            "Cool",
+            "Windy",
+            "Humid"
+        ]
+        }
+        """;
+    </code>
+</pre>
+
+<h3>Secvențe escape a șirurilor de caractere</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Secvență escape</th>
+            <th>Denumire caracter</th>
+            <th>Codificarea Unicode</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <td>\'</td>
+            <td>Ghilimea simplă</td>
+            <td>0x0027</td>
+        </tr>    
+        <tr>
+            <td>\"</td>
+            <td>Ghilimea dublă</td>
+            <td>0x0022</td>
+        </tr>
+        <tr>
+            <td>\\</td>
+            <td>Bară oblică inversă</td>
+            <td>0x005C</td>
+        </tr>
+        <tr>
+            <td>\0</td>
+            <td>Null</td>
+            <td>0x0000</td>
+        </tr>
+        <tr>
+            <td>\a</td>
+            <td>Alertă</td>
+            <td>0x0007</td>
+        </tr>
+        <tr>
+            <td>\b</td>
+            <td>Backspace</td>
+            <td>0x0008</td>
+        </tr>
+        <tr>
+            <td>\f</td>
+            <td>Form feed</td>
+            <td>0x000C</td>
+        </tr>
+        <tr>
+            <td>\n</td>
+            <td>New line</td>
+            <td>0x000A</td>
+        </tr>
+        <tr>
+            <td>\r</td>
+            <td>Carriage return</td>
+            <td>0x000D</td>
+        </tr>
+        <tr>
+            <td>\t</td>
+            <td>Tab orizontal</td>
+            <td>0x0009</td>
+        </tr>
+        <tr>
+            <td>\v</td>
+            <td>Tab vertical</td>
+            <td>0x000B</td>
+        </tr>
+        <tr>
+            <td>\u</td>
+            <td>Secvență escape Unicode (UTF-16)</td>
+            <td><code>\uHHHH</code> (range: 0000 - FFFF; example: <code>\u00E7</code> = "ç")</td>
+        </tr>
+        <tr>
+            <td>\U</td>
+            <td>Secvență escape Unicode (UTF-32)</td>
+            <td><code>\U00HHHHHH</code> (range: 000000 - 10FFFF; example: <code>\U0001F47D</code> = "👽")</td>
+        </tr>
+        <tr>
+            <td>\x</td>
+            <td>Secvență escape Unicode similară cu "\u", însă de lungime variabilă</td>
+            <td><code>\xH[H][H][H]</code> (range: 0 - FFFF; example: <code>\x00E7</code> or <code>\x0E7</code> or <code>\xE7</code> = "ç")</td>
+        </tr>
+    </tbody>
+</table>
+
+<h6>Atenție</h6>
+<p>
+    Atunci când se utilizează secvența escape <code>\x</code> și se specifică mai puțin de 4 cifre hexazecimale,
+    în cazul în care caracterele care urmează imediat după secvența escape sunt cifre hexazecimale valide (de
+    exemplu, 0-9, A-F și a-f), acestea vor fi interpretate ca făcând parte din secvența escape. De exemplu,
+    <code>\xA1</code> produce "¡", care este punctul de cod U+00A1. Cu toate acestea, dacă următorul caracter
+    este "A" sau "a", atunci secvența de evadare va fi interpretată ca fiind <code>\xA1A</code> și va produce
+    "ਚ", care este punctul de cod U+0A1A. În astfel de cazuri, specificarea tuturor celor 4 cifre hexagonale
+    (de exemplu, <code>\x00A1</code>) va preveni orice posibilă interpretare greșită.
+</p>
+
+<h6>Notă</h6>
+<p>
+    La momentul compilării, șirurile verbatim și cele brute sunt convertite în șiruri de caractere obișnuite
+    cu aceleași secvențe escape. Prin urmare, dacă vizualizați un șir verbatim sau brut în fereastra de
+    supraveghere a depanatorului, veți vedea caracterele escape care au fost adăugate de compilator, nu
+    versiunea verbatim sau brută din codul sursă. De exemplu, șirul verbatim <code>@"C:\files.txt"</code> va
+    apărea în fereastra de supraveghere ca "C:\files.txt".
+</p>
+
+<h3>Șiruri de caractere formatate</h3>
+<p>
+    Un șir de caractere formatat este un șir de caractere al cărui conținut este determinat în mod dinamic în
+    momentul execuției. Aceste șiruri sunt create prin încorporarea expresiilor interpolate sau a caracterelor
+    de poziție (placeholders) în interiorul unor paranteze într-un șir. Tot ceea ce se află în interiorul parantezelor
+    (<code>{...}</code>) va fi transformat într-o valoare și va fi emis ca șir formatat la momentul execuției.
+    Există două metode de creare a șirurilor formatate: interpolarea șirurilor și formatarea compozită.
+</p>
+<h4>Interpolarea șirurilor de caractere</h4>
+<p>
+    Șirurile interpolate sunt identificate prin caracterul special <code>$</code> și includ expresii interpolate
+    între paranteze.
+</p>
+<p>
+    Utilizați interpolarea șirurilor de caractere pentru a îmbunătăți lizibilitatea și a ușura întreținerea
+    codului dumneavoastră. Interpolarea șirurilor de caractere obține aceleași rezultate ca și metoda 
+    <code>String.Format</code>, dar simplifică utilizarea și îmbunătățește claritatea codului.
+</p>
+<pre>
+    <code>
+        var jh = (firstName: "Jupiter", lastName: "Hammon", born: 1711, published: 1761);
+        Console.WriteLine($"{jh.firstName} {jh.lastName} was an African American poet born in {jh.born}.");
+        Console.WriteLine($"He was first published in {jh.published} at the age of {jh.published - jh.born}.");
+        Console.WriteLine($"He'd be over {Math.Round((2018d - jh.born) / 100d) * 100d} years old today.");
+
+        // Afișează:
+        // Jupiter Hammon was an African American poet born in 1711.
+        // He was first published in 1761 at the age of 50.
+        // He'd be over 300 years old today.
+    </code>
+</pre>
+<p>
+    Începând cu C#10, puteți utiliza interpolarea șirurilor de caractere pentru a inițializa un șir constant
+    atunci când toate expresiile utilizate pentru caractere de poziție sunt, de asemenea, șiruri constante.
+</p>
+<p>
+    Începând cu C#11, puteți combina literali de șiruri brute cu interpolări de șiruri. Se începe și se termină
+    șirul de format prin trei sau mai multe ghilimele duble succesive. Dacă șirul de ieșire trebuie să conțină
+    caracterul <code>{</code> sau <code>}</code>, puteți utiliza caractere <code>$</code> suplimentare pentru
+    a specifica câte caractere <code>{</code> și <code>}</code> încep și termină o interpolare. Orice secvență
+    cu mai puține caractere <code>{</code> sau <code>}</code> este inclusă în ieșire. Exemplul următor arată
+    cum puteți utiliza această caracteristică pentru a afișa distanța unui punct față de origine și pentru a
+    plasa punctul în interiorul acoladelor:
+</p>
+<pre>
+    <code>
+        int X = 2;
+        int Y = 3;
+
+        var pointMessage = $$"""The point {{{X}}, {{Y}}} is {{Math.Sqrt(X * X + Y * Y)}} from the origin.""";
+
+        Console.WriteLine(pointMessage);
+        // Afișează:
+        // The point {2, 3} is 3.605551275463989 from the origin.
+    </code>
+</pre>
+
+<h4>Interpolarea șirurilor de caractere verbatim</h4>
+<p>
+    C# permite, de asemenea, interpolarea textuală a șirurilor de caractere, de exemplu pe mai multe linii,
+    utilizând sintaxa <code>$@</code> sau <code>@$</code>.
+</p>
+<p>
+    Pentru a interpreta secvențele escape în mod literal, utilizați un literal de șir de caractere literale.
+    Un șir literar interpolat începe cu caracterul <code>$</code>  urmat de caracterul <code>@</code>. Puteți
+    utiliza simbolurile <code>$</code>  și <code>@</code>  în orice ordine: atât <code>$@"..."</code>, cât și
+    <code>@$"..."</code> sunt șiruri verbatim interpolate valide.
+</p>
+<pre>
+    <code>
+        var jh = (firstName: "Jupiter", lastName: "Hammon", born: 1711, published: 1761);
+        Console.WriteLine($@"{jh.firstName} {jh.lastName}
+            was an African American poet born in {jh.born}.");
+        Console.WriteLine(@$"He was first published in {jh.published}
+        at the age of {jh.published - jh.born}.");
+
+        // Afișează:
+        // Jupiter Hammon
+        //     was an African American poet born in 1711.
+        // He was first published in 1761
+        // at the age of 50.
+    </code>
+</pre>
+
+<h4>Formatarea compozită</h4>
+<p>
+    <code>String.Format</code> utilizează spații libere între paranteze pentru a crea un șir de formatat.
+    Acest exemplu are ca rezultat o ieșire similară cu metoda de interpolare a șirurilor de caractere utilizată mai sus.
+</p>
+<pre>
+    <code>
+        var pw = (firstName: "Phillis", lastName: "Wheatley", born: 1753, published: 1773);
+        Console.WriteLine("{0} {1} was an African American poet born in {2}.", pw.firstName, pw.lastName, pw.born);
+        Console.WriteLine("She was first published in {0} at the age of {1}.", pw.published, pw.published - pw.born);
+        Console.WriteLine("She'd be over {0} years old today.", Math.Round((2018d - pw.born) / 100d) * 100d);
+
+        // Afișează:
+        // Phillis Wheatley was an African American poet born in 1753.
+        // She was first published in 1773 at the age of 20.
+        // She'd be over 300 years old today.
+    </code>
+</pre>
+
+<h3>Subșiruri</h3>
+<p>
+    O subșir este orice secvență de caractere conținută într-un șir de caractere. Utilizați metoda <code>Substring</code>
+    pentru a crea un nou șir de caractere dintr-o porțiune a șirului original. Puteți căuta una sau mai multe
+    apariții ale unui subșir, folosind metoda IndexOf. Utilizați metoda <code>Replace</code> pentru a înlocui
+    toate aparițiile unui subșir specificat cu un nou șir. Ca și metoda <code>Substring</code>, <code>Replace</code>
+    returnează de fapt un nou șir de caractere și nu modifică șirul original.
+</p>
+<pre>
+    <code>
+        string s3 = "Visual C# Express";
+        System.Console.WriteLine(s3.Substring(7, 2));
+        // Afișează: "C#"
+
+        System.Console.WriteLine(s3.Replace("C#", "Basic"));
+        // Afișează: "Visual Basic Express"
+
+        // Valorile indecșilor pornesc de la 0
+        int index = s3.IndexOf("C");
+        // index = 7
+    </code>
+</pre>
+<h3>Accesarea caracterelor individuale</h3>
+<p>
+    Puteți utiliza notația de tip vector cu o valoare de index pentru a obține acces read-only la caractere
+    individuale, ca în exemplul următor:
+</p>
+<pre>
+    <code>
+        string s5 = "Printing backwards";
+
+        for (int i = 0; i < s5.Length; i++)
+        {
+            System.Console.Write(s5[s5.Length - i - 1]);
+        }
+        // Afișează: "sdrawkcab gnitnirP"
+    </code>
+</pre>
+<p>
+    În cazul în care metodele <code>String</code> nu oferă funcționalitatea necesară pentru a schmba caracterele
+    individuale dintr-un șir de caractere, puteți utiliza un obiect <code>StringBuilder</code> pentru a schimba
+    caracterele individuale "la fața locului" și apoi să creați un nou șir de caractere pentru a stoca rezultatele
+    prin utilizarea metodelor <code>StringBuilder</code>. În exemplul următor, presupunem că trebuie să modificați
+    șirul original într-un anumit mod și apoi să stocați rezultatele pentru utilizare ulterioară:
+</p>
+<pre>
+    <code>
+        string question = "hOW DOES mICROSOFT wORD DEAL WITH THE cAPS lOCK KEY?";
+        System.Text.StringBuilder sb = new System.Text.StringBuilder(question);
+
+        for (int j = 0; j < sb.Length; j++)
+        {
+            if (System.Char.IsLower(sb[j]) == true)
+                sb[j] = System.Char.ToUpper(sb[j]);
+            else if (System.Char.IsUpper(sb[j]) == true)
+                sb[j] = System.Char.ToLower(sb[j]);
+        }
+        // Stochează noul șir de caractere.
+        string corrected = sb.ToString();
+        System.Console.WriteLine(corrected);
+        // Afișează: How does Microsoft Word deal with the Caps Lock key?
+    </code>
+</pre>
+
+<h3>Șiruri nule și șiruri vide</h3>
+<p>
+    Un șir vid este o instanță a unui obiect <code>System.String</code> care conține zero caractere. Șirurile
+    vide sunt utilizate adesea în diverse scenarii de programare pentru a reprezenta un câmp de text gol. Puteți
+    apela metode pe șiruri goale deoarece acestea sunt obiecte <code>System.String</code> valide. Șirurile vide
+    sunt inițializate după cum urmează:
+</p>
+<pre>
+    <code>
+        string s = String.Empty;
+    </code>
+</pre>
+<p>
+    În schimb, un șir de caractere nul nu se referă la o instanță a unui obiect <code>System.String</code> și
+    orice încercare de a apela o metodă pe un șir de caractere nul provoacă o excepție <code>NullReferenceException</code>.
+    Cu toate acestea, puteți utiliza șiruri de caractere nule în operațiile de concatenare și comparare cu
+    alte șiruri de caractere. Exemplele următoare ilustrează câteva cazuri în care o referință la un șir de
+    caractere nul provoacă sau nu o excepție:
+</p>
+<pre>
+    <code>
+        string str = "hello";
+        string nullStr = null;
+        string emptyStr = String.Empty;
+
+        string tempStr = str + nullStr;
+        // Linia de mai jos tipărește: hello
+        Console.WriteLine(tempStr);
+
+        bool b = (emptyStr == nullStr);
+        // Linia de mai jos tipărește: False
+        Console.WriteLine(b);
+
+        // Următoarea linie creează un șir de caractere vid.
+        string newStr = emptyStr + nullStr;
+
+        // Șirurile nule se comportă diferit. Următoarele două linii afișează 0
+        Console.WriteLine(emptyStr.Length);
+        Console.WriteLine(newStr.Length);
+        // Următoarea linie cauzează o eroare de tipul NullReferenceException.
+        //Console.WriteLine(nullStr.Length);
+
+        // Caracterul null poate fi afișat și numărat ca orice alt caracter.
+        string s1 = "\x0" + "abc";
+        string s2 = "abc" + "\x0";
+        // Linia de mai jos tipărește: * abc*
+        Console.WriteLine("*" + s1 + "*");
+        // Linia de mai jos tipărește: *abc *
+        Console.WriteLine("*" + s2 + "*");
+        // Linia de mai jos tipărește: 4
+        Console.WriteLine(s2.Length);
+    </code>
+</pre>
+
+<h3>Folosirea stringBuilder pentru crearea rapidă a șirurilor de caractere</h3>
+<p>
+    Operațiile cu șiruri de caractere în .NET sunt foarte optimizate și, în majoritatea cazurilor, nu au un
+    impact semnificativ asupra performanței. Cu toate acestea, în anumite scenarii, cum ar fi buclele strânse
+    care se execută de mai multe sute sau mii de ori, operațiunile cu șiruri de caractere pot afecta performanța.
+    Clasa <code>StringBuilder</code> creează un buffer de șiruri de caractere care oferă o performanță mai
+    bună dacă programul dumneavoastră efectuează multe manipulări de șiruri de caractere. Șirul <code>StringBuilder</code>
+    vă oferă, de asemenea, posibilitatea de a realoca caractere individuale, aspect pe care tipul de date
+    string încorporat nu îl permite. Acest cod, de exemplu, modifică conținutul unui șir de caractere fără a
+    crea un nou șir de caractere:
+</p>
+<pre>
+    <code>
+        System.Text.StringBuilder sb = new System.Text.StringBuilder("Rat: the ideal pet");
+        sb[0] = 'C';
+        System.Console.WriteLine(sb.ToString());
+        // Tipărește Cat: the ideal pet
+    </code>
+</pre>
+<p>
+    În acest exemplu, un obiect <code>StringBuilder</code> este utilizat pentru a crea un șir de caractere
+    dintr-un set de tipuri numerice:
+</p>
+<pre>
+    <code>
+        var sb = new StringBuilder();
+
+        // Creează un șir de caractere compus din cifrele 0 - 9
+        for (int i = 0; i &lt 10; i++)
+        {
+            sb.Append(i.ToString());
+        }
+        Console.WriteLine(sb);  // afișează 0123456789
+
+        // Copiază un caracter din șir (operație imposibilă cu System.String)
+        sb[0] = sb[9];
+
+        Console.WriteLine(sb);  // afișează 9123456789
+    </code>
+</pre>
+
+<h3>Șiruri de caractere, metode de extensie și LINQ</h3>
+<p>
+    Deoarece tipul String implementează <code>IEnumerable&ltT&gt</code>, puteți utiliza metodele de extensie
+    definite în clasa <code>Enumerable</code> pentru șirurile de caractere. Pentru a evita dezordinea vizuală,
+    aceste metode sunt excluse din IntelliSense pentru tipul <code>String</code>, dar ele sunt totuși disponibile.
+    De asemenea, puteți utiliza expresii de interogare LINQ pe șiruri de caractere.
 </p>
