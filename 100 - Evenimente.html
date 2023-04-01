@@ -1,6 +1,687 @@
+﻿<!DOCTYPE html>
 
-<h1>Evenimente</h1>
+<html>
 
-<p>
-</p>
+<head>
+    <title> Evenimente </title>
+</head>
 
+<body>
+
+    <h1>10. Evenimente </h1>
+    <ul>
+        <li>10.1 Evenimente - Prezentare generală</li>
+        <li>10.2 Evenimente - Prezentare generală</li>
+        <li>10.3 Evenimente - Prezentare generală</li>
+        <li>10.4 Evenimente - Prezentare generală</li>
+    </ul>
+
+
+
+    <p>
+        Evenimentele permit unei clase sau unui obiect să notifice alte clase sau obiecte atunci când apare
+        ceva de interes. Clasa care trimite (sau declanșează) evenimentul se numește editor,
+        iar clasele care primesc (sau gestionează) evenimentul se numesc abonați.
+    </p>
+
+    <p>
+        Într-o aplicație Web tipică sau in C# Windows Forms, vă puteți abona la evenimentele declanșate
+        de controale, cum ar fi butoane și casetele cu listă. Puteți utiliza mediul integrat de dezvoltare (IDE) <b>Visual C#</b>
+        pentru a naviga prin evenimentele publicate de un control și pentru a le selecta pe cele pe care doriți
+        să le gestionați. IDE-ul oferă o modalitate ușoară de a adăuga automat o metodă vidă de gestionare a evenimentului
+        și codul pentru abonarea la eveniment.
+    </p>
+
+    <br>
+
+    <h2> 10.1 Evenimente - Prezentare generală </h2>
+
+    <h3> Evenimentele au următoarele proprietăți: </h3>
+
+    <p>
+        - Editorul determină când este declanșat un eveniment. Abonații determină ce acțiune este luată ca răspuns la eveniment.
+    </p>
+
+    <p>
+        - Un eveniment poate avea mai mulți abonați. Un abonat poate gestiona mai multe evenimente de la mai mulți editori.
+    </p>
+
+    <p>
+        - Evenimentele care nu au abonați nu sunt niciodată declanșate.
+    </p>
+
+    <p>
+        - Evenimentele sunt utilizate în mod obișnuit pentru a semnala acțiunile utilizatorului, cum ar fi clickurile de buton sau    selecțiile de meniu în interfețele grafice.
+    </p>
+
+    <p>
+        - Atunci când un eveniment are mai mulți abonați, gestionarii evenimentelor sunt invocați sincron când un eveniment este declanșat.
+
+    </p>
+
+    <p>
+        - În biblioteca de clase .NET, evenimentele se bazează pe delegatul <b>EventHandler</b> și clasa de bază <b>EventArgs</b>.
+    </p>
+
+    <br>
+
+
+    <h2> 10.2 Abonarea și dezabonarea de la evenimente </h2>
+
+    <p>
+        Atunci când doriți să scrieți un cod personalizat care este apelat in momentul în care evenimentul este
+        declanșat, vă abonați la un eveniment publicat de o altă clasă. De exemplu, ați putea să vă abonați la evenimentul
+        de click al unui buton pentru a face ca aplicația dvs. să facă ceva util atunci când utilizatorul dă click pe buton.
+
+    </p>
+
+
+    <h3> Abonarea la evenimente folosind IDE-ul Visual Studio </h3>
+
+    <p>
+        1. Dacă nu puteți vedea fereastra <b>Proprietăți</b>, în vizualizarea <b>Design</b>, faceți click dreapta
+        pe formularul sau controlul
+        pentru care doriți să creați un manipulator de evenimente și selectați <b>Proprietăți</b>.
+    </p>
+
+    <p>
+        2. În partea de sus a ferestrei <b>Proprietăți</b>, faceți click pe pictograma <b>Evenimente</b>.
+    </p>
+
+    <p>
+        3. Faceți dublu click pe evenimentul pe care doriți să îl creați, de exemplu evenimentul <b>Load</b>.
+    </p>
+
+    <p>
+        Visual C# creează o metodă manipulator de evenimente vidă și o adaugă în codul dvs.
+        Alternativ, puteți adăuga codul manual în vizualizarea <b>Code</b>. De exemplu,
+        următoarele linii de cod declară o metodă manipulator de evenimente
+        care va fi apelată atunci când clasa <b>Form</b> declansează evenimentul Load.
+    </p>
+
+    <pre>
+    <code>
+    private void Form1_Load(object sender, System.EventArgs e)
+    {
+           // Adăugați codul de gestionare a evenimentului de încărcare a formularului aici.
+    }
+     </code>
+    </pre>
+
+    <p>
+        Linia de cod necesară pentru a vă abona la eveniment este generată automat
+        și înlocuită în metoda <b>InitializeComponent</b> din fișierul <b>Form1.Designer.cs</b> din proiectul dvs. și arată în felul următor:
+    </p>
+
+    <pre>
+
+    <code>
+    this.Load += new System.EventHandler(this.Form1_Load);
+    </code>
+    </pre>
+
+    <h3> Abonarea la evenimente în mod programatic:</h3>
+
+    <p>
+        1. Definiți o metoda de gestionare a evenimentului, ale cărei parametrii și tip de returnare să corespundă
+        semnăturii delegatului pentru eveniment. De exemplu, dacă evenimentul se bazeaza pe tipul de delegat <b>EventHandler</b>,
+        urmatorul cod reprezintă șablonul pentru metoda:
+
+    </p>
+
+    <pre>
+    <code>
+    void HandleCustomEvent(object sender, CustomEventArgs a)
+    }
+            // Cod util.
+    }
+    </code>
+    </pre>
+
+    <p>
+        2. Folosiți operatorul de adăugare în atribuire (+=) pentru a atașa o metodă de gestionare a evenimentului la eveniment.
+        În exemplul următor, se presupune că un obiect numit <b>publisher</b> are un eveniment numit <b>RaiseCustomEvent</b>.
+        Observați că clasa abonată necesită o referință la clasa editoare pentru a se putea abona la evenimentele sale.
+    </p>
+
+    <pre>
+<code>
+    publisher.RaiseCustomEvent += HandleCustomEvent;
+</code>
+    </pre>
+
+    <p>
+        De asemenea, puteți folosi o expresie lambda pentru a specifica o metodă de gestionare a evenimentului:
+
+    </p>
+
+    <pre>
+<code>
+    public Form1() 
+    {  
+    	InitializeComponent();  
+   		this.Click += (s,e) =>
+        {
+            MessageBox.Show(((MouseEventArgs)e).Location.ToString());
+        };
+    }
+</code>
+    </pre>
+
+    <h3>
+        Abonarea la evenimente folosind o funcție anonimă:
+    </h3>
+
+    <p>
+        Dacă nu trebuie să vă dezabonați mai târziu de la un eveniment, puteți folosi operatorul de adăugare în
+        atribuire (+=) pentru a atașa o funcție anonimă ca și metodă de gestionare a evenimentului. În exemplul următor,
+        presupunem că un obiect numit <b>publisher</b> are un eveniment numit <b>RaiseCustomEvent</b> și că o clasă <b>CustomEventArgs</b>
+        a fost definită pentru a purta anumite informații specializate ale evenimentului. Observați că clasa abonată necesită
+        o referință la <b>publisher</b> pentru a se putea abona la evenimentele sale.
+
+    </p>
+
+    <pre>
+
+<code>
+
+    publisher.RaiseCustomEvent += (object o, CustomEventArgs e)
+    {  
+  	 string s = o.ToString() + " " + e.ToString();  
+  	 Console.WriteLine(s);  
+    }
+</code>
+
+    </pre>
+
+
+    <p>
+        Nu vă puteși dezabona ușor de la un eveniment dacă ați folosit o funcție anonimă pentru a vă abona la acesta.
+        Pentru a vă dezabona în această situație, trebuie să vă întoarceți la codul unde v-ați abonat la eveniment,
+        să stocați funcția anonimă într-o variabilă delegată și apoi să adăugați delegatul la eveniment. Vă recomandăm
+        să nu folosiți funcții anonime pentru a vă abona la evenimente dacă trebuie să vă dezabonați de la eveniment într-un
+        moment ulterior în codul dvs. Pentru mai multe informații despre funcțiile anonime, consultați expresii lambda.
+    </p>
+
+    <h3> Dezabonarea </h3>
+
+    <p>
+        Pentru a preveni apelarea metodei dvs. de gestionare a evenimentului atunci când evenimentul este declanșat,
+        vă puteți dezabona de la eveniment. Pentru a preveni scurgerile de resurse, trebuie să vă dezabonați de la evenimente
+        înainte de a distruge un obiect abonat. Până când va dezabonați de la un eveniment, delegatul multicast care stă
+        la baza evenimentului în obiectul editor are o referință la delegatul care încapsulează metoda
+        de gestionare a evenimentului abonatului. Atâta timp cât obiectul editor deține acea referință,
+        colectorul de gunoi nu va șterge obiectul dvs. abonat.
+    </p>
+
+    <h3> Dezabonarea de la un eveniment </h3>
+
+    <p> Folosiți operatorul de scădere în atribuire (-=): </p>
+
+    <pre>
+<code>
+
+    publisher.RaiseCustomEvent -= HandleCustomEvent;
+</code>
+    </pre>
+
+    <p>
+        Când toți abonații s-au dezabonat de la un eveniment, instanța evenimentului din clasa <b>publisher</b>
+        este setată la null.
+
+    </p>
+
+    <br>
+
+    <h2>  10.3 Publicarea evenimentelor care respectă Ghidul .NET </h2>
+
+    <p>
+        Procedura următoare demonstrează cum să adăugați evenimente care urmează tiparul standard .NET în clasele și structurile
+        dvs. Toate evenimentele din biblioteca de clase .NET se bazează pe delegatul <b> EventHandler </b>, care este definit astfel:
+
+    </p>
+
+<pre>
+
+<code>
+    public delegate void EventHandler(object sender, EventArgs e);
+</code>
+
+</pre>
+
+    <h2> Atenție! </h2>
+
+    <p>
+        <b>
+            .NET Framework 2.0 introduce o versiune generică a acestui delegat, EventHandler< TEventArgs >.
+            Următoarele exemple arată cum să utilizați ambele versiuni.
+        </b>
+    </p>
+
+    <p>
+        Deși evenimentele din clasele pe care le definiți pot fi bazate pe orice tip de delegat valid,
+        chiar și pe delegați care returnează o valoare, se recomandă în general să vă bazați evenimentele pe tiparul .NET
+        utilizând <b>EventHandler</b>, așa cum este prezentat în următorul exemplu.
+
+    </p>
+
+    <p>
+        Numele <b>EventHandler</b> poate duce la o oarecare confuzie, deoarece de fapt nu gestionează evenimentul.
+        <b>EventHandler</b> și <b>EventHandler< TEventArgs > </b> sunt tipuri de delegați. O metodă sau o expresie lambda a
+        cărei semnătură se potrivește cu definiția delegatului este manipulatorul evenimentului și va fi invocat atunci când
+        evenimentul este declanșat.
+    </p>
+
+    <h3> Publicarea evenimentelor bazate pe tiparul EventHandler</h3>
+
+    <p>
+        1. (Treceți peste acest pas și mergeți la pasul 3a dacă nu trebuie să trimiteți date personalizate cu evenimentul.)
+        Declarați clasa pentru datele personalizate la o scară care este vizibilă atât pentru editor cât și pentru clasele
+        abonate. Apoi, adăugați membrii necesari pentru a păstra datele evenimentului personalizat. În acest exemplu,
+        se returnează un șir simplu.
+    </p>
+
+<pre>
+<code>
+    public class CustomEventArgs : EventArgs
+    {
+        public CustomEventArgs(string message)
+    	{
+       		   Message = message;
+    	}
+
+    	public string Message { get; set; }
+    }  
+</code>
+</pre>
+
+    <p>
+        2. (Dacă utilizați versiunea generică a <b>EventHandler< TEventArgs ></b>, omiteți acest pas.) Declarați un delegat
+        în clasa dvs. de publicare. Dati-i un nume care se termină cu <b>EventHandler</b>. Al doilea parametru specifică tipul dvs.
+        personalizat de <b>EventArgs</b>.
+
+    </p>
+
+<pre>
+
+    <code>
+     public delegate void CustomEventHandler(object sender, CustomEventArgs args);
+
+    </code>
+</pre>
+
+    <p>
+        3. Declarați evenimentul în clasa dvs. de publicare utilizând unul dintre următorii pași.
+    </p>
+
+    <p>
+        a. Dacă nu aveți o clasă customizată <b>EventArgs</b>, tipul dvs. de eveniment va fi delegatul non-generic <b>EventHandler</b>.
+        Nu trebuie să declarați delegatul deoarece este deja declarat în spațiul <b>System</b>, care este inclus când creați proiectul
+        dvs. C#. Adăugați următorul cod în clasa dvs. de publicare.
+
+    </p>
+
+<pre>
+
+    <code>
+
+     public event EventHandler RaiseCustomEvent;
+    </code>
+</pre>
+
+    <p>
+
+        b. Dacă utilizați versiunea non-generică a <b>EventHandler</b> și aveți o clasă personalizată derivată din <b>EventArgs</b>,
+        declarați evenimentul în interiorul clasei dvs. de publicare și utilizați delegatul din pasul 2 ca tip.
+    </p>
+
+<pre>
+
+    <code>
+     public event CustomEventHandler RaiseCustomEvent;
+
+    </code>
+</pre>
+
+    <p>
+        c. Dacă utilizați versiunea generică, nu aveți nevoie de un delegat personalizat. În schimb, în clasa dvs. de publicare,
+        specificați tipul dvs. de eveniment ca <b>EventHandler< CustomEventArgs ></b>, înlocuind numele propriei dvs. clase
+        între paranteze unghiulare.
+    </p>
+
+<pre>
+
+    <code>
+     public event EventHandler< CustomEventArgs > RaiseCustomEvent;
+
+    </code>
+</pre>
+
+
+
+    <h3> Exemplu:</h3>
+
+    <p>
+        Următorul exemplu demonstrează pașii anteriori prin utilizarea unei clase customizate
+        <b>EventArgs</b> și <b>EventHandler< TEventArgs ></b> ca tip de eveniment.
+
+    </p>
+
+<pre>
+
+    <code>
+     using System;
+
+     namespace DotNetEvents
+     {
+        // Declararea unei clase pentru a stoca informații personalizate despre eveniment.
+
+        public class CustomEventArgs : EventArgs
+        {
+            public CustomEventArgs(string message)
+        {
+            Message = message;
+        }
+
+        public string Message { get; set; }
+     }
+
+     // Clasa care publică un eveniment
+
+     class Publisher
+     {
+        // Declararea evenimentului folosind EventHandler< T >
+
+        public event EventHandler< CustomEventArgs >
+        RaiseCustomEvent;
+
+        public void DoSomething()
+        {
+            // Scrieți aici un cod care face ceva util
+            // apoi declanșați evenimentul. De asemenea, puteți declanșa un eveniment
+            // înainte de a executa un bloc de cod.
+
+            OnRaiseCustomEvent(new CustomEventArgs("Event triggered"));
+        }
+
+        // Încapsulați invocările de evenimente într-o metodă virtuală protejată
+        // pentru a permite claselor derivate să suprascrie comportamentul de invocare al evenimentului
+
+        protected virtual void OnRaiseCustomEvent(CustomEventArgs e)
+        {
+            // Creați o copie temporară a evenimentului pentru a evita posibilitatea
+            // unei condiții de cursă dacă ultimul abonat dezabonează
+            // imediat după verificarea valorii nule și înainte ca evenimentul să fie declanșat.
+
+            EventHandler< CustomEventArgs >
+            raiseEvent = RaiseCustomEvent;
+
+            // Evenimentul va fi nul dacă nu există abonați.
+
+            if (raiseEvent != null)
+            {
+                // Formatați șirul de caractere de trimis în interiorul parametrului CustomEventArgs.
+                e.Message += $" at {DateTime.Now}";
+
+                // Apel pentru declanșarea evenimentului.
+                raiseEvent(this, e);
+             }
+        }
+     }
+
+     // Clasă care se abonează la un eveniment
+
+     class Subscriber
+     {
+        private readonly string _id;
+
+        public Subscriber(string id, Publisher pub)
+        {
+            _id = id;
+
+            // Abonare la eveniment
+            pub.RaiseCustomEvent += HandleCustomEvent;
+        }
+
+        // Definiți ce acțiuni să se întreprindă atunci când evenimentul este declanșat.
+
+        void HandleCustomEvent(object sender, CustomEventArgs e)
+        {
+            Console.WriteLine($"{_id} received this message: {e.Message}");
+        }
+     }
+
+     class Program
+     {
+        static void Main()
+        {
+            var pub = new Publisher();
+            var sub1 = new Subscriber("sub1", pub);
+            var sub2 = new Subscriber("sub2", pub);
+
+            // Apelarea metodei care declanșează evenimentul
+            pub.DoSomething();
+
+            // Păstrarea deschisă a ferestrei consolei
+            Console.WriteLine("Press any key to continue...");
+            Console.ReadLine();
+        }
+     }
+                    
+
+    </code>
+
+</pre>
+
+    <br>
+
+    <h2>10.4 Declanșarea evenimentelor de clasă de bază în clasele derivate </h2>
+
+    <p>
+        Exemplul simplu de mai jos arată modul standard de declarare a evenimentelor într-o clasă de bază astfel încât acestea
+        să poată fi declanșate și din clasele derivate. Această abordare este folosită extensiv în clasele Windows Forms
+        din bibliotecile de clase .NET.
+    </p>
+
+    <p>
+        Atunci când creați o clasă care poate fi utilizată ca clasă de bază pentru alte clase, ar trebui să aveți în vedere
+        faptul că evenimentele sunt un tip special de delegat care poate fi invocat doar din interiorul clasei care le-a
+        declarat. Clasele derivate nu pot invoca direct evenimentele declarate în clasa de bază. Deși uneori poate fi necesar
+        un eveniment care poate fi declanșat doar de clasa de bază, de cele mai multe ori ar trebui să permiteți clasei
+        derivate să invoce evenimentele clasei de bază. Pentru a face acest lucru, puteți crea o metodă protejată de invocare
+        în clasa de bază care încapsulează evenimentul. Prin apelarea sau suprascrierea acestei metode de invocare,
+        clasele derivate pot invoca evenimentul indirect.
+    </p>
+
+    <h2>Atenție!</h2>
+
+    <p>
+        Nu declarați evenimente virtuale într-o clasă de bază și nu le suprascrieți într-o clasă derivată. Compilatorul C#
+        nu le gestionează corect și este imprevizibil dacă un abonat la evenimentul derivat se va abona de fapt la evenimentul
+        clasei de bază.
+    </p>
+
+    <h3> Exemplu </h3>
+
+    <pre>
+    <code>
+         namespace BaseClassEvents
+         {
+            // Clasa Specială EventArgs pentru a stoca informații despre Forme.
+            public class ShapeEventArgs : EventArgs
+            {
+                public ShapeEventArgs(double area)
+                {
+                    NewArea = area;
+                }
+
+            public double NewArea { get; }
+         }
+
+         // Editorul de evenimente - clasa de bază.
+
+         public abstract class Shape
+         {
+            protected double _area;
+
+            public double Area
+            {
+            get => _area;
+            set => _area = value;
+            }
+
+            // Evenimentul. Observați că prin utilizarea tipului de eveniment generic EventHandler< T >, nu trebuie să declarăm un tip de 	  
+            //delegat separat.
+
+            public event EventHandler< ShapeEventArgs > ShapeChanged;
+
+            public abstract void Draw();
+
+            // Metoda de invocare a evenimentului pe care clasele derivate o pot suprascrie.
+
+            protected virtual void OnShapeChanged(ShapeEventArgs e)
+            {
+                // Declanșarea în siguranță a evenimentului pentru toți abonații.
+                ShapeChanged?.Invoke(this, e);
+            }
+         }
+
+         public class Circle : Shape
+         {
+            private double _radius;
+
+            public Circle(double radius)
+            {
+                _radius = radius;
+                _area = 3.14 * _radius * _radius;
+            }
+
+            public void Update(double d)
+            {
+                _radius = d;
+                _area = 3.14 * _radius * _radius;
+                OnShapeChanged(new ShapeEventArgs(_area));
+            }
+
+            protected override void OnShapeChanged(ShapeEventArgs e)
+            {
+                // Realizați aici orice prelucrare specifică cercului.
+
+                // Apelați metoda de invocare a evenimentului din clasa de bază.
+                base.OnShapeChanged(e);
+            }
+
+            public override void Draw()
+            {
+                Console.WriteLine("Drawing a circle");
+            }
+         }
+
+         public class Rectangle : Shape
+         {
+            private double _length;
+            private double _width;
+
+            public Rectangle(double length, double width)
+            {
+                _length = length;
+                _width = width;
+                _area = _length * _width;
+            }
+
+            public void Update(double length, double width)
+            {
+                _length = length;
+                _width = width;
+                _area = _length * _width;
+                OnShapeChanged(new ShapeEventArgs(_area));
+            }
+
+            protected override void OnShapeChanged(ShapeEventArgs e)
+            {
+                // Realizați aici orice prelucrare specifică dreptunghiului.
+
+                // Apelați metoda de invocare a evenimentului din clasa de bază.
+                base.OnShapeChanged(e);
+            }
+
+            public override void Draw()
+            {
+                Console.WriteLine("Drawing a rectangle");
+            }
+         }
+
+         // Reprezentați suprafața pe care sunt desenate formele
+         // Abonați-vă la evenimentele formei astfel încât să știți
+         // când să redesenați o formă.
+
+         public class ShapeContainer
+         {
+            private readonly List< Shape > _list;
+
+            public ShapeContainer()
+            {
+                _list = new List< Shape >();
+            }
+
+            public void AddShape(Shape shape)
+            {
+                _list.Add(shape);
+
+                // Abonare la evenimentul clasei de bază.
+
+                shape.ShapeChanged += HandleShapeChanged;
+            }
+
+            // ...Alte metode pentru a desena, redimensiona, etc.
+
+            private void HandleShapeChanged(object sender, ShapeEventArgs e)
+            {
+                if (sender is Shape shape)
+                {
+                    // Mesaj de diagnosticare în scop demonstrativ.
+                    Console.WriteLine($"Received event. Shape area is now {e.NewArea}");
+
+                    // Desenare formă (din nou).
+                    shape.Draw();
+                }
+            }
+         }
+
+         class Test
+         {
+            static void Main()
+            {
+                //Creearea editorilor și abonaților la evenimente.
+                var circle = new Circle(54);
+                var rectangle = new Rectangle(12, 9);
+                var container = new ShapeContainer();
+
+                // Adăugarea formelor în container.
+                container.AddShape(circle);
+                container.AddShape(rectangle);
+
+                // Determinarea ridicarii unor evenimente.
+                circle.Update(57);
+                rectangle.Update(7, 7);
+
+                // Menținerea ferestrei consolei deschisă în modul de depanare.
+                Console.WriteLine("Press any key to continue...");
+                Console.ReadKey();
+            }
+         }
+                            
+         /* Ieșire:
+               Received event. Shape area is now 10201.86
+               Drawing a circle
+               Received event. Shape area is now 49
+               Drawing a rectangle
+         */
+
+        </code>
+</pre>
+
+
+
+</body>
+</html>
