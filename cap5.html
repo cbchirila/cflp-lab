@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="ro">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<body>
+    <h1>5. Arrays(Vectori)</h1>
+    <p>5.1 Array-uri prezentare generala</p>
+    <p>5.2 Array-uri unidimensionale</p>
+    <p>5.3 Array-uri multidimensionale</p>
+    <p>5.4 Array-uri fragmentate</p>
+    <p>5.5 Folosirea instructiunii foreach in array-uri</p>
+    <p>5.6 Transmiterea array-urilor ca parametri</p>
+    <p>5.7 Array-uri tipizate implicit</p>
+    <p>5.8 Colectii</p>
+    <p>5.9 Iteratori</p>
+
+    <h1>5.1 Array-uri prezentare generala</h1>
+    <p>Poți stoca mai multe variabile de același tip într-o structură de date de tip tablou. Declari un tablou prin
+    specificarea tipului elementelor sale. Dacă dorești ca tabloul să stocheze elemente de orice tip, poți specifica
+    'object' ca tip al său. În sistemul unificat de tipuri din C#, toate tipurile, atât cele predefinite cât și cele
+    definite de utilizator, tipurile de referință și cele de valoare, moștenesc direct sau indirect din 'Object'.</p>
+    <p>Declararea unui tablou in C#:</p>
+    <pre>
+        <code>
+            type[] arrayName;
+        </code>
+    </pre>
+
+    <h2>Exemplu:</h2>
+    <p>Urmatorul exemplu creaza un tablou unidimensional,multidimensional si fragmentat:</p>
+    <pre>
+        <code>
+            class TestArraysClass
+            {
+            static void Main()
+            {
+            // Declare a single-dimensional array of 5 integers.
+            int[] array1 = new int[5];
+            
+            // Declare and set array element values.
+            int[] array2 = new int[] { 1, 3, 5, 7, 9 };
+            
+            // Alternative syntax.
+            int[] array3 = { 1, 2, 3, 4, 5, 6 };
+            
+            // Declare a two dimensional array.
+            int[,] multiDimensionalArray1 = new int[2, 3];
+            
+            // Declare and set array element values.
+            int[,] multiDimensionalArray2 = { { 1, 2, 3 }, { 4, 5, 6 } };
+            
+            // Declare a jagged array.
+            int[][] jaggedArray = new int[6][];
+            
+            // Set the values of the first array in the jagged array structure.
+            jaggedArray[0] = new int[4] { 1, 2, 3, 4 };
+            }
+            }
+        </code>
+    </pre>
+    <p>Un array are urmatoarele proprietati:</p>
+    <ul>
+        <li>Un tablou poate fi unidimensional, multidimensional sau fragmentat.</li>
+        <li>Numărul de dimensiuni și lungimea fiecărei dimensiuni sunt stabilite atunci când instanța tabloului este creată. Aceste
+        valori nu pot fi schimbate pe parcursul duratei de viață a instanței.</li>
+        <li>Valorile implicite ale elementelor unui tablou numeric sunt setate la zero, iar elementele de referință sunt setate la
+        valoarea null.</li>
+        <li>Un tablou fragmentat este un tablou de tablouri, prin urmare, elementele sale sunt de tip referință și sunt inițializate
+        la valoarea null.</li>
+        <li>Tablourile sunt indexate de la zero: un tablou cu n elemente este indexat de la 0 la n-1.</li>
+        <li>Elementele tabloului pot fi de orice tip, inclusiv de tip tablou.</li>
+        <li>Tipurile de tablouri sunt tipuri de referință derivate din tipul de bază abstract Array. Toate tablourile implementează
+        IList și IEnumerable. Puteți utiliza instrucțiunea foreach pentru a itera prin intermediul unui tablou. Tablourile
+        unidimensionale implementează, de asemenea, IList<T> și IEnumerable<T>.</li>
+    </ul>
+    <h2>Comportamentul valorii implicite:</h2>
+    <ul>
+        <li>Pentru tipurile de valoare, elementele tabloului sunt inițializate cu valoarea implicită, care este un model de biți
+        format din 0-uri; astfel, elementele vor avea valoarea 0.</li>
+        <li>Toate tipurile de referință (inclusiv cele care nu pot fi nule), au valoarea null.</li>
+        <li>Pentru tipurile de valoare care pot fi nule, proprietatea HasValue este setată la false și elementele sunt setate la
+        valoarea null.</li>
+    </ul>
+    <h2>Tablouri ca obiecte</h2>
+    <p>În C#, tablourile sunt, de fapt, obiecte și nu doar regiuni de memorie adiacente adresabile, așa cum este cazul în C și
+    C++. Array este tipul de bază abstract al tuturor tipurilor de tablouri. Puteți utiliza proprietățile și alte elemente
+    de clasă pe care le are Array. Un exemplu în acest sens este utilizarea proprietății Length pentru a obține lungimea
+    unui tablou. Următorul cod atribuie lungimea tabloului "numbers", care este 5, unei variabile numite "lengthOfNumbers":</p>
+    <pre>
+        <code>
+            int[] numbers = { 1, 2, 3, 4, 5 };
+            int lengthOfNumbers = numbers.Length;
+        </code>
+    </pre>
+    <p>Clasa Array oferă multe alte metode și proprietăți utile pentru sortarea, căutarea și copierea tablourilor. Următorul
+    exemplu utilizează proprietatea Rank pentru a afișa numărul de dimensiuni ale unui tablou.</p>
+    <pre>
+        <code>
+            class TestArraysClass
+            {
+            static void Main()
+            {
+            // Declare and initialize an array.
+            int[,] theArray = new int[5, 10];
+            System.Console.WriteLine("The array has {0} dimensions.", theArray.Rank);
+            }
+            }
+            // Output: The array has 2 dimensions.
+        </code>
+    </pre>
+
+
+    <h1>5.2 Tablouri unidimensionale</h1>
+    <p>Pentru a crea un tablou unidimensional, utilizați operatorul new specificând tipul elementului tabloului și numărul de
+    elemente. Următorul exemplu declară un tablou de cinci numere întregi:</p>
+    <pre>
+        <code>
+            int[] array = new int[5];
+        </code>
+    </pre>
+    <p>Acest tablou conține elementele de la array[0] la array[4]. Elementele tabloului sunt inițializate cu valoarea implicită
+    a tipului elementului, adică 0 pentru numere întregi.
+    
+    Tablourile pot stoca orice tip de element specificat, așa cum se arată în exemplul următor, care declară un tablou de
+    șiruri de caractere:</p>
+    <pre>
+        <code>
+            string[] stringArray = new string[6];
+        </code>
+    </pre>
+    <h2>Inițializarea unui tablou</h2>
+    <p>Puteți inițializa elementele unui tablou atunci când îl declarați. Specificatorul de lungime nu este necesar deoarece
+    acesta este dedus din numărul de elemente din lista de inițializare. De exemplu:</p>
+    <pre>
+        <code>
+            int[] array1 = new int[] { 1, 3, 5, 7, 9 };
+        </code>
+    </pre>
+    <p>Codul următor arată declarația unui tablou de șiruri de caractere în care fiecare element al tabloului este inițializat
+    cu numele unei zile:</p>
+    <pre>
+        <code>
+            string[] weekDays = new string[] { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+        </code>
+    </pre>
+    <p>Puteți evita expresia new și tipul de tablou atunci când inițializați un tablou la declarare, cum se arată în codul
+    următor. Acest lucru se numește tablou cu tip implicit:</p>
+    <pre>
+        <code>
+            int[] array2 = { 1, 3, 5, 7, 9 };
+            string[] weekDays2 = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+        </code>
+    </pre>
+    <p>Puteți declara o variabilă de tip tablou fără a o crea, dar trebuie să folosiți operatorul new atunci când atribuiți un
+    nou tablou acestei variabile. De exemplu:</p>
+    <pre>
+        <code>
+            int[] array3;
+            array3 = new int[] { 1, 3, 5, 7, 9 }; // OK
+            //array3 = {1, 3, 5, 7, 9}; // Error
+        </code>
+    </pre>
+    <h2>Tablourile de tip valoare și de tip referință</h2>
+    <p>Luați în considerare următoarea declarație de tablou:</p>
+    <pre>
+        <code>
+            SomeType[] array4 = new SomeType[10];
+        </code>
+    </pre>
+    <p>Rezultatul acestei declarații depinde de faptul dacă SomeType este un tip de valoare sau un tip de referință. Dacă este
+    un tip de valoare, declarația creează un tablou de 10 elemente, fiecare cu tipul SomeType. Dacă SomeType este un tip de
+    referință, declarația creează un tablou de 10 elemente, fiecare inițializat la o referință nulă. În ambele cazuri,
+    elementele sunt inițializate cu valoarea implicită pentru tipul elementului. Pentru mai multe informații despre tipurile
+    de valoare și tipurile de referință, consultați Tipurile de valoare și Tipurile de referință.</p>
+    <h2>Obținerea datelor dintr-un array</h2>
+    <p>Puteți recupera datele unui tablou folosind un index. De exemplu:</p>
+    <pre>
+        <code>
+            string[] weekDays2 = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+            
+            Console.WriteLine(weekDays2[0]);
+            Console.WriteLine(weekDays2[1]);
+            Console.WriteLine(weekDays2[2]);
+            Console.WriteLine(weekDays2[3]);
+            Console.WriteLine(weekDays2[4]);
+            Console.WriteLine(weekDays2[5]);
+            Console.WriteLine(weekDays2[6]);
+            
+            /*Output:
+            Sun
+            Mon
+            Tue
+            Wed
+            Thu
+            Fri
+            Sat
+            */
+        </code>
+    </pre>
+    
+    
+    
+    <h1>5.3 Tablouri multidimensionale</h1>
+    <p>Array-urile pot avea mai mult de o dimensiune. De exemplu, următoarea declarație creează un array bidimensional cu patru
+    rânduri și două coloane.</p>
+    <pre>
+        <code>
+            int[,] array = new int[4, 2];
+        </code>
+    </pre>
+    <p>Următoarea declarație creează un array de trei dimensiuni, 4, 2 și 3.</p>
+    <pre>
+        <code>
+            int[,,] array1 = new int[4, 2, 3];
+        </code>
+    </pre>
+    <h2>Inițializarea unui tablou</h2>
+    <p>Puteți inițializa matricea la declarare, așa cum este arătat în următorul exemplu.</p>
+    <pre>
+        <code>
+            // Two-dimensional array.
+            int[,] array2D = new int[,] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
+            // The same array with dimensions specified.
+            int[,] array2Da = new int[4, 2] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
+            // A similar array with string elements.
+            string[,] array2Db = new string[3, 2] { { "one", "two" }, { "three", "four" },
+            { "five", "six" } };
+            
+            // Three-dimensional array.
+            int[,,] array3D = new int[,,] { { { 1, 2, 3 }, { 4, 5, 6 } },
+            { { 7, 8, 9 }, { 10, 11, 12 } } };
+            // The same array with dimensions specified.
+            int[,,] array3Da = new int[2, 2, 3] { { { 1, 2, 3 }, { 4, 5, 6 } },
+            { { 7, 8, 9 }, { 10, 11, 12 } } };
+            
+            // Accessing array elements.
+            System.Console.WriteLine(array2D[0, 0]);
+            System.Console.WriteLine(array2D[0, 1]);
+            System.Console.WriteLine(array2D[1, 0]);
+            System.Console.WriteLine(array2D[1, 1]);
+            System.Console.WriteLine(array2D[3, 0]);
+            System.Console.WriteLine(array2Db[1, 0]);
+            System.Console.WriteLine(array3Da[1, 0, 1]);
+            System.Console.WriteLine(array3D[1, 1, 2]);
+            
+            // Getting the total count of elements or the length of a given dimension.
+            var allLength = array3D.Length;
+            var total = 1;
+            for (int i = 0; i < array3D.Rank; i++) { total *=array3D.GetLength(i); } System.Console.WriteLine("{0} equals {1}",
+                allLength, total); // Output: // 1 // 2 // 3 // 4 // 7 // three // 8 // 12 // 12 equals 12
+        </code>
+    </pre>
+    <p>Puteți, de asemenea, să inițializați array-ul fără a specifica dimensiunea.</p>
+    <pre>
+        <code>
+            int[,] array4 = { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } };
+        </code>
+    </pre>
+    <p>Dacă alegeți să declarați o variabilă array fără a o inițializa, trebuie să utilizați operatorul new pentru a atribui un
+    array variabilei. Utilizarea operatorului new este prezentată în exemplul următor.</p>
+    <pre>
+        <code>
+            int[,] array5;
+            array5 = new int[,] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } }; // OK
+            //array5 = {{1,2}, {3,4}, {5,6}, {7,8}}; // Error
+        </code>
+    </pre>
+    <p>Exemplul următor atribuie o valoare unui anumit element dintr-un tablou.</p>
+    <pre>
+        <code>
+            array5[2, 1] = 25;
+        </code>
+    </pre>
+    <p>În mod similar, următorul exemplu obține valoarea unui element de tip array și o atribuie variabilei elementValue.</p>
+    <pre>
+        <code>
+            int elementValue = array5[2, 1];
+        </code>
+    </pre>
+    <p>Exemplul de cod următor inițializează elementele matricei la valorile implicite (cu excepția matricelor fragmentate).</p>
+    <pre>
+        <code>
+            int[,] array6 = new int[10, 10];
+        </code>
+    </pre>
+
+
+
+    <h1>5.4 Tablouri(Matrice) fragmentate</h1>
+    <p>Un array fragmentat este un array al carui elemente sunt alte array-uri, cu posibile dimensiuni diferite. Un astfel de
+    array este numit uneori "array de array-uri". Următoarele exemple arată cum se poate declara, inițializa și accesa
+    astfel de array-uri.
+    
+    Mai jos avem o declarație a unui array uni-dimensional care are trei elemente, fiecare dintre ele fiind un array
+    uni-dimensional de numere întregi:</p>
+    <pre>
+        <code>
+            int[][] jaggedArray = new int[3][];
+        </code>
+    </pre>
+    <p>Înainte de a putea utiliza jaggedArray, elementele sale trebuie să fie inițializate. Puteți inițializa elementele
+    astfel:</p>
+    <pre>
+        <code>
+            jaggedArray[0] = new int[5];
+            jaggedArray[1] = new int[4];
+            jaggedArray[2] = new int[2];
+        </code>
+    </pre>
+    <p>Fiecare dintre elemente este un array unidimensional de întregi. Primul element este un array de 5 întregi, al doilea
+    este un array de 4 întregi, iar al treilea este un array de 2 întregi.</p>
+    
+    <p>Este de asemenea posibil să utilizați inițializatoare pentru a umple elementele array-ului cu valori, caz în care nu
+    aveți nevoie de dimensiunea array-ului. De exemplu:</p>
+    <pre>
+        <code>
+            jaggedArray[0] = new int[] { 1, 3, 5, 7, 9 };
+            jaggedArray[1] = new int[] { 0, 2, 4, 6 };
+            jaggedArray[2] = new int[] { 11, 22 };
+        </code>
+    </pre>
+    <p>Puteți, de asemenea, să inițializați matricea la declarare astfel:</p>
+    <pre>
+        <code>
+            int[][] jaggedArray2 = new int[][]
+            {
+            new int[] { 1, 3, 5, 7, 9 },
+            new int[] { 0, 2, 4, 6 },
+            new int[] { 11, 22 }
+            };
+        </code>
+    </pre>
+    <p>Puteți folosi următoarea formă prescurtată. Observați că nu puteți omite operatorul new din inițializarea elementelor,
+    deoarece nu există inițializare implicită pentru elemente:</p>
+    <pre>
+        <code>
+            int[][] jaggedArray3 =
+            {
+            new int[] { 1, 3, 5, 7, 9 },
+            new int[] { 0, 2, 4, 6 },
+            new int[] { 11, 22 }
+            };
+        </code>
+    </pre>
+    <p>Un jagged array este un array de array-uri, prin urmare elementele sale sunt tipuri de referință și sunt inițializate la
+    null.</p>
+    <p>Puteți accesa elementele individuale ale array-ului folosind exemplele de mai jos:</p>
+    <pre>
+        <code>
+            // Assign 77 to the second element ([1]) of the first array ([0]):
+            jaggedArray3[0][1] = 77;
+            
+            // Assign 88 to the second element ([1]) of the third array ([2]):
+            jaggedArray3[2][1] = 88;
+        </code>
+    </pre>
+    <p>Este posibil să se amestece tablouri fragmentate și multidimensionale. Următorul exemplu arată o declarație și inițializare
+    a unui tablou zimțat unidimensional care conține trei elemente de tablou bidimensionale cu dimensiuni diferite. Pentru
+    mai multe informații, consultați Tablouri Multidimensionale.</p>
+    <pre>
+        <code>
+            int[][,] jaggedArray4 = new int[3][,]
+            {
+            new int[,] { {1,3}, {5,7} },
+            new int[,] { {0,2}, {4,6}, {8,10} },
+            new int[,] { {11,22}, {99,88}, {0,9} }
+            };
+        </code>
+    </pre>
+    <p>Puteți accesa elementele individuale așa cum este arătat în acest exemplu, care afișează valoarea elementului [1,0] din
+    primul array (valoarea 5):</p>
+    <pre>
+        <code>
+            System.Console.Write("{0}", jaggedArray4[0][1, 0]);
+        </code>
+    </pre>
+    <p>Metoda Length returnează numărul de vectori conținuți într-un jagged array. De exemplu, presupunând că ați declarat
+    array-ul anterior, această linie:</p>
+    <pre>
+        <code>
+            System.Console.WriteLine(jaggedArray4.Length);
+        </code>
+    </pre>
+
+
+    <h1>5.5 Utilizarea instrucțiunii foreach cu array-uri</h1>
+    <p>Instrucțiunea foreach oferă o modalitate simplă și curată de a itera prin elementele unui tablou.
+    </p>
+    <p>Pentru tablouri unidimensionale, instrucțiunea foreach procesează elementele în ordine crescătoare a indexului, începând
+    cu indexul 0 și terminând cu indexul Length - 1:</p>
+    <pre>
+        <code>
+            int[] numbers = { 4, 5, 6, 1, 2, 3, -2, -1, 0 };
+            foreach (int i in numbers)
+            {
+            System.Console.Write("{0} ", i);
+            }
+            // Output: 4 5 6 1 2 3 -2 -1 0
+        </code>
+    </pre>
+    <p>Pentru matricile multidimensionale, elementele sunt parcurse astfel încât indicii celei mai din dreapta dimensiuni sunt
+    crescuți mai întâi, apoi următoarea dimensiune din stânga și tot așa până la stânga.</p>
+    <pre>
+        <code>
+            int[,] numbers2D = new int[3, 2] { { 9, 99 }, { 3, 33 }, { 5, 55 } };
+            // Or use the short form:
+            // int[,] numbers2D = { { 9, 99 }, { 3, 33 }, { 5, 55 } };
+            
+            foreach (int i in numbers2D)
+            {
+            System.Console.Write("{0} ", i);
+            }
+            // Output: 9 99 3 33 5 55
+        </code>
+    </pre>
+    <p>Cu toate acestea, în cazul matricelor multidimensionale, utilizarea unui for loop încorporat oferă mai mult control
+    asupra ordinei în care să se proceseze elementele matricei.</p>
+</body>
+</html>
