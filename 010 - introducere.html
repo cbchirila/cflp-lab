@@ -1,6 +1,1917 @@
+<!DOCTYPE html>
+    <body>
+        <h1>Introducere în limbajul C#</h1>
+        <p>
+            C# (pronunțat "See Sharp") este un limbaj de programare modern, orientat pe obiecte și type-safe (te atenționează atunci când greșești și erorile sunt foarte sugestive). 
+            C# permite dezvoltatorilor să construiască o gamă largă de aplicații securizate și robuste care rulează în .NET. 
+            C# își are rădăcinile în familia de limbaje C și va fi imediat familiar pentru programatorii de C, C++, Java și JavaScript. 
+            Această introducere oferă o prezentare generală a principalelor componente ale limbajului în C#.
+        </p>
 
-<h1>Introducere</h1>
+        <p>
+            C# este un limbaj de programare <em><strong>orientat pe obiecte și pe componente</strong></em>. 
+            C# oferă construcții de limbaj pentru a sprijini direct aceste concepte, făcând din C# un limbaj natural pentru crearea și utilizarea componentelor software.
+            De la originea sa, C# a adăugat funcționalități pentru a sprijini noi încărcări de lucru și practici emergente de proiectare a software-ului.
+            În centrul său, C# este un limbaj <em><strong>orientat pe obiecte</strong></em>. Programatorul definește tipuri și comportamentul acestora.
+        </p>
 
-<p>
-</p>
+        <p>
+            Mai multe caracteristici ale C# ajută la crearea de aplicații robuste și durabile.
+            <em><strong>Colectarea gunoiului</strong></em> recuperează automat memoria ocupată de obiectele neutilizate.
+            <em><strong>Tipurile opționale</strong></em> protejează împotriva variabilelor care nu se referă la obiecte alocate. 
+            <em><strong>Tratarea excepțiilor</strong></em> oferă o abordare structurată și extensibilă pentru detectarea erorilor. 
+            <em><strong>Expresiile lambda</strong></em> oferă tehnici de programare funcțională.
+            <em><strong>Sintaxa interogărilor integrate în limbaj (Language Integrated Query - LINQ)</strong></em> creează un model comun pentru lucrul cu date din orice sursă.
+            Suportul pentru <em><strong>operații asincrone</strong></em>  în limbaj oferă sintaxă pentru construirea sistemelor distribuite.
+            C# are un <em><strong>sistem de tipuri unificat</strong></em>. 
+            Toate tipurile C#, inclusiv tipurile primitive precum <code>int</code> și <code>double</code>, moștenesc de la un singur tip de <code>obiect</code> rădăcină.  
+            Toate tipurile împărtășesc un set de operații comune. Valorile oricărui tip pot fi stocate, transportate și operate într-un mod consecvent.
+            În plus, C# suportă atât tipuri de referință definite de utilizator, cât și tipuri de valori. 
+            C# permite alocarea dinamică a obiectelor și stocarea în linie a structurilor ușoare. C# suportă metode și tipuri generice, care oferă o creștere a siguranței și performanței de tip. 
+            C# oferă iteratori, care permit implementatorilor colecțiilor de clase să definească comportamente personalizate pentru codul client.
+        </p>
 
+        <p>
+            C# pune accent pe <em><strong>versiuni</strong></em> pentru a asigura evoluția programelor și bibliotecilor într-un mod compatibil în timp. 
+            Aspecte ale design-ului C# care au fost direct influențate de considerațiile de versiune includ modificatorii separați<code>virtual</code> și <code>suprascriere(override)</code>, 
+            regulile pentru rezolvarea supraîncărcării(overload) metodelor și suportul pentru declarațiile explicite ale membrilor interfeței.
+        </p>
+
+        <h2>Arhitectura .NET</h2>
+
+        <p>
+            Programele C# rulează pe .NET, un sistem de executare virtual numit <em><strong>runtime-ul limbajului comun (common language runtime - CLR)</strong></em> și un set de biblioteci de clase.
+             CLR este implementarea Microsoft a <em><strong>infrastructurii limbajului comun (common language infrastructure - CLI)</strong></em>, un standard internațional.
+             CLI este baza pentru crearea de medii de dezvoltare și de executare în care limbajele și bibliotecile lucrează împreună fără probleme.
+        </p>
+
+        <p>
+            Codul sursă scris în C# este compilat într-un limbaj intermediar (IL) care se conformează specificației CLI. 
+            Codul IL și resursele, cum ar fi bitmap-urile și șirurile, sunt stocate într-o asamblare, de obicei cu o extensie .dll. <em>.dll</em>. 
+            O asamblare conține un manifest care furnizează informații despre tipurile, versiunea și cultura asamblării.
+        </p>
+
+        <p>
+            Când programul C# este executat, asamblarea este încărcată în CLR. CLR efectuează compilarea Just-In-Time (JIT) pentru a converti codul IL în instrucțiuni cod mașină.
+            CLR oferă alte servicii legate de colectarea automată a gunoiului, gestionarea excepțiilor și a resurselor. Codul executat de CLR este uneori numit "cod gestionat".
+            "Codul neadministrat" este compilat în limbaj cod mașină care vizează o platformă specifică.
+        </p>
+
+        <p>
+            Interoperabilitatea limbajelor este o caracteristică cheie a .NET-ului. Codul IL produs de compilatorul C# se conformează Specificației comune a tipurilor (Common Type Specification - CTS). 
+            Codul IL generat din C# poate interacționa cu codul generat din versiunile .NET ale F#, Visual Basic, C++. Există peste 20 de alte limbaje compatibile cu CTS. 
+            O singură asamblare poate conține mai multe module scrise în diferite limbaje .NET.  Tipurile se pot referi reciproc ca și cum ar fi scrise în același limbaj.
+        </p>
+
+        <p>
+            În plus față de serviciile de timp de execuție, .NET include, de asemenea, biblioteci extinse. These libraries support many different workloads. 
+            Aceste biblioteci susțin multe sarcini diferite și sunt organizate în spații de nume (namespaces) care oferă o varietate largă de funcționalități utile.
+            Bibliotecile includ totul, de la intrare și ieșire de fișiere la manipularea de șiruri de caractere, analiza XML, cadre de aplicații web și controale Windows Forms.
+            O aplicație C# tipică folosește extensiv biblioteca de clase .NET pentru a gestiona sarcinile de "instalare" comune.
+        </p>
+
+       <h2>Hello world</h2>
+
+       <p>
+        Programul "Hello, World" este în general utilizat pentru a introduce un limbaj de programare. Iată cum arată în C#:
+       </p>
+
+       <pre>
+        <code>
+            using System;
+        
+            class Hello
+            {
+                static void Main()
+                {
+                    // This line prints "Hello, World" 
+                    Console.WriteLine("Hello, World");
+                }
+            }
+        </code>
+       </pre>
+
+        <p>
+            Programul "Hello, World" începe cu o directivă de utilizare, <code>using</code> care face referire la spațiul de nume <code>System</code>. 
+            Spațiile de nume oferă o modalitate ierarhică de organizare a programelor și bibliotecilor C#. 
+            Spațiile de nume conțin tipuri și alte spații de nume - de exemplu, spațiul de nume <code>System</code>  conține un număr de tipuri, 
+            cum ar fi clasa <code>Console</code> utilizată în program, și multe alte spații de nume, cum ar fi <code>IO (INPUT OUTPUT)</code> și <code>Collections</code>. 
+            O directivă de utilizare care face referire la un anumit spațiu de nume permite utilizarea ne-calificată a tipurilor care sunt membrii ai acelui spațiu de nume. 
+            Datorită  directivei de utilizare, programul poate utiliza  <code>Console.WriteLine</code> ca scurtătură pentru <code>System.Console.WriteLine</code>.
+        </p>
+
+        <p>
+            Clasa <code>Hello</code>  declarată de programul "Hello, World" are un singur membru, metoda numită <code>Main</code>. Metoda <code>Main</code>  este declarată cu modificatorul <code>static</code>. 
+            În timp ce metodele de instanță pot face  referire la o anumită instanță de obiect închisă folosind cuvântul cheie <code>this</code>, metodele statice operează fără referință la un anumit obiect.  
+            În mod convențional, o metodă statică numită <code>Main</code> servește ca punct de intrare al unui program C#.
+        </p>
+
+        <p>
+            Linia care începe cu <code>//</code> este un <em>comentariu pe o singură linie</em>. Comentariile pe o singură linie în C# încep cu <code>//</code> și continuă până la sfârșitul liniei curente. 
+            C# suportă, de asemenea,  <em>comentarii pe mai multe linii</em>.  Comentariile pe mai multe linii încep cu <code>/*</code> și se termină cu <code>*/</code>. 
+            Ieșirea programului este generată de metoda <code>WriteLine</code> a clasei <code>Console</code> namespace-ul <code>System</code>. 
+            Această clasă este furnizată de bibliotecile standard de clase, care, în mod implicit, sunt referite automat de către compilator.
+        </p>
+
+        <h2>Tipuri și variabile</h2>
+
+        <p>
+            Un <em>tip</em> definește structura și comportamentul oricărui tip de date în C#. Declarația unui tip poate include membrii săi, tipul de bază, interfețele pe care le implementează și operațiile permise pentru acel tip.
+            O <em>variabilă</em> este o etichetă care se referă la o instanță a unui tip specific.
+        </p>
+
+        <p>
+            Există două feluri de tipuri în C#: <em>tipuri de valoare</em> și <em>tipuri de referință.</em>. Variabilele de tip de valoare conțin direct datele lor. Variabilele de tip referință stochează referințe către datele lor, acestea din urmă fiind cunoscute sub numele de obiecte.
+            Cu tipurile de referință, este posibil ca două variabile să facă referință la același obiect și posibil ca operațiile efectuate pe o variabilă să afecteze obiectul referit de cealaltă variabilă.
+            Cu tipurile de valoare, variabilele au fiecare propria copie a datelor și nu este posibil ca operațiile efectuate pe una să afecteze cealaltă  (cu excepția variabilelor de parametru <code>ref</code> și <code>out</code>.
+        </p>
+
+        <p>
+            Un <em><strong>identificator</strong></em> este un nume de variabilă.  Un identificator este o secvență de caractere Unicode fără spații între ele. Un identificator poate fi o cuvânt rezervat C#, dacă este prefixat cu <code>@</code>. 
+            Utilizarea unui cuvânt rezervat ca identificator poate fi utilă atunci când se interacționează cu alte limbi de programare.
+        </p>
+
+        <p>
+            Tipurile de valoare ale C# sunt împărțite în <em>tipuri simple</em>, <em>tipuri enum,</em>, <em>tipuri struct</em>, <em>tipuri de valoare nullable</em>, și <em>tipuri de valoare tuplu</em>. 
+            Tipurile de referință ale C# sunt împărțite în <em>tipuri de clasă</em>, <em>tipuri de interfață</em>, <em>tipuri de vector (array)</em>, și <em>tipuri de delegat</em>.
+        </p>
+
+        <p>
+            Schița următoare oferă o prezentare generală a sistemului de tipuri C#.
+        </p>
+
+        <ul>
+            <li>Tipuri de valori
+            <ul>
+            <li>Tipuri simple
+            <ul>
+            <li>Întregi cu semn: <code>sbyte</code>, <code>short</code>, <code>int</code>, <code>long</code></li>
+            <li>Întregi fără semn: <code>byte</code>, <code>ushort</code>, <code>uint</code>, <code>ulong</code></li>
+            <li>Caractere Unicode: <code>char</code></li>
+            <li>Formatul IEEE pentru numere cu virgulă mobilă: <code>float</code>, <code>double</code></li>
+            <li>Numere zecimale cu virgulă mobilă: <code>decimal</code></li>
+            <li>Boolean: <code>bool</code>, ce reprezintă valori de tip Boolean care sunt fie <code>true</code> fie <code>false</code></li>
+            </ul>
+            </li>
+            <li>Tipuri Enum
+            <ul>
+            <li>Tipuri definite de utilizator de forma <code>enum E {...}</code>.  Un tip <code>enum</code> este un tip distinct cu constante cu un nume dat. Fiecare tip <code>enum</code> are un tip de baza,care trebuie sa fie unul dintre cele opt tipuri întregi. 
+                Setul de valori ale unui tip <code>enum</code> este același cu setul de valori ale tipului de baza.</li>
+            </ul>
+            </li>
+            <li>Tipuri Struct
+            <ul>
+            <li>Tipuri definite de utilizator de forma <code>struct S {...}</code></li>
+            </ul>
+            </li>
+            <li>Tipuri de valoare nullable
+            <ul>
+            <li>Extensiile tuturor celorlalte tipuri de valori cu o valoare <code>null</code></li>
+            </ul>
+            </li>
+            <li>Tipuri de valoare tuplu
+            <ul>
+            <li>Tipuri definite de utilizator de forma <code>(T1, T2, ...)</code></li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+            <li>Tipuri de referință
+            <ul>
+            <li>Tipuri de clasă
+            <ul>
+            <li>Clasa de bază pentru toate celelalte tipuri <code>object</code></li>
+            <li>Unicode strings: <code>string</code>, care reprezintă o secvență de unități de cod UTF-16.</li>
+            <li>Tipuri definite de utilizator de forma <code>class C {...}</code></li>
+            </ul>
+            </li>
+            <li>Tipuri de interfață
+            <ul>
+            <li>Tipuri definite de utilizator de forma <code>interface I {...}</code></li>
+            </ul>
+            </li>
+            <li>Tipuri de tablou
+            <ul>
+            <li>Unidimensionale, multidimensionale și inegale.  De exemplu: <code>int[]</code>, <code>int[,]</code>, and <code>int[][]</code></li>
+            </ul>
+            </li>
+            <li>Tipuri de delegat
+            <ul>
+            <li>Tipuri definite de utilizator de forma <code>delegate int D(...)</code></li>
+            </ul>
+            </li>
+            </ul>
+            </li>
+
+        </ul>
+
+        <p>
+            Programele C# folosesc <em>declarații de tipuri</em> pentru a crea noi tipuri. O declarație de tip specifică numele și membri noului tip.
+            Șase dintre categoriile de tipuri ale C# sunt definite de utilizator: tipuri de clasă, tipuri de structură, tipuri de interfață, tipuri de enumerare, tipuri de delegat și tipuri de valoare tuplu. 
+            De asemenea, puteți declara  tipuri de <code>înregistrare</code>, fie tipul de <code>înregistrare de structură</code>, fie tipul de <code> înregistrare de clasă</code>. Tipurile de înregistrare au membri sintetizați de compilator. 
+            Înregistrările se utilizează în principal pentru a stoca valori, cu comportament minim asociat
+        </p>
+
+        <ul>
+            <li>
+                Un tip de <code>clasă</code> definește o structură de date care conține membri de date (câmpuri) și membri de funcție (metode, proprietăți și altele). 
+                Tipurile de clasă suportă moștenirea simplă și polimorfismul, mecanisme prin care clasele derivate pot extinde și specializa clasele de bază.
+            </li>
+            <li>
+                Un tip de <code>structură</code> este similar cu un tip de clasă în sensul că reprezintă o structură cu membri de date și membri de funcție. 
+                Cu toate acestea, spre deosebire de clase, structurile sunt tipuri valor și nu necesită în mod obișnuit alocare pe heap.  Tipurile de structură nu suportă moștenirea specificată de utilizator, iar toate tipurile de structură moștenesc implicit de la tipul <code>object</code>.
+            </li>
+            <li>
+                Un tip de <code>interfață</code> definește un contract ca un set numit de membri publici.. O <code>clasă</code> sau o <code>structură</code> care implementează o <code>interfață</code> mrebuie să ofere implementări ale membrilor interfeței. 
+                O <code>interfață</code> poate moșteni din mai multe interfețe de bază, iar o <code>clasă</code> sau o <code>structură</code> poate implementa mai multe interfețe.    
+            </li>
+            <li>
+                Un tip de <code>delegat</code> reprezintă referințe la metode cu un anumit tip de parametri și de returnare. 
+                Delegații fac posibilă tratarea metodelor ca entități care pot fi atribuite variabilelor și trecute ca parametri. Delegații sunt analogi tipurilor de funcții furnizate de limbajele funcționale.
+                Ei sunt, de asemenea, similari cu conceptul de pointer la funcție găsit în unele alte limbaje. Spre deosebire de pointerii la funcție, delegații sunt orientați pe obiecte și siguri din punct de vedere al tipului.
+            </li>
+        </ul>
+
+        <p>
+            Tipurile de <code>clasă</code>, <code>structură</code>, <code>interfață</code>, și <code>delegat</code> suportă genericitatea, prin care pot fi parametrizate cu alte tipuri.
+        </p>
+
+        <p>
+            C# acceptă tablouri unidimensionale și multidimensionale de orice tip. Spre deosebire de tipurile enumerate mai sus, tipurile de tablou nu trebuie declarate înainte de a fi utilizate. În schimb, tipurile de tablou sunt construite prin scrierea de paranteze pătrate după un nume de tip. 
+            De exemplu, <code>int[]</code> este un tablou unidimensional de <code>int</code>, <code>int[,]</code> este un tablou bidimensional de <code>int</code>, și <code>int[][]</code>  este un tablou unidimensional de tablouri unidimensionale, sau un tablou "șerpuit", <code>int</code>.
+        </p>
+
+        <p>
+            Tipurile nulabile (nullable) nu necesită o definiție separată. Pentru fiecare tip non-nullable <code>T</code>, există un tip corespunzător nullable <code>T?</code>,care poate stoca o valoare suplimentară, <code>null</code>. 
+            De exemplu, <code>int?</code> este un tip care poate stoca orice întreg de 32 de biți sau valoarea <code>null</code>, iar <code>string?</code> este un tip care poate stoca orice <code>string</code> sau valoarea <code>null</code>.
+        </p>
+
+        <p>
+            Sistemul de tipuri C# este unificat astfel încât o valoare de orice tip poate fi tratată ca un <code>obiect</code>. Fiecare tip în C# derivă direct sau indirect din clasa tipului <code>obiect (object)</code>, și clasa <code>obiect</code> este clasa de bază a tuturor tipurilor. 
+            Valorile tipurilor de referință sunt tratate ca obiecte prin simpla vizualizare a valorilor ca tip <code>obiect</code>. Valorile tipurilor de valoare sunt tratate ca obiecte prin efectuarea operațiilor de <em>împachetare (încapsulare)</em> și <em>despachetare</em>. 
+            n exemplul următor, o valoare <code>int</code> este convertită în <code>obiect</code> și înapoi la <code>int</code>.
+        </p>
+
+        <pre>
+         <code>
+            int i = 123;
+            object o = i;    // încapsulare (impachetare)
+            int j = (int)o;  // despachetare
+         </code>
+        </pre>
+
+        <p>
+            Când o valoare a unui tip de valoare este asignată unei referințe <code>obiect</code>, se alocă o "cutie" pentru a ține valoarea. Acea cutie este o instanță a unui tip de referință, iar valoarea este copiată în acea cutie. 
+            În mod invers, atunci când o referință <code>obiect</code> este convertită la un tip de valoare, se face o verificare dacă <code>obiectul</code> referențiat este o cutie a tipului de valoare corect. Dacă verificarea reușește, valoarea din cutie este copiată în tipul de valoare.
+        </p>
+
+        <p>
+            Sistemul de tipuri unificate din C# înseamnă în mod efectiv că tipurile de valoare sunt tratate ca referințe la <code>obiecte</code> "la cerere". 
+            Datorită unificării, bibliotecile de uz general care folosesc tipul <code>obiect</code> pot fi utilizate cu toate tipurile care se derivă din <code>obiect</code>, inclusiv tipurile de referință și cele de valoare.
+        </p>
+
+        <p>
+            Există mai multe tipuri de <em>variabile</em> în C#, inclusiv câmpuri (fields), elemente de array, variabile locale și parametri. Variabilele reprezintă locații de stocare. Fiecare variabilă are un tip care determină ce valori pot fi stocate în variabilă, așa cum este prezentat mai jos.
+        </p>
+
+        <ul>
+            <li>Tip de valoare non-nullable
+            <ul>
+            <li>O valoare exactă a acelui tip</li>
+            </ul>
+            </li>
+            <li>Tip de valoare nullable
+            <ul>
+            <li>O valoare <code>null</code>sau o valoare exactă a acelui tip</li>
+            </ul>
+            </li>
+            <li>object
+            <ul>
+            <li>O referință <code>null</code>,o referință către un obiect de orice tip de referință, sau o referință către o valoare încapsulată a oricărui tip de valoare</li>
+            </ul>
+            </li>
+            <li>Tip de clasă
+            <ul>
+            <li>A <code>null</code> reference, o referință către o instanță a acelui tip de clasă, sau o referință către o instanță a unei clase derivate din acel tip de clasă</li>
+            </ul>
+            </li>
+            <li>Tip de interfață
+            <ul>
+            <li>O referință <code>null</code>, o referință către o instanță a unui tip de clasă care implementează acel tip de interfață, sau o referință către o valoare încapsulată a unui tip de valoare care implementează acel tip de interfață</li>
+            </ul>
+            </li>
+            <li>Tip de array
+            <ul>
+            <li>O referință <code>null</code>, o referință către o instanță a acelui tip de array, sau o referință către o instanță a unui tip de array compatibil</li>
+            </ul>
+            </li>
+            <li>Tip de delegate
+            <ul>
+            <li>O referință <code>null</code> sau o referință către o instanță a unui tip de delegate compatibil</li>
+            </ul>
+            </li>
+        </ul>
+
+        <h2>Structura programului</h2>
+
+        <p>
+            Conceptele organizatorice cheie în C# sunt <em><strong>programele</strong></em>, 
+            <em><strong>spațiile de nume</strong></em>, <em><strong>tipurile</strong></em>, 
+            <em><strong>membri</strong></em>, și <em><strong>asamblările</strong></em>. 
+            Programele declară tipuri, care conțin membri și pot fi organizate în spații de nume. Clasele, structurile și interfețele sunt exemple de tipuri. Câmpurile, metodele, proprietățile și evenimentele sunt exemple de membri. 
+            Când programele C# sunt compilate, acestea sunt împachetate fizic în asamblări. Asamblările au în mod obișnuit extensia de fișier <code>.exe</code> sau <code>.dll</code>, 
+            depinzând de ce implementează <em><strong>aplicații</strong></em> sau <em><strong>biblioteci</strong></em>
+        </p>
+
+        <p>
+            Ca exemplu, să luăm în considerare o asamblare care conține următorul cod:
+        </p>
+
+        <pre>
+            <code>
+                namespace Acme.Collections;
+            
+                public class Stack<T>
+                {
+                    Entry _top;
+                
+                    public void Push(T data)
+                    {
+                        _top = new Entry(_top, data);
+                    }
+                
+                    public T Pop()
+                    {
+                        if (_top == null)
+                        {
+                            throw new InvalidOperationException();
+                        }
+                        T result = _top.Data;
+                        _top = _top.Next;
+                
+                        return result;
+                    }
+                
+                    class Entry
+                    {
+                        public Entry Next { get; set; }
+                        public T Data { get; set; }
+                
+                        public Entry(Entry next, T data)
+                        {
+                            Next = next;
+                            Data = data;
+                        }
+                    }
+                }
+            </code>
+        </pre>
+
+        <p>
+            Numele complet al acestei clase este <code>Acme.Collections.Stack</code>. Clasa conține mai mulți membri: un câmp denumit <code>_top</code>, două metode numite <code>Push</code> și <code>Pop</code>, și o clasă imbricată denumită <code>Entry</code>. 
+            Clasa <code>Entry</code> conține la rândul său trei membri: o proprietate numită <code>Next</code>, o proprietate numită <code>Data</code>, și un constructor. Clasa <code>Stack</code> este o clasă <em>generică</em>. 
+            Are un parametru de tip, <code>T</code>  care este înlocuit cu un tip concret atunci când este utilizat.
+        </p>
+
+        <p>
+            O <em>stivă</em> este o colecție "last in - first out" (LIFO). Elementele noi sunt adăugate în vârful stivei. Atunci când un element este eliminat, este eliminat din vârful stivei. 
+            Exemplul anterior declară tipul <code>Stack</code> care definește stocarea și comportamentul pentru o stivă.  Puteți declara o variabilă care se referă la o instanță a tipului <code>Stack</code> pentru a utiliza acea funcționalitate.
+        </p>
+
+        <p>
+            Asamblările conțin cod executabilsub formă de instrucțiuni Intermediate Language (IL) și informații simbolice sub formă de metadate. 
+            Înainte de a fi executat, compilatorul Just-In-Time (JIT) al .NET Common Language Runtime convertește codul IL dintr-o asamblare în cod specific procesorului.
+        </p>
+
+        <p>
+            Deoarece o asamblare este o unitate de funcționalitate autodescriptivă care conține atât cod cât și metadate, nu este nevoie de directive <code>#include</code> și fișiere header în C#. 
+            Tipurile și membrii publici conținuți într-o anumită asamblare sunt puse la dispoziție într-un program C# doar prin referirea acelei asamblări în timpul compilării programului. 
+            De exemplu, acest program utilizează clasa <code>Acme.Collections.Stack</code> din asamblarea <code>acme.dll</code>:
+        </p>
+
+        <pre>
+            <code>
+                class Example
+                {
+                    public static void Main()
+                    {
+                        var s = new Acme.Collections.Stack<int>();
+                        s.Push(1); // stiva conține 1
+                        s.Push(10); // stiva conține 1, 10
+                        s.Push(100); // stiva conține 1, 10, 100
+                        Console.WriteLine(s.Pop()); // stiva conține 1, 10
+                        Console.WriteLine(s.Pop()); // stiva conține 1
+                        Console.WriteLine(s.Pop()); // stiva e goală
+                    }
+                }
+            </code>
+        </pre>
+
+        <p>
+            Pentru a compila acest program, ar trebui să faceți <em>referință</em> la asamblarea care conține clasa stack definită în exemplul anterior.
+        </p>
+
+        <p>
+            Programele C# pot fi stocate în mai multe fișiere sursă. Când un program C# este compilat, toate fișierele sursă sunt procesate împreună, iar fișierele sursă pot face referire liberă unul la celălalt.
+            Conceptual, este ca și cum toate fișierele sursă ar fi concatenate într-un singur fișier mare înainte de a fi procesate. Declarațiile înaintate nu sunt niciodată necesare în C# deoarece, cu puține excepții, ordinea de declarare este nesemnificativă.
+            C# nu limitează un fișier sursă să declare doar un singur tip public și nici nu cere ca numele fișierului sursă să se potrivească cu un tip declarat în fișierul sursă.
+        </p>
+
+        <h1>Tipuri și membri in C#</h1>
+
+        <p>
+            Ca limbaj orientat pe obiecte, C# susține conceptele de încapsulare, moștenire și polimorfism. O clasă poate moșteni direct de la o clasă părinte și poate implementa orice număr de interfețe. 
+            Metodele care suprascriu metode virtuale într-o clasă părinte necesită cuvântul cheie <code>override</code>ca o modalitate de a evita redefinirea accidentală. În C#, un struct este similar cu o clasă simplă; 
+            este un tip alocat pe stivă care poate implementa interfețe, dar nu susține moștenirea. C# oferă tipurile <code>clasă de înregistrare</code> și <code>structură de înregistrare</code>, care sunt tipuri ale căror scop principal este stocarea valorilor de date.
+        </p>
+
+        <h2>Clase și obiecte</h2>
+
+        <p>
+            <em>Clasele</em> sunt cele mai fundamentale tipuri ale C#. O clasă este o structură de date care combină starea (câmpurile) și acțiunile (metodele și alte membri funcționali) într-o unitate singulară. 
+            O clasă furnizează o definiție pentru <em>instanțele</em> clasei, cunoscute și ca <em>obiecte</em>. Clasele oferă <em>moștenirea</em> și <em>polimorfismul</em>, mecanisme prin care <em>clasele derivate</em>  pot extinde și specializa <em>clasele de bază</em>.
+        </p>
+
+        <p>
+            Noile clase sunt create folosind declarații de clasă.  O declarație de clasă începe cu un antet (header). Antetul specifică:
+        </p>
+
+        <ul>
+            <li>Atributele și modificatorii clasei</li>
+            <li>Numele clasei</li>
+            <li>Clasa de bază (atunci când se moștenește dintr-o clasă de bază)</li>
+            <li>Interfețele implementate de clasă.</li>
+        </ul>
+
+        <p>Următorul cod prezintă o declarație a unei clase simple numite <code>Point</code>:</p>
+
+        <pre>
+            <code>
+                public class Point
+                {
+                    public int X { get; }
+                    public int Y { get; }
+                    
+                    public Point(int x, int y) => (X, Y) = (x, y);
+                }
+            </code>
+        </pre>
+
+        <p>
+            Instanțele claselor sunt create folosind operatorul <code>new</code>, care alocă memorie pentru o nouă instanță, apelează un constructor pentru a inițializa instanța și returnează o referință către instanță. 
+            Următoarele declarații creează două obiecte <code>Point</code> t și stochează referințele la aceste obiecte în două variabile:
+        </p>
+
+        <pre>
+            <code>
+                var p1 = new Point(0, 0);
+                var p2 = new Point(10, 20);
+            </code>
+        </pre>
+
+        <p>Memoria ocupată de un obiect este recuperată automat atunci când obiectul nu mai este accesibil. Nu este necesar sau posibil să dezalocați explicit obiecte în C#.</p>
+
+        <h3>Parametrii de tip</h3>
+
+        <p>
+            Clasele generice definesc <em><strong>parametri de tip</strong></em>. Parametrii de tip sunt o listă de nume de parametri de tip închise între semnele de mai mic și mai mare. 
+            Parametrii de tip urmează după numele clasei.  Parametrii de tip pot fi apoi utilizați în corpul declarațiilor de clasă pentru a defini membrii clasei.  
+            În exemplul următor, parametrii de tip ai clasei <code>Pair</code> sunt <code>TFirst</code> și <code>TSecond</code>:
+        </p>
+
+       <pre>
+            <code>
+                public class Pair<TFirst, TSecond>
+                {
+                    public TFirst First { get; }
+                    public TSecond Second { get; }
+                    
+                    public Pair(TFirst first, TSecond second) => 
+                        (First, Second) = (first, second);
+                }
+            </code>
+       </pre>
+
+        <p>
+            Un tip de clasă declarat pentru a primi parametri de tip este numit un <em>tip de clasă generică</em>. 
+            Structurile, interfețele și tipurile de delegare pot fi, de asemenea, generice. Atunci când clasa generică este utilizată, argumentele de tip trebuie furnizate pentru fiecare dintre parametrii de tip:
+        </p>
+
+        <pre>
+            <code>
+                var pair = new Pair<int, string>(1, "two");
+                int i = pair.First;     //TFirst int
+                string s = pair.Second; //TSecond string
+            </code>
+        </pre>
+
+        <p>
+            Un tip generic cu argumente de tip furnizate, cum ar <code>Pair&lt;int,string&gt;</code>de mai sus, este numit un <em>tip construit</em>.
+        </p>
+        
+        <h3>Clasele de bază</h3>
+
+        <p>
+            O declarație de clasă poate specifica o clasă de bază. Urmați numele clasei și parametrii de tip cu două puncte și numele clasei de bază. Omisiunea specificării unei clase de bază este echivalentă cu derivarea de la tipul <code>object</code>. 
+            În exemplul următor, clasa de bază a lui <code>Point3D</code> este <code>Point</code>.Din primul exemplu, clasa de bază a lui <code>Point</code> este <code>object</code>:
+        </p>
+
+        <pre>
+            <code>
+                public class Point3D : Point
+                {
+                    public int Z { get; set; }
+                    
+                    public Point3D(int x, int y, int z) : base(x, y)
+                    {
+                        Z = z;
+                    }
+                }
+            </code>
+        </pre>
+
+        <p>
+            O clasă moștenește membrii clasei sale de bază. Moștenirea înseamnă că o clasă conține implicit aproape toți membrii clasei sale de bază.O clasă nu moștenește constructorii de instanță și statici, și nici destructorul. 
+            O clasă derivată poate adăuga noi membri la cei moșteniți, dar nu poate elimina definiția unui membru moștenit.  
+            În exemplul anterior, <code>Point3D</code> moștenește membrii <code>X</code> și <code>Y</code> de la <code>Point</code>, și fiecare instanță <code>Point3D</code> conține trei proprietăți, <code>X</code>, <code>Y</code>, și <code>Z</code>.
+        </p>
+
+        <p>
+            Există o conversie implicită de la un tip de clasă la oricare dintre tipurile sale de clasă de bază. O variabilă de tip clasă poate fi referință la o instanță a acelei clase sau la o instanță a oricărei clase derivate.  
+            De exemplu, dat fiind declarațiile de clasă anterioare, o variabilă de tip <code>Point</code> poate face referire la un <code>Point</code> sau la un <code>Point3D</code>:
+        </p>
+
+        <pre>
+            <code>
+                Point a = new Point(10, 20);
+                Point b = new Point3D(10, 20, 30);
+            </code>
+        </pre>
+
+        <h2>Structuri</h2>
+
+        <p>
+            Clasele definesc tipuri care susțin moștenirea și polimorfismul.Ele vă permit să creați comportamente sofisticate bazate pe ierarhii de clase derivate.
+            În schimb, <em><strong>structurile</strong></em> sunt tipuri mai simple, ale căror scop principal este de a stoca valori de date. Structurile nu pot declara un tip de bază; ele derivă implicit din System.ValueType.  
+            Nu puteți deriva alte tipuri <code>struct</code> dintr-un tip <code>struct</code>. Ele sunt implicit sigilate.
+        </p>
+
+        <pre>
+            <code>
+                public struct Point
+                {
+                    public double X { get; }
+                    public double Y { get; }
+                    
+                    public Point(double x, double y) => (X, Y) = (x, y);
+                }
+            </code>
+        </pre>
+
+        <h2>Interfețe</h2>
+
+        <p>
+            O <em><strong>interfață</strong></em> definește un contract ce poate fi implementat de clase și structuri. O <em>interfață</em> poate fi definită pentru a declara capabilități care sunt partajate între tipuri diferite.  
+            De exemplu, interfața System.Collections.Generic.IEnumerable&lt;T&gt;  definește o modalitate consistentă de a parcurge toate elementele unei colecții, precum un array. 
+            O interfață poate conține metode, proprietăți, evenimente și indexatori. În mod tipic, o interfață nu furnizează implementări ale membrilor pe care îi definește, ci doar specifică membrii care trebuie furnizați de clasele sau structurile care implementează interfața.
+        </p>
+
+        <p>
+            Interfețele pot utiliza <em><strong>moștenire multiplă</strong></em>. n exemplul următor, interfața <code>IComboBox</code> moștenește atât de la <code>ITextBox</code>, cât și de la <code>IListBox</code>.
+        </p>
+
+        <pre>
+            <code>
+                interface IControl
+                {
+                    void Paint();
+                }
+
+                interface ITextBox : IControl
+                {
+                    void SetText(string text);
+                }
+
+                interface IListBox : IControl
+                {
+                    void SetItems(string[] items);
+                }
+
+                interface IComboBox : ITextBox, IListBox { }
+            </code>
+        </pre>
+
+        <p>Clasele și structurile pot implementa mai multe interfețe. În exemplul următor, clasa <code>EditBox</code> implementează atât <code>IControl</code> cât și <code>IDataBound</code>.</p>
+
+        <pre>
+            <code>
+                interface IDataBound
+                {
+                    void Bind(Binder b);
+                }
+
+                public class EditBox : IControl, IDataBound
+                {
+                    public void Paint() { }
+                    public void Bind(Binder b) { }
+                }
+            </code>
+        </pre>
+
+        <p>Atunci când o clasă sau o structură implementează o anumită interfață, instanțele acelei clase sau structuri pot fi convertite implicit la tipul interfeței respective. De exemplu:</p>
+
+        <pre>
+            <code>
+                EditBox editBox = new();
+                IControl control = editBox;
+                IDataBound dataBound = editBox;
+            </code>
+        </pre>
+
+        <h2>Enum</h2>
+
+        <p>Tipul <em><strong>Enum</strong></em> definește un set de valori constante. <code>Enum-ul</code> următor declară constante care definesc diferite legume:</p>
+
+        <pre>
+            <code>
+                public enum SomeRootVegetable
+                {
+                    HorseRadish,
+                    Radish,
+                    Turnip
+                }
+            </code>
+        </pre>
+
+        <p>
+            De asemenea, puteți defini un <code>enum</code>  pentru a fi utilizat în combinație cu steaguri (flags). Declarația următoare declară un set de steaguri pentru cele patru anotimpuri. 
+            Poate fi aplicată orice combinație de anotimpuri, inclusiv o valoare <code>All</code> care include toate anotimpurile:
+        </p>
+
+        <pre>
+            <code>
+                [Flags]
+                public enum Seasons
+                {
+                    None = 0,
+                    Summer = 1,
+                    Autumn = 2,
+                    Winter = 4,
+                    Spring = 8,
+                    All = Summer | Autumn | Winter | Spring
+                }
+            </code>
+        </pre>
+
+        <p>Următorul exemplu arată declarațiile ambelor enum-uri precedente:</p>
+
+        <pre>
+            <code>
+                var turnip = SomeRootVegetable.Turnip;
+
+                var spring = Seasons.Spring;
+                var startingOnEquinox = Seasons.Spring | Seasons.Autumn;
+                var theYear = Seasons.All;
+            </code>
+        </pre>
+
+        <h2>Tipuri Nullable</h2>
+
+        <p>
+            Variabilele de orice tip pot fi declarate ca <em><strong>non-nullable</strong></em> sau <em><strong>nullable</strong></em>. O variabilă nulabilă poate stoca o valoare suplimentară <code>null</code>, indicând că nu există o valoare.  
+            Tipurile de valoare (structuri sau enum-uri) nulabile sunt reprezentate de System.Nullable&lt;T&gt;. Tipurile de referință ne-nulabile și nulabile sunt ambele reprezentate de tipul de referință de bază. 
+            Distincția este reprezentată de metadatele citite de compilator și de unele biblioteci. Compilatorul oferă avertismente atunci când referințele nulabile sunt dereferențiate fără a verifica mai întâi valoarea lor în raport cu <code>null</code>. 
+            De asemenea, compilatorul oferă avertismente atunci când referințele ne-nulabile sunt atribuite cu o valoare care poate fi <code>null</code>.Exemplul următor declară un <em><strong>int nulabil</strong></em>, inițializându-l cu <code>null</code>. 
+            Apoi, setează valoarea la <code>5</code>. Demonstrează același concept cu un <em><strong>șir de caractere nulabil</strong></em>.
+        </p>
+
+        <pre>
+            <code>
+                int? optionalInt = default; 
+                optionalInt = 5;
+                string? optionalText = default;
+                optionalText = "Hello World.";
+            </code>
+        </pre>
+
+        <h2>Tupluri</h2>
+
+        <p>
+            C# suportă <em><strong>tupluri</strong></em>, care oferă o sintaxă concisă pentru gruparea mai multor elemente de date într-o structură de date ușoară. 
+            Un tuplu se poate instanția declarând tipurile și numele membrilor între <code>(</code> și <code>)</code>, așa cum este prezentat în următorul exemplu:
+        </p>
+
+        <pre>
+            <code>
+                (double Sum, int Count) t2 = (4.5, 3);
+                Console.WriteLine($"Sum of {t2.Count} elements is {t2.Sum}.");
+                //Output:
+                //Sum of 3 elements is 4.5.
+            </code>
+        </pre>
+
+        <p>
+            Tuplurile oferă o alternativă pentru structurile de date cu mai mulți membri.
+        </p>
+
+        <h1>Bazele construcției unui program C#</h1>
+
+        <p>Tipurile descrise anterior sunt construite folosind aceste elemente de construcție:</p>
+
+        <ul>
+            <li>Membri, cum ar fi proprietăți, câmpuri, metode și evenimente</li>
+            <li>Expresii</li>
+            <li>Instrucțiuni</li>
+        </ul>
+
+        <h2>Membri</h2>
+
+        <p>Membrii unei <code>clase</code> sunt fie <em><strong>membri statici</strong></em> fie <em><strong>membri de instanță</strong></em>. Membrii statici aparțin claselor, în timp ce membrii de instanță aparțin obiectelor (instancelor de clase).</p>
+
+        <p>Următoarea listă oferă o prezentare generală a tipurilor de membri pe care o clasă le poate conține.</p>
+
+        <ul>
+            <li><strong>Constante</strong>: Valori constante asociate cu clasa</li>
+            <li><strong>Câmpuri</strong>:  Variabile asociate cu clasa</li>
+            <li><strong>Metode</strong>:  Acțiuni care pot fi realizate de clasă</li>
+            <li><strong>Proprietăți</strong>: Acțiuni asociate citirii și scrierii proprietăților numite ale clasei</li>
+            <li><strong>Indexatori</strong>:  Acțiuni asociate indexării instanțelor clasei ca un tablou</li>
+            <li><strong>Evenimente</strong>: Notificări care pot fi generate de clasă</li>
+            <li><strong>Operatori</strong>: Conversii și operatori de expresie suportați de clasă</li>
+            <li><strong>Constructori</strong>: Acțiuni necesare pentru a inițializa instanțele clasei sau clasa în sine</li>
+            <li><strong>Finalizatoare</strong>:  Acțiuni realizate înainte ca instanțele clasei să fie eliminate permanent</li>
+            <li><strong>Tipuri</strong>: Tipuri declarate de clasă.</li>
+        </ul>
+
+        <h3>Modificatorii de acces</h3>
+
+        <p>Fiecare membru al unei clase are o accesibilitate asociată, care controlează regiunile textului programului care pot accesa membrul respectiv. Există șase forme posibile de accesibilitate. Modificatorii de acces sunt prezentați mai jos.</p>
+
+        <ul>
+            <li><code>public</code>: Accesul nu e limitat.</li>
+            <li><code>private</code>: Access e limitat la clasa curentă.</li>
+            <li><code>protected</code>: Accesul este limitat la clasa curentă sau la clasele derivate din această clasă.</li>
+            <li><code>internal</code>:Accesul este limitat la asamblarea curentă(<code>.exe</code> or <code>.dll</code>).</li>
+            <li><code>protected internal</code>: Accesul este limitat la clasa curentă, la clasele derivate din această clasă sau la clase din aceeași asamblare.</li>
+            <li><code>private protected</code>:  Accesul este limitat la  clasa curentă sau la clasele derivate din acest tip în aceeași asamblare.</li>
+        </ul>
+
+        <h2>Câpmuri</h2>
+
+        <p>Un <em>câmp</em> este o variabilă asociată cu o clasă sau cu o instanță a unei clase.</p>
+
+        <p>Un câmp declarat cu modificatorul static definește un câmp static. Un câmp static identifică exact o locație de stocare. Indiferent de câte instanțe ale unei clase sunt create, există întotdeauna doar o singură copie a unui câmp static.</p>
+
+        <p>Un câmp declarat fără modificatorul static definește un câmp de instanță. Fiecare instanță a unei clase conține o copie separată a tuturor câmpurilor de instanță ale acelei clase.</p>
+
+        <p>
+            În exemplul următor, fiecare instanță a clasei <code>Color</code> are o copie separată a câmpurilor de instanță <code>R</code>, <code>G</code>, și <code>B</code>, 
+            dar există doar o singură copie a câmpurilor statice <code>Black</code>, <code>White</code>, <code>Red</code>, <code>Green</code>, și <code>Blue</code>:
+        </p>
+
+        <pre>
+            <code>
+                public class Color
+                {
+                    public static readonly Color Black = new(0, 0, 0);
+                    public static readonly Color White = new(255, 255, 255);
+                    public static readonly Color Red = new(255, 0, 0);
+                    public static readonly Color Green = new(0, 255, 0);
+                    public static readonly Color Blue = new(0, 0, 255);
+                    
+                    public byte R;
+                    public byte G;
+                    public byte B;
+
+                    public Color(byte r, byte g, byte b)
+                    {
+                        R = r;
+                        G = g;
+                        B = b;
+                    }
+                }
+            </code>
+        </pre>
+
+        <p>Conform exemplului anterior, câmpurile <em>read-only</em> pot fi declarate cu modificatorul <code>readonly</code>. Atribuirea către un câmp read-only poate avea loc doar ca parte a declarației câmpului sau într-un constructor din aceeași clasă.</p>
+
+        <h2>Metode</h2>
+
+        <p>O <em>metodă</em>  este o funcție membră care implementează o acțiune ce poate fi efectuată de un obiect sau clasă. <em>Metodele statice</em>  sunt accesate prin intermediul clasei. <em>Metodele instanță</em> sunt accesate prin intermediul instanțelor clasei.</p>
+
+        <p>
+            Metodele pot avea o listă de <em>parameteri</em>,  care reprezintă valorile sau referințele variabilelor transmise metodei. Metodele au un <em>tip returnat</em>, care specifică tipul valorii calculate și returnate de metodă. 
+            Tipul returnat al unei metode este <code>void</code> dacă nu returnează o valoare.
+        </p>
+
+        <p>La fel ca și tipurile, metodele pot avea de asemenea un set de parametri de tip, pentru care trebuie specificate argumentele de tip când metoda este apelată. Spre deosebire de tipuri, argumentele de tip pot fi adesea deduse din argumentele unui apel de metodă și nu trebuie date în mod explicit.</p>
+
+        <p>
+            <em>Semnătura</em> unei metode trebuie să fie unică în clasa in care metoda e declarată. Semnătura unei metode constă în numele metodei, numărul de parametri de tip, precum și numărul, modificatorii și tipurile parametrilor săi.  
+            Semnătura unei metode nu include tipul returnat.
+        </p>
+        
+        <p>Când corpul unei metode este o singură expresie, metoda poate fi definită utilizând un format de expresie compactă, așa cum este prezentat în exemplul următor:</p>
+
+        <pre>
+            <code>
+                public override string ToString() => "This is an object";
+            </code>
+        </pre>
+
+        <h2>Parametri</h3>
+
+        <p>
+            Parametrii sunt utilizați pentru a transmite valori sau referințe variabile către metode. Parametrii unei metode își obțin valorile reale din <em>argumentele</em> specificate atunci când metoda este invocată. 
+            Există patru tipuri de parametri: parametri de valoare, parametri de referință, parametri de ieșire și tablouri de parametri.
+        </p>
+
+        <p>
+            Un <em>parametru de valoare</em> este utilizat pentru a transmite argumente de intrare. Un parametru de valoare corespunde unei variabile locale care își primește valoarea inițială din argumentul care a fost trecut pentru parametru.  
+            Modificările aduse unui parametru de valoare nu afectează argumentul care a fost trecut pentru parametru.
+        </p>
+
+        <p>Parametrii de valoare pot fi opționali, prin specificarea unei valori implicite, astfel încât argumentele corespunzătoare pot fi omise.</p>
+
+        <p>
+            Un <em>parametru de referință</em> este utilizat pentru a transmite argumente prin referință. Argumentul trecut pentru un parametru de referință trebuie să fie o variabilă cu o valoare definită. 
+            În timpul executării metodei, parametrul de referință reprezintă aceeași locație de stocare ca și variabila argument. 
+            Un parametru de referință este declarat cu modificatorul <code>ref</code>. Exemplul următor arată utilizarea parametrilor de referință:
+        </p>
+
+        <pre>
+            <code>
+                static void Swap(ref int x, ref int y)
+                {
+                    int temp = x;
+                    x = y;
+                    y = temp;
+                }
+
+                public static void SwapExample()
+                {
+                    int i = 1, j = 2;
+                    Swap(ref i, ref j);
+                    Console.WriteLine($"{i} {j}");    // "2 1"
+                }
+            </code>
+        </pre>
+
+        <p>
+            Un <em>parametru de ieșire</em> este utilizat pentru a transmite argumente prin referință. Este similar cu un parametru de referință, cu excepția faptului că nu necesită atribuirea explicită a unei valori argumentului furnizat de apelant. 
+            Un parametru de ieșire este declarat cu modificatorul  <code>out</code>.  Exemplul următor arată utilizarea parametrilor de ieșire:
+        </p>
+
+        <pre>
+            <code>
+                static void Divide(int x, int y, out int quotient, out int remainder)
+                {
+                    quotient = x / y;
+                    remainder = x % y;
+                }
+
+                public static void OutUsage()
+                {
+                    Divide(10, 3, out int quo, out int rem);
+                    Console.WriteLine($"{quo} {rem}");	// "3 1"
+                }
+            </code>
+        </pre>
+
+        <p>
+            Un <em>tablou de parametri</em> permite transmiterea unui număr variabil de argumente către o metodă. Un tablou de parametri este declarat cu modificatorul <code>params</code>. 
+            Doar ultimul parametru al unei metode poate fi un tablou de parametri, iar tipul unui tablou de parametri trebuie să fie un tip de tablou unidimensional. 
+            Metodele <code>Write</code> și <code>WriteLine</code> ale clasei System.Console sunt exemple bune de utilizare a unui tablou de parametri. Acestea sunt declarate astfel:
+        </p>
+
+        <pre>
+            <code>
+                public class Console
+                {
+                    public static void Write(string fmt, params object[] args) { }
+                    public static void WriteLine(string fmt, params object[] args) { }
+                    // ...
+                }
+            </code>
+        </pre>
+
+        <p>
+            Într-o metodă care utilizează un tablou de parametri, acesta se comportă exact ca un parametru obișnuit de tipul unui tablou. 
+            Cu toate acestea, în invocarea unei metode cu un tablou de parametri, este posibil să se transmită fie un singur argument de tipul tabloului de parametri, fie orice număr de argumente de tipul elementului tabloului de parametri. 
+            În acest caz, o instanță de tablou este creată și inițializată automat cu argumentele date. Acest exemplu:
+        </p>
+
+        <pre>
+            <code>
+                int x, y, z;
+                x = 3;
+                y = 4;
+                z = 5;
+                Console.WriteLine("x={0} y={1} z={2}", x, y, z);
+            </code>
+        </pre>
+
+        <p>este echivalent cu a scrie următorul cod:</p>
+
+        <pre>
+            <code>
+                int x = 3, y = 4, z = 5;
+
+                string s = "x={0} y={1} z={2}";
+                object[] args = new object[3];
+                args[0] = x;
+                args[1] = y;
+                args[2] = z;
+                Console.WriteLine(s, args);
+            </code>
+        </pre>
+        
+        <h3>Corpul metodei și variabilele locale</h3>
+
+        <p>Corpul unei metode specifică declarațiile de executat atunci când metoda este invocată.</p>
+
+        <p>
+            Corpul unei metode poate declara variabile care sunt specifice invocării metodei. Aceste variabile sunt numite <em>variabile locale</em>. O declarație de variabilă locală specifică un nume de tip, un nume de variabilă și posibil o valoare inițială. 
+            În exemplul următor este declarată o variabilă locală <code>i</code> cu o valoare inițială de zero și o variabilă locală <code>j</code> fără o valoare inițială.
+        </p>
+
+        <pre>
+            <code>
+                class Squares
+                {
+                    public static void WriteSquares()
+                    {
+                        int i = 0;
+                        int j;
+                        while (i < 10)
+                        {
+                            j = i * i;
+                            Console.WriteLine($"{i} x {i} = {j}");
+                            i++;
+                        }
+                    }
+                }
+            </code>
+        </pre>
+
+        <p>
+            În C#, o variabilă locală trebuie să fie <em>definitiv atribuită</em> înainte ca valoarea sa să poată fi obținută. 
+            De exemplu, dacă declarația anterioară a variabilei <code>i</code> nu include o valoare inițială, compilatorul va raporta o eroare pentru utilizările ulterioare ale lui <code>i</code> deoarece <code>i</code> nu ar fi definitiv atribuit în acele puncte ale programului. 
+        </p>
+
+        <p>
+            O metodă poate folosi instrucțiuni de <code>return</code>  pentru a returna controlul către apelantul său. Într-o metodă care returnează <code>void</code>, instrucțiunile de <code>return</code> return nu pot specifica o expresie. 
+            Într-o metodă care returnează non-void, instrucțiunile de <code>return</code> trebuie să includă o expresie care calculează valoarea de returnat.
+        </p>
+
+        <h3>Metodele statice și metodele de instanță</h3>
+
+        <p>O metodă declarată cu modificatorul <code>static</code> este o <em>metodă statică</em>.  O metodă statică nu operează pe o instanță specifică și poate accesa doar membrii statici în mod direct.</p>
+
+        <p>
+            O metodă declarată fără modificatorul <code>static</code>  este o <em>metodă de instanță</em>.  O metodă de instanță operează pe o instanță specifică și poate accesa atât membrii statici, cât și membrii de instanță. 
+            Instanța pe care o metodă de instanță a fost invocată poate fi accesată în mod explicit folosind cuvântul-cheie <code>this</code>.  Este o eroare să se facă referire la <code>this</code> într-o metodă statică.
+        </p>
+
+        <p>Clasa <code>Entity</code> are atât membri statici, cât și membri de instanță.</p>
+
+        <pre>
+            <code>
+                class Entity
+                {
+                    static int s_nextSerialNo;
+                    int _serialNo;
+                    
+                    public Entity()
+                    {
+                        _serialNo = s_nextSerialNo++;
+                    }
+                    
+                    public int GetSerialNo()
+                    {
+                        return _serialNo;
+                    }
+                    
+                    public static int GetNextSerialNo()
+                    {
+                        return s_nextSerialNo;
+                    }
+                    
+                    public static void SetNextSerialNo(int value)
+                    {
+                        s_nextSerialNo = value;
+                    }
+                }
+            </code>
+        </pre>
+
+        <p>
+            Fiecare instanță <code>Entity</code> conține un număr de serie (și probabil alte informații care nu sunt afișate aici). 
+            Constructorul <code>Entity</code> (care este similar cu o metodă de instanță) inițializează noua instanță cu următorul număr de serie disponibil. 
+            Deoarece constructorul este un membru de instanță,  este permis să acceseze atât câmpul de instanță <code>_serialNo</code> cât și câmpul static <code>s_nextSerialNo</code>.
+        </p>
+
+        <p>Medotele statice <code>GetNextSerialNo</code> și <code>SetNextSerialNo</code> pot accesa câmpul static <code>s_nextSerialNo</code>,  dar ar fi o eroare să acceseze direct câmpul de instanță <code>_serialNo</code>.</p>
+
+        <p>Următorul exemplu arată utilizarea clasei <code>Entity</code>.</p>
+
+        <pre>
+            <code>
+                Entity.SetNextSerialNo(1000);
+                Entity e1 = new();
+                Entity e2 = new();
+                Console.WriteLine(e1.GetSerialNo());          // Outputs "1000"
+                Console.WriteLine(e2.GetSerialNo());          // Outputs "1001"
+                Console.WriteLine(Entity.GetNextSerialNo());  // Outputs "1002"
+            </code>
+        </pre>
+
+        <p>Metodele statice <code>SetNextSerialNo</code> și <code>GetNextSerialNo</code> sunt invocate pe clasa în timp ce metoda de instanță <code>GetSerialNo</code> este invocată pe instanțe ale clasei.</p>
+
+        <h3>Metode virtuale, suprascrise și abstracte.</h3>
+
+        <p>
+            Folosești metode virtuale, override și abstracte pentru a defini comportamentul pentru o ierarhie de tipuri de clase. Deoarece o clasă poate deriva dintr-o clasă de bază, acele clase derivate pot avea nevoie să modifice comportamentul implementat în clasa de bază.  
+            O metodă <em><strong>virtuală</strong></em> este una declarată și implementată într-o clasă de bază, unde orice clasă derivată poate furniza o implementare mai specifică. 
+            O metodă <em><strong>override</strong></em> este o metodă implementată într-o clasă derivată care modifică comportamentul implementării clasei de bază. 
+            O metodă <em><strong>abstractă</strong></em> este o metodă declarată într-o clasă de bază care trebuie <em>suprascrisă</em> în toate clasele derivate. De fapt, metodele abstracte nu definesc o implementare în clasa de bază.
+        </p>
+
+        <p>
+            Apelurile metodelor către metodele de instanță pot rezolva implementări ale clasei de bază sau ale clasei derivate. Tipul unei variabile determină <em>tipul său la momentul compilării</em>. 
+            <em>Tipul la momentul compilării</em> este tipul pe care compilatorul îl utilizează pentru a determina membrii săi. 
+            Cu toate acestea, o variabilă poate fi atribuită unei instanțe a oricărui tip derivat din <em>tipul său la momentul compilării</em>. <em> Tipul la momentul execuției</em> este tipul instanței reale la care se referă o variabilă.
+        </p>
+
+        <p>
+            Atunci când o metodă virtuală este invocată, <em>tipul la momentul execuției</em> al instanței pentru care are loc acea invocare determină implementarea reală a metodei de invocat. 
+            Într-o invocare de metodă non-virtuală, <em>tipul la momentul compilării</em> al instanței este factorul determinant.
+        </p>
+
+        <p>
+            O metodă virtuală poate fi <em>suprascrisă</em> într-o clasă derivată. Atunci când o declarație a metodei de instanță include un modificator override, metoda suprascrie o metodă virtuală moștenită cu aceeași semnătură.
+            O declarație a metodei virtuale introduce o nouă metodă. O declarație a metodei de suprascriere specializează o metodă virtuală moștenită existentă furnizând o nouă implementare a acelei metode.
+        </p>
+
+        <p>O <em>metodă abstractă</em> este o metodă virtuală fără implementare. O metodă abstractă este declarată cu modificatorul <code>abstract</code> și este permisă numai într-o clasă abstractă. O metodă abstractă trebuie suprascrisă în fiecare clasă derivată non-abstractă.</p>
+
+        <p>
+            Următorul exemplu declară o clasă abstractă, <code>Expression</code>, care reprezintă un nod al arborelui de expresii, și trei clase derivate, 
+            <code>Constant</code>, <code>VariableReference</code>, și <code>Operation</code>, care implementează noduri ale arborelui de expresii pentru constante, referințe variabile și operații aritmetice. (Acest exemplu este similar, dar nu este legat de tipurile de arbori de expresii).
+        </p>
+
+        <pre>
+            <code>
+                public abstract class Expression
+                {
+                    public abstract double Evaluate(Dictionary<string, object> vars);
+                }
+
+                public class Constant : Expression
+                {
+                    double _value;
+                    
+                    public Constant(double value)
+                    {
+                        _value = value;
+                    }
+                    
+                    public override double Evaluate(Dictionary<string, object> vars)
+                    {
+                        return _value;
+                    }
+                }
+
+                public class VariableReference : Expression
+                {
+                    string _name;
+                    
+                    public VariableReference(string name)
+                    {
+                        _name = name;
+                    }
+                    
+                    public override double Evaluate(Dictionary<string, object> vars)
+                    {
+                        object value = vars[_name] ?? throw new Exception($"Unknown variable: {_name}");
+                        return Convert.ToDouble(value);
+                    }
+                }
+
+                public class Operation : Expression
+                {
+                    Expression _left;
+                    char _op;
+                    Expression _right;
+                    
+                    public Operation(Expression left, char op, Expression right)
+                    {
+                        _left = left;
+                        _op = op;
+                        _right = right;
+                    }
+                    
+                    public override double Evaluate(Dictionary<string, object> vars)
+                    {
+                        double x = _left.Evaluate(vars);
+                        double y = _right.Evaluate(vars);
+                        switch (_op)
+                        {
+                            case '+': return x + y;
+                            case '-': return x - y;
+                            case '*': return x * y;
+                            case '/': return x / y;
+                            
+                            default: throw new Exception("Unknown operator");
+                        }
+                    }
+                }
+            </code>
+        </pre>
+
+        <p>Cele patru clase anterioare pot fi utilizate pentru a modela expresii aritmetice. De exemplu, folosind instanțe ale acestor clase, expresia <code>x + 3</code> poate fi reprezentată astfel:</p>
+
+        <pre>
+            <code>
+                Expression e = new Operation(
+                new VariableReference("x"),
+                '+',
+                new Constant(3));
+            </code>
+        </pre>
+
+        <p>
+            Metoda <code>Evaluate</code> a unei instanțe <code>Expression</code> este apelată pentru a evalua expresia dată și pentru a produce o valoare de tip <code>double</code>. 
+            Metoda primește un argument de tip <code>Dictionary</code> care conține nume de variabile ((ca chei ale intrărilor) și valori (ca valori ale intrărilor). 
+            Deoarece <code>Evaluate</code> este o metodă abstractă, clasele non-abstracte derivate din <code>Expression</code> trebuie să o suprascrie.
+        </p>
+
+        <p>
+            Implementarea metodei <code>Evaluate</code> pentru clasa <code>Constant</code> pur și simplu returnează valoarea constantă stocată. 
+            Implementarea metodei <code>Evaluate</code> pentru clasa <code>VariableReference</code> caută numele variabilei în dicționar și returnează valoarea rezultată. 
+            Implementarea metodei  <code>Evaluate</code> pentru clasa <code>Operation</code> evaluează mai întâi operatorii stâng și drept (apelând recursiv metodele lor <code>Evaluate</code>) și apoi efectuează operația aritmetică specificată.
+        </p>
+
+        <p>Programul următor utilizează clasele <code>Expression</code> pentru a evalua expresia <code>x * (y + 2)</code> pentru diferite valori ale lui <code>x</code> și <code>y</code>.</p>
+
+        <pre>
+            <code>
+                Expression e = new Operation(
+                new VariableReference("x"),
+                '*',
+                new Operation(
+                    new VariableReference("y"),
+                    '+',
+                    new Constant(2)
+                )
+                );
+                Dictionary<string, object> vars = new();
+                vars["x"] = 3;
+                vars["y"] = 5;
+                Console.WriteLine(e.Evaluate(vars)); // "21"
+                vars["x"] = 1.5;
+                vars["y"] = 9;
+                Console.WriteLine(e.Evaluate(vars)); // "16.5"
+            </code>
+        </pre>
+
+        <h3>Supraîncarcarea metodelor</h3>
+
+        <p>
+            <em>Supraîncarcarea metodelor</em> permite ca mai multe metode din aceeași clasă să aibă același nume, atâta timp cât au semnături unice. 
+            La compilarea unei invocări a unei metode supraîncărcate, compilatorul folosește <em>rezolvarea supraîncărcării</em> pentru a determina metoda specifică care trebuie invocată. 
+            Rezolvarea supraîncărcării găsește metoda care se potrivește cel mai bine cu argumentele. Dacă nu se poate găsi o singură potrivire optimă, este raportată o eroare. Exemplul următor arată efectul rezolvării supraîncărcării.
+            Comentariul pentru fiecare invocare din metoda <code>UsageExample</code> arată care metoda este invocată.
+        </p>
+        
+        <pre>
+            <code>
+                class OverloadingExample
+                {
+                    static void F() => Console.WriteLine("F()");
+                    static void F(object x) => Console.WriteLine("F(object)");
+                    static void F(int x) => Console.WriteLine("F(int)");
+                    static void F(double x) => Console.WriteLine("F(double)");
+                    static void F<T>(T x) => Console.WriteLine($"F<T>(T), T is {typeof(T)}");            
+                    static void F(double x, double y) => Console.WriteLine("F(double, double)");
+                    
+                    public static void UsageExample()
+                    {
+                        F();            // Invokes F()
+                        F(1);           // Invokes F(int)
+                        F(1.0);         // Invokes F(double)
+                        F("abc");       // Invokes F<T>(T), T is System.String
+                        F((double)1);   // Invokes F(double)
+                        F((object)1);   // Invokes F(object)
+                        F<int>(1);      // Invokes F<T>(T), T is System.Int32
+                        F(1, 1);        // Invokes F(double, double)
+                    }
+                }
+            </code>
+        </pre>
+
+        <p>După cum arată exemplul, o metodă particulară poate fi întotdeauna selectată prin convertirea explicită a argumentelor în tipurile exacte de parametri și argumente de tip.</p>
+
+        <h2>Alți membri ai funcției</h2>
+
+        <p>
+            Membrii care conțin cod executabil sunt cunoscuți colectiv sub numele de <em>membri ai funcției</em> dintr-o clasă. Secțiunea anterioară descrie metodele, care sunt tipurile principale de membri ai funcției. 
+            Această secțiune descrie celelalte tipuri de membri ai funcției suportați de C#: constructori, proprietăți, indici, evenimente, operatori și finalizatori.
+        </p>
+
+        <p>Exemplul următor arată o clasă generică numită <code>MyList&lt;T&gt;</code>, care implementează o listă extensibilă de obiecte. Clasa conține mai multe exemple ale celor mai comune tipuri de membri ai funcției.</p>
+
+        <pre>
+            <code>
+                public class MyList<T>
+                {
+                    const int DefaultCapacity = 4;
+                
+                    T[] _items;
+                    int _count;
+                
+                    public MyList(int capacity = DefaultCapacity)
+                    {
+                        _items = new T[capacity];
+                    }
+                
+                    public int Count => _count;
+                
+                    public int Capacity
+                    {
+                        get =>  _items.Length;
+                        set
+                        {
+                            if (value < _count) value = _count;
+                            if (value != _items.Length)
+                            {
+                                T[] newItems = new T[value];
+                                Array.Copy(_items, 0, newItems, 0, _count);
+                                _items = newItems;
+                            }
+                        }
+                    }
+                
+                    public T this[int index]
+                    {
+                        get => _items[index];
+                        set
+                        {
+                            if (!object.Equals(_items[index], value)) {
+                                _items[index] = value;
+                                OnChanged();
+                            }
+                        }
+                    }
+                
+                    public void Add(T item)
+                    {
+                        if (_count == Capacity) Capacity = _count * 2;
+                        _items[_count] = item;
+                        _count++;
+                        OnChanged();
+                    }
+                    protected virtual void OnChanged() =>
+                        Changed?.Invoke(this, EventArgs.Empty);
+                
+                    public override bool Equals(object other) =>
+                        Equals(this, other as MyList<T>);
+                
+                    static bool Equals(MyList<T> a, MyList<T> b)
+                    {
+                        if (Object.ReferenceEquals(a, null)) return Object.ReferenceEquals(b, null);
+                        if (Object.ReferenceEquals(b, null) || a._count != b._count)
+                            return false;
+                        for (int i = 0; i < a._count; i++)
+                        {
+                            if (!object.Equals(a._items[i], b._items[i]))
+                            {
+                                return false;
+                            }
+                        }
+                        return true;
+                    }
+                
+                    public event EventHandler Changed;
+                
+                    public static bool operator ==(MyList<T> a, MyList<T> b) =>
+                        Equals(a, b);
+                
+                    public static bool operator !=(MyList<T> a, MyList<T> b) =>
+                        !Equals(a, b);
+                }
+            </code>
+        </pre>
+
+        <h3>Constructori</h3>
+
+        <p>
+            C# suportă atât constructori de instanță, cât și constructori statici. Un <em>constructor de instanță</em> este un membru care implementează acțiunile necesare pentru a inițializa o instanță a unei clase. 
+            Un <em>constructor static</em> este un membru care implementează acțiunile necesare pentru a inițializa o clasă însăși atunci când este încărcată pentru prima dată. 
+        </p>
+
+        <p>
+            Un constructor este declarat ca o metodă fără un tip de returnare și cu același nume ca și clasa care îl conține. 
+            Dacă o declarație de constructor include un modificator <code>static</code>, atunci se declară un constructor static. În caz contrar, se declară un constructor de instanță.
+        </p>
+
+        <p>
+            Constructorii de instanță pot fi suprascriși și pot avea parametri opționali. De exemplu, clasa <code>MyList&lt;T&gt;</code> declară un constructor de instanță cu un singur parametru opțional <code>int</code>. 
+            Constructorii de instanță sunt invocați folosind operatorul <code>new</code>. 
+            Următoarele declarații alocă două instanțe <code>MyList&lt;string&gt;</code> folosind constructorul clasei <code>MyList</code> cu și fără argumentul opțional.
+        </p>
+
+        <pre>
+            <code>
+                MyList<string> list1 = new();
+                MyList<string> list2 = new(10);
+            </code>
+        </pre>
+
+        <p>
+            Spre deosebire de ceilalți membri, constructorii de instanță nu sunt moșteniți. 
+            O clasă nu are constructori de instanță în afară de aceiași constructori efectiv declarați în clasă. Dacă nu se furnizează niciun constructor de instanță pentru o clasă, atunci unul gol, fără parametri, este furnizat automat.
+        </p>
+
+        <h3>Proprietăți</h3>
+
+        <p>
+            <em>Proprietățile</em> sunt o extensie naturală a câmpurilor. Ambele sunt membri denumiți cu tipuri asociate, iar sintaxa pentru accesarea câmpurilor și a proprietăților este aceeași. 
+            Cu toate acestea, spre deosebire de câmpuri, proprietățile nu denotă locații de stocare. În schimb, proprietățile au <em>accesori</em> care specifică declarațiile executate atunci când valorile lor sunt citite sau scrise. 
+            Un <em>get accessor</em>  citește valoarea. Un <em>set accessor</em> scrie valoarea.
+        </p>
+
+        <p>
+            O proprietate este declarată ca un câmp, cu excepția faptului că declarația se termină cu un get accessor sau un set accessor scris între delimitatorii <code>{</code> și <code>}</code> în loc să se termine cu un punct și virgulă. 
+            O proprietate care are atât un get accessor, cât și un set accessor este o <em>proprietate de scriere-citire</em>.
+            O proprietate care are doar un get accessor este o <em>proprietate doar pentru citire</em>. O proprietate care are doar un set accessor  este o <em>proprietate doar pentru scriere</em>.
+        </p>
+
+        <p>
+            Un get accessor corespunde unei metode fără parametri cu o valoare de returnare a tipului proprietății. Un set accessor  corespunde unei metode cu un singur parametru numit "value" și fără un tip de returnare. 
+            Get accessor calculează valoarea proprietății. Set accessor furnizează o nouă valoare pentru proprietate. 
+            Când proprietatea este ținta unei atribuiri sau operandul <code>++</code> sau <code>--</code>, 
+            În alte cazuri în care proprietatea este referită, get accessor este invocat.
+        </p>
+
+        <p>Clasa <code>MyList&lt;T&gt;</code> declară două proprietăți <code>Count</code> și <code>Capacity</code>, care sunt respectiv doar pentru citire și pentru scriere-citire. Codul următor este un exemplu de utilizare a acestor proprietăți:</p>
+
+        <pre>
+            <code>
+                MyList<string> names = new();
+                names.Capacity = 100;   // Invokes set accessor
+                int i = names.Count;    // Invokes get accessor
+                int j = names.Capacity; // Invokes get accessor
+            </code>
+        </pre>
+
+        <p>Similar cu câmpurile și metodele, C# suportă atât proprietăți de instanță cât și proprietăți statice. Proprietățile statice sunt declarate cu modificatorul static, iar proprietățile de instanță sunt declarate fără acest modificator.</p>
+
+        <p>Accesoriul sau accesoriile unei proprietăți pot fi virtuale. Atunci când o declarație de proprietate include un modificator <code>virtual</code>, <code>abstract</code>, sau <code>override</code>, acesta se aplică la accesoriul sau accesoriile proprietății.</p>
+
+        <h3>Indexatori</h3>
+        
+        <p>
+            Un <em>indexator</em> este un membru care permite obiectelor să fie indexate în același mod ca un array. 
+            Un <em>indexator</em> este declarat ca o proprietate, cu excepția faptului că numele membrului este "this" urmat de o listă de parametri scrisă între delimitatorii [ și ]. 
+            Parametrii sunt disponibili în accesoriile indexatorului. Similar cu proprietățile, indexatorii pot fi de tip citire-scriere, doar de citire sau doar de scriere, și accesoriile unui indexer pot fi virtuale.
+        </p>
+
+        <p>Clasa <code>MyList&lt;T&gt;</code> declară un singur indexator de tip citire-scriere care primește un parametru <code>int</code>. Indexatorul permite indexarea instanțelor <code>MyList&lt;T&gt;</code> cu valori <code>int</code>. De exemplu:</p>
+
+        <pre>
+            <code>
+                MyList<string> names = new();
+                names.Add("Liz");
+                names.Add("Martha");
+                names.Add("Beth");
+                for (int i = 0; i < names.Count; i++)
+                {
+                    string s = names[i];
+                    names[i] = s.ToUpper();
+                }
+            </code>
+        </pre>
+
+        <p>Indexatorii pot fi supraincarcati. O clasă poate declara mai mulți indexatori atâta timp cât numărul sau tipurile parametrilor lor sunt diferite.</p>
+
+        <h3>Evenimente</h3>
+
+        <p>Un <em>eveniment</em> este un membru care permite unei clase sau obiect să furnizeze notificări. Un eveniment este declarat ca un câmp, cu excepția faptului că declarația include o cheie de <code>eveniment</code> și tipul trebuie să fie un tip delegat.</p>
+
+        <p>
+            În cadrul unei clase care declară un membru eveniment, evenimentul se comportă exact ca un câmp de tip delegat (dacă evenimentul nu este abstract și nu declară accesori). 
+            Câmpul stochează o referință către un delegat care reprezintă gestionarii evenimentelor care au fost adăugați la eveniment. Dacă nu există gestionari de evenimente, câmpul este <code>null</code>.
+        </p>
+
+        <p>
+            Clasa <code>MyList&lt;T&gt;</code> declară un singur membru eveniment numit <code>Changed</code>, care indică faptul că un element nou a fost adăugat în listă sau un element din listă a fost modificat utilizând accessorul set al indexatorulu.
+            Evenimentul Changed este declanșat de metoda virtuală <code>OnChanged</code> care verifică mai întâi dacă evenimentul este <code>null</code> (însemnând că nu există gestionari de evenimente prezenți). 
+            Conceptul de declanșare a unui eveniment este echivalent exact cu invocarea delegatului reprezentat de eveniment. Nu există construcții speciale de limbaj pentru declanșarea evenimentelor.
+        </p>
+
+        <p>
+            Clienții reacționează la evenimente prin intermediul <em>gestionarilor de evenimente.</em>. EGestionarii de evenimente sunt atașați folosind operatorul <code>+=</code> și sunt eliminați folosind operatorul <code>-=</code>
+            În exemplul următor, este atașat un gestionar de evenimente la evenimentul <code>Changed</code> al unui <code>MyList&lt;string&gt;</code>.
+        </p>
+
+        <pre>
+            <code>
+                class EventExample
+                {
+                    static int s_changeCount;
+                    
+                    static void ListChanged(object sender, EventArgs e)
+                    {
+                        s_changeCount++;
+                    }
+                    
+                    public static void Usage()
+                    {
+                        var names = new MyList<string>();
+                        names.Changed += new EventHandler(ListChanged);
+                        names.Add("Liz");
+                        names.Add("Martha");
+                        names.Add("Beth");
+                        Console.WriteLine(s_changeCount); // "3"
+                    }
+                }
+            </code>
+        </pre>
+
+        <p>
+            Pentru scenarii avansate în care se dorește controlul depozitării subiacente a unui eveniment, o declarație de eveniment poate furniza în mod explicit 
+            accesori de <code>adăugare (add)</code> și <code>eliminare (remove)</code> care sunt similare cu accessorul set al unei proprietăți.
+        </p>
+
+
+        <h3>Operatori</h3>
+
+        <p>
+            Un <em>operator</em> este un membru care definește semnificația aplicării unui operator de expresie particular la instanțe ale unei clase. 
+            ot fi definite trei tipuri de operatori: operatori unari, operatori binari și operatori de conversie. Toți operatorii trebuie declarați ca <code>public</code> și <code>static</code>.
+        </p>
+
+        <p>
+            Clasa <code>MyList&lt;T&gt;</code>  declară doi operatori, <code>operatorul ==</code> și <code>operatorul !=</code>. 
+            Acești operatori suprascriși oferă o nouă semnificație expresiilor care aplică acești operatori la instanțe <code>MyList</code>. 
+            În mod specific, operatorii definesc egalitatea a două instanțe <code>MyList&lt;T&gt;</code> prin compararea fiecărui obiect conținut folosind metodele lor <code>Equals</code>. 
+            Exemplul următor folosește operatorul <code>==</code> pentru a compara două instanțe <code>MyList&lt;int&gt;</code>
+        </p>
+
+        <pre>
+            <code>
+                MyList<int> a = new();
+                a.Add(1);
+                a.Add(2);
+                MyList<int> b = new();
+                b.Add(1);
+                b.Add(2);
+                Console.WriteLine(a == b);  // Outputs "True"
+                b.Add(3);
+                Console.WriteLine(a == b);  // Outputs "False"
+            </code>
+        </pre>
+
+        <p>
+            Primul <code>Console.WriteLine</code> va afișa <code>True</code> pentru că cele două liste conțin același număr de obiecte cu aceleași valori în aceeași ordine. 
+            Dacă clasa <code>MyList&lt;T&gt;</code> nu ar fi definit <code>operatorul ==</code>, primul <code>Console.WriteLine</code> ar fi afișat <code>False</code> deoarece <code>a</code> și <code>b</code> referă instanțe diferite <code>MyList&lt;int&gt;</code>.
+        </p>
+
+        <h3>Finalizer</h3>
+
+        <p>
+            Un <em>finalizer</em> este un membru care implementează acțiunile necesare pentru a finaliza o instanță a unei clase. De obicei, un finalizator este necesar pentru a elibera resursele neadministrabile.  
+            Finalizatorii nu pot avea parametri, nu pot avea modificatori de acces și nu pot fi invocați explicit. Finalizatorul pentru o instanță este invocat automat în timpul colectării gunoiului.
+        </p>
+
+        <p>
+            Colectorul de gunoi are o mare libertate în decizia de când să colecteze obiecte și să ruleze finalizatorii. 
+            În mod specific, momentul invocării finalizatorilor nu este determinist și finalizatorii pot fi executați pe orice fir de execuție. 
+            Din aceste motive și altele, clasele ar trebui să implementeze finalizatori doar atunci când nu există alte soluții posibile.
+        </p>
+
+        <p>Instrucțiunea <code>using</code> oferă o abordare mai bună pentru distrugerea obiectelor.</p>
+
+        <h2>Expresii</h2>
+
+        <p>
+            <em>Expresiile</em> sunt construite din <em>operații</em> și <em>operatori</em>. Operatorii unei expresii indică care operații să se aplice asupra operanzilor.  
+            Exemple de operatori includ <code>+</code>, <code>-</code>, <code>*</code>, <code>/</code>, și <code>new</code>. 
+            Exemple de operanzi includ literali, câmpuri, variabile locale și expresii.
+        </p>
+
+        <p>
+            Când o expresie conține mai mulți operatori, <em>precedența</em>  operatorilor controlează ordinea în care sunt evaluați operatorii individuali. 
+            De exemplu, expresia <code>x + y * z</code> este evaluată ca <code>x + (y * z)</code> deoarece operatorul <code>*</code>are o precedență mai mare decât operatorul <code>+</code>.
+        </p>
+
+        <p>Când un operand apare între doi operatori cu aceeași precedență, <em>asociativitatea</em> operatorilor controlează ordinea în care sunt efectuate operațiile:</p>
+
+        <ul>
+            <li>Cu excepția operatorilor de atribuire și null-coalescing, toți operatorii binari sunt <em>asociativi la stânga</em>,  ceea ce înseamnă că operațiile sunt efectuate de la stânga la dreapta. De exemplu, <code>x + y + z</code> este evaluat ca <code>(x + y) + z</code>.</li>
+            <li>Operatorii de atribuire, operatorii null-coalescing <code>??</code> și <code>??=</code>, și operatorul condițional <code>?:</code> sunt <em>asociativi la dreapta</em>, ceea ce înseamnă că operațiile sunt efectuate de la dreapta la stânga. De exemplu, <code>x = y = z</code> este evaluat ca <code>x = (y = z)</code>.</li>
+        </ul>
+
+        <p>
+            Precedența și asociativitatea pot fi controlate folosind paranteze. De exemplu, <code>x + y * z</code> fînmulțește mai întâi <code>y</code> cu <code>z</code> și apoi adaugă rezultatul la <code>x</code>, 
+            dar <code>(x + y) * z</code> adună mai întâi <code>x</code> și <code>y</code> și apoi înmulțește rezultatul cu <code>z</code>.
+        </p>
+
+        <p>
+            Majoritatea operatorilor pot fi suprascriși. Suprascrierea operatorilor permite specificarea implementărilor de operatori definite de utilizator pentru operații în care unul sau ambii operanzi sunt de tip clasă sau structură definită de utilizator.
+        </p>
+
+        <p>
+            C# furnizează operatori pentru efectuarea de operații aritmetice, logice, pe biți și de deplasare și comparații de egalitate și ordine.
+        </p>
+
+        <p>
+            Pentru lista completă a operatorilor C# ordonați după nivelul de precedență, consultați C# operators.
+        </p>
+
+        <h2>Instrucțiuni</h2>
+
+        <p>Acțiunile unui program sunt exprimate folosind instrucțiuni. C# suportă mai multe tipuri diferite de instrucțiuni, dintre care unele sunt definite în termeni de instrucțiuni încorporate.</p>
+
+        <ul>
+            <li>Un <em>bloc</em> scrierea mai multor instrucțiuni în contexte în care este permisă o singură instrucțiune. Un bloc constă dintr-o listă de instrucțiuni scrise între delimitatoarele <code>{</code> și <code>}</code>.</li>
+            <li><em>Instrucțiunile de declarație</em> sunt utilizate pentru a declara variabile și constante locale.</li>
+            <li><em>Instrucțiunile de expresie</em> sunt utilizate pentru a evalua expresii. Expresiile care pot fi utilizate ca instrucțiuni includ apeluri de metode, alocări de obiecte utilizând operatorul <code>new</code>, atribuiri utilizând <code>=</code> și operatorii de atribuire compuși, operații de incrementare și decrementare utilizând operatorii <code>++</code> și <code>--</code> și expresii <code>await</code>.</li>
+            <li><em>Instrucțiunile de selecție</em> sunt utilizate pentru a selecta una dintre mai multe instrucțiuni posibile pentru execuție pe baza valorii unei expresii. Acest grup conține instrucțiunile <code>if</code> și <code>switch</code>.</li>
+            <li><em>Instrucțiunile de iterație</em>  sunt utilizate pentru a executa repetat o instrucțiune încorporată.  Acest grup conține instrucțiunile <code>while</code>, <code>do</code>, <code>for</code>, și <code>foreach</code>.</li>
+            <li><em>JInstrucțiunile de salt</em> de salt sunt utilizate pentru a transfera controlul. Acest grup conține instrucțiunile <code>break</code>, <code>continue</code>, <code>goto</code>, <code>throw</code>, <code>return</code>, și <code>yield</code>.</li>
+            <li>Instrucțiunea <code>try</code>...<code>catch</code> este utilizată pentru a prinde excepțiile care apar în timpul execuției unui bloc, iar instrucțiunea <code>try</code>...<code>finally</code> este utilizată pentru a specifica codul de finalizare care este întotdeauna executat, indiferent dacă a apărut o excepție sau nu.</li>
+            <li>Instrucțiunile <code>checked</code> și <code>unchecked</code> sunt utilizate pentru a controla contextul de verificare a depășirii pentru operațiile aritmetice și conversiile de tip integral.</li>
+            <li>Instrucțiunea <code>lock</code> este utilizată pentru a obține lacătul de excludere mutuală pentru un obiect dat, a executa o instrucțiune și apoi a elibera lacătul.</li>
+            <li>Instrucțiunea <code>using</code> este utilizată pentru a obține un resursă, a executa o instrucțiune și apoi a elibera acea resursă.</li>
+        </ul>
+
+        <p>Următoarele listează tipurile de declarații care pot fi utilizate:</p>
+
+        <ul>
+            <li>Declarația de variabilă locală.</li>
+            <li>Declarația de constantă locală.</li>
+            <li>Declarația de expresie.</li>
+            <li>Declarația <code>if</code>.</li>
+            <li>Declarația <code>switch</code>.</li>
+            <li>Declarația <code>while</code>.</li>
+            <li>Declarația <code>do</code>.</li>
+            <li>Declarația <code>for</code>.</li>
+            <li>Declarația <code>foreach</code>.</li>
+            <li>Declarația <code>break</code>.</li>
+            <li>Declarația <code>continue</code>.</li>
+            <li>Declarația <code>goto</code>.</li>
+            <li>Declarația <code>return</code>.</li>
+            <li>Declarația <code>yield</code>.</li>
+            <li>Declarația <code>throw</code> și declarația <code>try</code>.</li>
+            <li>Declarațiile <code>checked</code> și <code>unchecked</code>.</li>
+            <li>Declarația <code>lock</code>.</li>
+            <li>Declarația <code>using</code>.</li>
+        </ul>
+
+        <h1>Domeniile majore de limbaj C#</h1>
+
+        <h2>Tablouri, colecții și LINQ.</h2>
+
+        <p>
+            C# și .NET furnizează multe tipuri diferite de colecții. Array-urile au sintaxa definită de limbaj. Tipurile generice de colecții sunt enumerate în spațiul de nume System.Collections.Generic. 
+            Colecțiile specializate includ System.Span&lt;T&gt; pentru accesarea memoriei continue pe stiva de execuție, și System.Memory&lt;T&gt; pentru accesarea memoriei continue în heap-ul gestionat.  
+            Toate colecțiile, inclusiv array-uri, Span&lt;T&gt; și Memory&lt;T&gt; împărtășesc un principiu unificator pentru iterație.  
+            Folosești interfața System.Collections.Generic.IEnumerable&lt;T&gt;. Acest principiu unificator înseamnă că oricare dintre tipurile de colecții pot fi folosite cu interogări LINQ sau alte algoritme. 
+            Scrii metode folosind IEnumerable&lt;T&gt;  și acele algoritme funcționează cu orice colecție.
+        </p>
+
+        <h3>Tablouri (array)</h3>
+
+        <p>
+            Un <em><strong>array</strong></em> este o structură de date care conține un număr de variabile la care se accesează prin indici calculați. 
+            Variabilele conținute într-un array, numite și  <em><strong>elemente</strong></em> ale array-ului,  sunt de același tip.   
+            Acest tip se numește <em><strong>tipul elementelor</strong></em> array-ului.
+        </p>
+
+        <p>
+            Tipurile de array-uri sunt tipuri de referință, iar declararea unei variabile de tip array doar rezervă spațiu pentru o referință către o instanță de array. 
+            Instanțele reale de array sunt create dinamic la momentul rulării programului folosind operatorul <code>new</code>. 
+            Operația de <code>new</code> specifică <em><strong>lungimea</strong></em> noii instanțe de array, care este apoi fixată pe durata de viață a instanței. 
+            Indicii elementelor unui array variază de la <code>0</code> la <code>Lungime - 1</code>. Operatorul <code>new</code> automat elementele unui array cu valoarea lor implicită, 
+            care, de exemplu, este zero pentru toate tipurile numerice și <code>null</code> pentru toate tipurile de referință.
+        </p>
+
+        <p>Următorul exemplu creează un array de elemente  <code>int</code>, initializează array-ul și afișează conținutul acestuia.</p>
+        
+        <pre>
+            <code>
+                int[] a = new int[10];
+                for (int i = 0; i < a.Length; i++)
+                {
+                    a[i] = i * i;
+                }
+                for (int i = 0; i < a.Length; i++)
+                {
+                    Console.WriteLine($"a[{i}] = {a[i]}");
+                }
+            </code>
+        </pre>
+
+        <p>
+            Acest exemplu creează și operează pe un <em><strong>array unidimensional</strong></em>. C# suportă, de asemenea, <em><strong>array-uri multidimensionale</strong></em>. 
+            Numărul de dimensiuni ale unui tip de array, cunoscut și sub numele de <em><strong>rang</strong></em> al tipului de array, este de unu plus numărul de virgule între parantezele pătrate ale tipului de array. 
+            Următorul exemplu alocă un array unidimensional, un array bidimensional și un array tridimensional, respectiv.
+        </p>
+
+        <pre>
+            <code>
+                int[] a1 = new int[10];
+                int[,] a2 = new int[10, 5];
+                int[,,] a3 = new int[10, 5, 2];
+            </code>
+        </pre>
+
+        <p>
+            Array-ul <code>a1</code> conține 10 elemente, array-ul <code>a2</code> conține 50 (10 × 5) elemente,  iar array-ul <code>a3</code> conține 100 (10 × 5 × 2) elemente.
+            Tipul elementelor unui array poate fi orice tip, inclusiv un tip de array. 
+            Un array cu elemente de tip array este uneori numit un <em><strong>array jagged (denticulat)</strong></em> deoarece lungimile array-urilor elementelor nu trebuie să fie toate aceleași. 
+            exemplu alocă un array de array-uri de tip <code>int</code>:
+        </p>
+
+        <pre>
+            <code>
+                int[][] a = new int[3][];
+                a[0] = new int[10];
+                a[1] = new int[5];
+                a[2] = new int[20]
+            </code>
+        </pre>
+
+        <p>
+            Prima linie creează un array cu trei elemente, fiecare de tip <code>int[]</code>  și fiecare cu o valoare inițială de <code>null</code>. 
+            Apoi, următoarele linii inițializează cele trei elemente cu referințe către instanțe individuale de array cu lungimi variate.
+        </p>
+
+        <p>
+            Operatorul <code>new</code> permite specificarea valorilor inițiale ale elementelor unui array utilizând un  <em><strong>inițializator de array</strong></em>, 
+            care este o listă de expresii scrise între delimitatori <code>{</code> și <code>}</code>. Următorul exemplu alocă și inițializează un <code>int[]</code> cu trei elemente.
+        </p>
+
+        <pre>
+            <code>
+                int[] a = new int[] { 1, 2, 3 };
+            </code>
+        </pre>
+
+        <p>Lungimea tabloului este dedusă din numărul de expresii între <code>{</code> și <code>}</code>. Inițializarea tabloului poate fi redusă și mai mult astfel încât tipul tabloului să nu mai fie reafirmat.</p>
+
+        <pre>
+            <code>
+                int[] a = { 1, 2, 3 };
+            </code>
+        </pre>
+
+        <p>Ambele exemple anterioare sunt echivalente cu următorul cod:</p>
+
+        <pre>
+            <code>
+                int[] t = new int[3];
+                t[0] = 1;
+                t[1] = 2;
+                t[2] = 3;
+                int[] a = t;
+            </code>
+        </pre>
+
+        <p>Instrucțiunea <code>foreach</code>  poate fi utilizată pentru a enumera elementele oricărei colecții.  Următorul cod enumerează tabloul din exemplul precedent:</p>
+
+        <pre>
+            <code>
+                foreach (int item in a)
+                {
+                    Console.WriteLine(item);
+                }
+            </code>
+        </pre>
+
+        <p>Instrucțiunea <code>foreach</code> utilizează interfața IEnumerable&lt;T&gt;, astfel că poate lucra cu orice colecție.</p>
+
+        <h2>Interpolare de șiruri de caractere</h2>
+
+        <p>
+            <em><strong>Interpolarea șirurilor de caractere</strong></em> în C# vă permite să formatați șiruri de caractere prin definirea de expresii ale căror rezultate sunt plasate într-un format șir de caractere.
+            De exemplu, următorul exemplu tipărește temperatura într-o anumită zi dintr-un set de date meteo:
+        </p>
+
+        <pre>
+            <code>
+                Console.WriteLine($"The low and high temperature on {weatherData.Date:MM-dd-yyyy}");
+                Console.WriteLine($"    was {weatherData.LowTemp} and {weatherData.HighTemp}.");
+                // Output (similar cu):
+                // Temperatura minimă și maximă pe 08-11-2020
+                //     a fost 5 și 30..
+            </code>
+        </pre>
+
+        <p>
+            Un șir de caractere interpolat este declarat folosind simbolul <code>$</code>. 
+            Interpolarea șirurilor de caractere evaluează expresiile dintre <code>{</code> și <code>}</code>, 
+            apoi convertește rezultatul într-un șir de caractere și înlocuiește textul dintre acolade cu rezultatul șirului de caractere al expresiei. Caracterul <code>:</code> în prima expresie, 
+            <code>{weatherData.Date:MM-dd-yyyy}</code>, specifică "șirul de format". În exemplul precedent, specifică că data ar trebui să fie tipărită în formatul "MM-dd-yyyy"
+        </p>
+
+        <h2>Potrivirea de tipare (Pattern matching)</h2>
+
+        <p>
+            Limbajul C# oferă expresii de <em><strong>potrivire a tiparelor</strong></em> pentru a interoga starea unui obiect și pentru a executa cod bazat pe acea stare. 
+            Puteți inspecta tipurile și valorile proprietăților și câmpurilor pentru a determina care acțiune să fie luată. Puteți inspecta și elementele unei liste sau a unui tablou. 
+            Expresia <code>switch</code> este expresia principală pentru potrivirea tiparelor.
+        </p>
+    
+        <h2>Delegate-uri și expresii lambda</h2>
+
+        <p>
+            Un <em><strong>tip de delegat</strong></em> reprezintă referințe către metode cu un anumit listă de parametri și tip de returnare.  
+            Delegatele permit tratarea metodelor ca entități care pot fi atribuite variabilelor și transmise ca parametri.  
+            Delegatele sunt similare conceptului de pointeri la funcții găsit în alte limbaje de programare. În contrast cu pointerii la funcții, delegatele sunt orientate pe obiect și type-safe.
+        </p>
+        
+        <p>Urmatorul exemplu declară și folosește un tip de delegat numit <code>Function</code>.</p>
+
+        <pre>
+            <div>
+                delegate double Function(double x);
+
+                class Multiplier
+                {
+                    double _factor;
+
+                    public Multiplier(double factor) => _factor = factor;
+
+                    public double Multiply(double x) => x * _factor;
+                }
+
+                class DelegateExample
+                {
+                    static double[] Apply(double[] a, Function f)
+                    {
+                        var result = new double[a.Length];
+                        for (int i = 0; i < a.Length; i++) result[i] = f(a[i]);
+                        return result;
+                    }
+
+                    public static void Main()
+                    {
+                        double[] a = { 0.0, 0.5, 1.0 };
+                        double[] squares = Apply(a, (x) => x * x);
+                        double[] sines = Apply(a, Math.Sin);
+                        Multiplier m = new(2.0);
+                        double[] doubles = Apply(a, m.Multiply);
+                    }
+                }
+            </div>
+        </pre>
+
+        <p>
+            O instanță a tipului de delegat <code>Function</code> poate face referire la oricare metodă care primește un argument de tip <code>double</code> și returnează o valoare de tip <code>double</code>. 
+            Metoda <code>Apply</code> aplică o anumită <code>funcție (Function)</code> asupra elementelor unui vector de tip <code>double[]</code>, returnând un vector de tip <code>double[]</code> cu rezultatele. 
+            În metoda <code>Main</code>, metoda <code>Apply</code> este utilizată pentru a aplica trei funcții diferite asupra unui vector de tip <code>double[]</code>.
+        </p>
+
+
+        <p>
+            Delegatele pot fi create folosind funcții anonime sau expresii lambda, care sunt "metode inline" create la momentul declarării.  
+            Funcțiile anonime pot accesa variabilele locale din metodele înconjurătoare.  
+            Exemplul următor nu creează o clasă:
+            <p>
+                Un delegat poate face referire fie la o expresie lambda pentru a crea o funcție anonimă (cum ar fi <code>(x) =&gt; x * x</code> în exemplul anterior), 
+                fie la o metodă statică (cum ar fi <code>Math.Sin</code> în exemplul anterior)  sau la o metodă de instanță (cum ar fi <code>m.Multiply</code>  în exemplul anterior). 
+                Un delegat care face referire la o metodă de instanță face referire și la un anumit obiect, iar atunci când metoda de instanță este invocată prin intermediul delegatului, acel obiect devine <code>this</code> în invocare.
+            </p>
+        </p>
+
+        <pre>
+            <div>
+                double[] doubles = Apply(a, (double x) => x * 2.0);
+            </div>
+        </pre>
+
+        <p>Un delegat nu știe sau nu îi pasă despre clasa metodei la care face referire. Metoda referită trebuie să aibă aceiași parametri și tip de returnare ca delegatul.</p>
+
+        <h2>async / await</h2>
+
+        <p>
+            C# suportă programe asincrone cu două cuvinte cheie: <code>async</code> și <code>await</code>. Adăugați modificatorul <code>async</code> la declarația unei metode pentru a declara că metoda este asincronă.  
+            Operatorul <code>await</code> le spune compilatorului să aștepte asincron rezultatul unei operații să se termine. Controlul este returnat apelantului, iar metoda returnează o structură care gestionează starea lucrului asincron. 
+            De obicei, această structură este de tipul System.Threading.Tasks.Task&lt;TResult&gt;, dar poate fi orice tip care suportă modelul de așteptare (awaiter pattern). 
+            Aceste caracteristici vă permit să scrieți cod care se citește similar cu echivalentul său sincron, dar se execută asincron. De exemplu, următorul cod descarcă pagina principală a documentației Microsoft:
+        </p>
+
+        <pre>
+            <div>
+                public async Task<int> RetrieveDocsHomePage()
+                {
+                    var client = new HttpClient();
+                    byte[] content = await client.GetByteArrayAsync("https://learn.microsoft.com/");
+                
+                    Console.WriteLine($"{nameof(RetrieveDocsHomePage)}: Finished downloading.");
+                    return content.Length;
+                }
+            </div>
+        </pre>
+
+        <p>Acest mic exemplu arată principalele caracteristici ale programării asincrone:</p>
+
+        <ul>
+            <li>Declararea metodei include modificatorul <code>async</code>.</li>
+            <li>Corpul metodei <code>așteaptă</code> returnarea rezultatului metodei <code>GetByteArrayAsync</code>.</li>
+            <li>Tipul specificat în declarația <code>return</code> se potrivește cu argumentul de tip în declarația <code>Task&lt;T&gt;</code> pentru metoda respectivă.
+                (O metodă care returnează un <code>Task</code>  ar folosi declarații <code>return</code> fără niciun argument).</li>
+        </ul>
+
+        <h2>Atribute</h2>
+
+        <p>
+            Tipurile, membrii și alte entități într-un program C# suportă modificatori care controlează anumite aspecte ale comportamentului lor.
+            De exemplu, accesibilitatea unei metode este controlată folosind modificatorii  <code>public</code>, <code>protected</code>, <code>internal</code>, și <code>private</code>. 
+            C# generalizează această capacitate astfel încât informațiile declarative definite de utilizator pot fi atașate entităților programului și pot fi accesate la timpul de execuție. 
+            Programele specifică aceste informații declarative prin definirea și utilizarea de <em><strong>atribute</strong></em>.
+        </p>
+
+        <p>Următorul exemplu declară un atribut <code>HelpAttribute</code> care poate fi plasat pe entități din program pentru a furniza legături către documentația asociată acestora.</p>
+
+        <pre>
+            <div>
+                public class HelpAttribute : Attribute
+                {
+                    string _url;
+                    string _topic;
+
+                    public HelpAttribute(string url) => _url = url;
+
+                    public string Url => _url;
+
+                    public string Topic
+                    {
+                        get => _topic;
+                        set => _topic = value;
+                    }
+                }
+            </div>
+        </pre>
+
+        <p>
+            Toate clasele de atribute moștenesc clasa de bază Attribute furnizată de biblioteca .NET. 
+            Atributele pot fi aplicate prin specificarea numelui lor, împreună cu orice argumente, în interiorul unor paranteze pătrate, chiar înaintea declarației asociate.  
+            Dacă numele unui atribut se termină în <code>Attribute</code>, această parte a numelui poate fi omisă atunci când atributul este referențiat. 
+            De exemplu, atributul <code>HelpAttribute</code> poate fi utilizat în felul următor.
+        </p>
+
+        <pre>
+            <div>
+                [Help("https://learn.microsoft.com/dotnet/csharp/tour-of-csharp/features")]
+                public class Widget
+                {
+                    [Help("https://learn.microsoft.com/dotnet/csharp/tour-of-csharp/features",
+                    Topic = "Display")]
+                    public void Display(string text) { }
+                }
+            </div>
+        </pre>
+
+        <p>
+            Această exemplificare atașează un <code>HelpAttribute</code> la clasa <code>Widget</code>. Se adaugă un alt <code>HelpAttribute</code> la metoda <code>Display</code> din clasă. 
+            Constructorii publici ai unei clase de atribute controlează informațiile care trebuie furnizate atunci când atributul este atașat la o entitate de program. 
+            Informații suplimentare pot fi furnizate prin referirea la proprietățile publice read-write ale clasei de atribute (cum ar fi referirea la proprietatea <code>Topic</code> menționată anterior).
+        </p>
+
+        <p>
+            Metadatele definite de atribute pot fi citite și manipulate în timpul execuției utilizând reflexia. Atunci când o anumită atribută este solicitată folosind această tehnică, 
+            constructorul clasei de atribute este invocat cu informațiile furnizate în sursa programului. Este returnată instanta atributului rezultat. 
+            Dacă informații suplimentare au fost furnizate prin proprietăți, acele proprietăți sunt setate la valorile date înainte ca instanța de atribut să fie returnată.
+        </p>
+
+        <p>Următorul exemplu de cod demonstrează cum să obțineți instanțele <code>HelpAttribute</code> asociate cu clasa <code>Widget</code> cși cu metoda sa <code>Display</code>.</p>
+
+        <pre>
+            <div>
+                Type widgetType = typeof(Widget);
+
+                object[] widgetClassAttributes = widgetType.GetCustomAttributes(typeof(HelpAttribute), false);
+
+                if (widgetClassAttributes.Length > 0)
+                {
+                    HelpAttribute attr = (HelpAttribute)widgetClassAttributes[0];
+                    Console.WriteLine($"Widget class help URL : {attr.Url} - Related topic : {attr.Topic}");
+                }
+
+                System.Reflection.MethodInfo displayMethod = widgetType.GetMethod(nameof(Widget.Display));
+
+                object[] displayMethodAttributes = displayMethod.GetCustomAttributes(typeof(HelpAttribute), false);
+
+                if (displayMethodAttributes.Length > 0)
+                {
+                    HelpAttribute attr = (HelpAttribute)displayMethodAttributes[0];
+                    Console.WriteLine($"Display method help URL : {attr.Url} - Related topic : {attr.Topic}");
+                }
+            </div>
+        </pre>
+
+    </body>
