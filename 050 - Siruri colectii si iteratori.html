@@ -7,7 +7,7 @@
         Deoarece tablourile sunt tipuri de referință,
         metoda poate modifica valoarea elementelor.</p>
 
-    <h2>Transmiterea tablourilor unidimensionale ca argumente</h2>
+    <h2>5.6.1 Transmiterea tablourilor unidimensionale ca argumente</h2>
     <p>Puteți transmite un tablou unidimensional inițializat la o metodă.
         De exemplu, următoarea secvență transmite un tablou către o metodă de scriere.
     <pre>
@@ -35,7 +35,7 @@
      </code></pre>
     </p>
 
-    <h2>Exemplu</h2>
+    <h3>Exemplu</h3>
     <p>În exemplul următor, un tablou de șiruri de caractere este inițializat și
         transmis ca un
         argument la o metodă DisplayArray pentru șiruri de caractere.
@@ -96,7 +96,7 @@
     //        Mon Wed Fri Wed Tue Mon Sun
    </code> </pre>
     </p>
-    <h2>Transmiterea tablourior multidimensionale ca argumente</h2>
+    <h2>5.6.2 Transmiterea tablourior multidimensionale ca argumente</h2>
 
     <p>Puteți transmite la o metodă un tablou multidimensional inițializat
         în același mod în care transmiteți un tablou unidimensional.
@@ -120,7 +120,7 @@
     Print2DArray(new int[,] { { 1, 2 }, { 3, 4 }, { 5, 6 }, { 7, 8 } });
        </code> </pre>
     </p>
-    <h2>Exemplu</h2>
+    <h3>Exemplu</h3>
     <p>
         În următorul exemplu,
         un tablou bidimensional de numere întregi este inițializat
@@ -206,7 +206,7 @@
     folosind new [] la fel ca tablourile unidimensionale.
     </p>
 
-    <h2>Tablouri tipizate implicit în inițializatorii de obiecte.</h2>
+    <h2>5.7.1 Tablouri tipizate implicit în inițializatorii de obiecte.</h2>
     <p>
         Când creați un tip anonim care conține un tablou, tabloul trebuie să fie
         implicit tipizat în inițializatorul de obiect al tipului. În exemplul următor,
@@ -252,7 +252,7 @@
         namespaces.
     </p>
 
-    <h2>Utilizarea unei colecții simple</h2>
+    <h2>5.8.1 Utilizarea unei colecții simple</h2>
     <p>
         Exemplele din această secțiune folosesc clasa generică List&lt;T&gt;,
         care vă permite să lucrați cu o listă de obiecte tipizate puternic.
@@ -335,23 +335,23 @@
     <pre> <code>
     var numbers = new List&lt;int&gt; { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 
-         // Remove odd numbers.
-         for (var index = numbers.Count - 1; index >= 0; index--)
-         {
-             if (numbers[index] % 2 == 1)
-             {
-                // Remove the element by specifying
-                // the zero-based index in the list.
-                 numbers.RemoveAt(index);
-             }
-         }
+    // Remove odd numbers.
+    for (var index = numbers.Count - 1; index >= 0; index--)
+    {
+        if (numbers[index] % 2 == 1)
+        {
+            // Remove the element by specifying
+            // the zero-based index in the list.
+            numbers.RemoveAt(index);
+        }
+    }
             
-        // Iterate through the list.
-        // A lambda expression is placed in the ForEach method
-        // of the List(T) object.
-         numbers.ForEach(
-             number => Console.Write(number + " "));
-        // Output: 0 2 4 6 8
+    // Iterate through the list.
+    // A lambda expression is placed in the ForEach method
+    // of the List(T) object.
+    numbers.ForEach(
+                number => Console.Write(number + " "));
+    // Output: 0 2 4 6 8
    </code> </pre>
     Pentru tipul de elemente din List&lt;T&gt;,
     puteți defini propriul dvs. clasă. În exemplul următor,
@@ -387,7 +387,7 @@
      </code></pre>
     </p>
 
-    <h2>Tipuri de colecții</h2>
+    <h2>5.8.2 Tipuri de colecții</h2>
 
     <p>
         Multe colecți comune sunt oferite de .NET. Fiecare tip de colecție este
@@ -400,7 +400,7 @@
         <li> Clasele System.Collections</li>
     </ul>
 
-    <h3>Clasele System.Collections.Generic</h3>
+    <h3>5.8.2.1 Clasele System.Collections.Generic</h3>
     Puteți crea o colecție generică folosind una dintre clasele din spațiul de nume System.Collections.Generic. O
     colecție generică este utilă atunci când fiecare element din colecție are același tip de date. O colecție generică
     impune tipul de date prin permiterea adăugării doar a tipului de date dorit.
@@ -438,7 +438,7 @@
         </tr>
     </table>
 
-    <h3>Clasele System.Collections.Concurrent</h3>
+    <h3>5.8.2.2 Clasele System.Collections.Concurrent</h3>
 
     În .NET Framework 4 și versiunile ulterioare, colecțiile din spațiul de nume System.Collections.Concurrent
     furnizează operații eficiente sigure pentru thread-uri pentru accesarea elementelor colecției din mai multe
@@ -453,7 +453,7 @@
     BlockingCollection&lt;T&gt;, ConcurrentDictionary&lt;TKey, TValue&gt;,
     ConcurrentQueue&lt;T&gt; și ConcurrentStack&lt;T&gt;.
 
-    <h3>Clasele System.Collections</h3>
+    <h3>5.8.2.3 Clasele System.Collections</h3>
     Clasele din spațiul de nume System.Collections nu stochează elemente ca obiecte cu tip specific, ci ca obiecte de
     tipul Object.
     <br><br>
@@ -492,7 +492,7 @@
     înlănțuite.
 
 
-    <h3>Implementarea unei colecții de perechi cheie/valoare</h3>
+    <h3>5.8.2.4 Implementarea unei colecții de perechi cheie/valoare</h3>
     Dicționarul generic Dictionary&lt;TKey, TValue&gt;
     permite accesul la elementele dintr-o colecție prin utilizarea
     cheii fiecărui element. Fiecare adăugare în dicționar constă dintr-o
@@ -604,7 +604,7 @@
             Console.WriteLine("found: " + theElement.Name);
     }
     </code> </pre>
-    <h3>Accesarea unei colecții folosind LINQ </h3>
+    <h3>5.8.2.5 Accesarea unei colecții folosind LINQ </h3>
 
     LINQ (Interogare Integrată în Limbaj) poate fi utilizat pentru a accesa colecțiile.
     Interogările LINQ oferă capabilități de filtrare, sortare și grupare.
@@ -653,7 +653,7 @@
     }
   </code></pre>
 
-    <h3>Sortarea unei colecții</h3>
+    <h3>5.2.8.6 Sortarea unei colecții</h3>
 
     Următorul exemplu ilustrează o procedură de sortare a unei colecții.
     Exemplul sortează instanțele clasei Car care sunt stocate într-o List&lt;T&gt;.
@@ -741,7 +741,7 @@
     }
 </code></pre>
 
-    <h3>Definirea unei colecții personalizate</h3>
+    <h3>5.2.8.7 Definirea unei colecții personalizate</h3>
     Puteți defini o colecție prin implementarea interfeței IEnumerable&lt;T&gt; sau IEnumerable.
     <br><br>
     Deși puteți defini o colecție personalizată, de obicei este mai bine să utilizați
@@ -826,7 +826,7 @@
     }
 </code></pre>
 
-    <h3>Iteratori</h3>
+    <h3>5.2.8.8 Iteratori</h3>
 
     Un iterator este folosit pentru a efectua o iterație personalizată peste o colecție.
     Un iterator poate fi o metodă sau un accesoriu get. Un iterator utilizează o instrucțiune
@@ -921,7 +921,7 @@
     using pentru namespace-urile System.Collections și System.Collections.Generic.
 
     </p>
-    <h2>Iteratori simpli</h2>
+    <h2>5.9.1 Iteratori simpli</h2>
     <p>
         Exemplul următor conține o singură instrucțiune yield return care se
         află într-un for loop. În metoda Main, fiecare iterație a corpului instrucțiunii
@@ -953,7 +953,7 @@
     </code></pre>
     </p>
 
-    <h2>Crearea unei clase de colecții</h2>
+    <h2>5.9.2 Crearea unei clase de colecții</h2>
     <p>În exemplul următor, clasa DaysOfTheWeek implementează interfața IEnumerable,
         care necesită o metodă GetEnumerator. Compilatorul apelează implicit metoda
         GetEnumerator, care returnează un obiect de tipul IEnumerator.
@@ -1077,7 +1077,6 @@
         private class Animal
         {
             public enum TypeEnum { Bird, Mammal }
-    
             public string Name { get; set; }
             public TypeEnum Type { get; set; }
         }
@@ -1085,7 +1084,7 @@
 </code></pre>
     </p>
 
-    <h2>Utilizarea iteratorilor cu o listă generică</h2>
+    <h2>5.9.3 Utilizarea iteratorilor cu o listă generică</h2>
     <p>
         În exemplul următor, clasa generică Stack&lt;T&gt; implementează
         interfața generică IEnumerable&lt;T&gt;. Metoda Push
@@ -1213,7 +1212,7 @@
        </code> </pre>
     </p>
 
-    <h2>Informații de sintaxă</h2>
+    <h2>5.9.4 Informații de sintaxă</h2>
     <p>
         Un iterator poate fi definit ca o metodă sau un accesoriu get.
         Un iterator nu poate fi definit într-un eveniment, constructor de instanță,
@@ -1230,7 +1229,7 @@
         înaintea cuvintelor cheie return sau break.
     </p>
 
-    <h2>Implementarea tehnică</h2>
+    <h2>5.9.5 Implementarea tehnică</h2>
     <p>
         Deși scrieți un iterator ca o metodă, compilatorul îl traduce
         într-o clasă imbricată care, în efect, este o mașină de stare.
@@ -1256,7 +1255,7 @@
         de o metodă iterator aruncă o excepție NotSupportedException.
     </p>
 
-    <h2>Utilizarea iteratorilor</h2>
+    <h2>5.9.6 Utilizarea iteratorilor</h2>
     <p>
         Iteratoarele permit menținerea simplității unui loop foreach
         atunci când este necesar să utilizați cod complex pentru a
