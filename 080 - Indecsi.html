@@ -47,7 +47,7 @@
                 //       Hello, World.
     </code></pre>
 
-    <h3>Definițiile corpului de expresii</h3>
+    <h3>8.1.1. Definițiile corpului de expresii</h3>
 
     <p>
     Se obișnuiește ca metoda de acces get sau set al unui index să constea dintr-o singură instrucțiune care returnează sau setează o valoare. Membrii cu corpul expresiei furnizează o sintaxă simplificată pentru a susține acest fapt. Un index doar pentru citire poate fi implementat ca membru cu un corp de expresie, după cum se arată în exemplul următor:
@@ -120,7 +120,7 @@
                 //       Hello, World.
     </code></pre>
 
-    <h3>Prezentare generală a indecșilor</h3>
+    <h3>8.1.2. Prezentare generală a indecșilor</h3>
 
     <ul>
         <li>Indecșii permit obiectelor să fie indexate într-un mod similar cu vectorii.</li>
@@ -162,7 +162,7 @@
 
     <p>Important! Declararea unui index va genera automat o proprietate numită Item pe obiect. Proprietatea Item nu este accesibilă direct din expresia de acces la membrul instanței. În plus, dacă se adaugă propria proprietate Item la un obiect cu un index, se va obține o eroare de compilare CS0102. Pentru a evita această eroare, utilizați IndexerNameAttribute pentru a redenumi indexul, așa cum este detaliat mai jos.</p>
 
-    <h3>Remarci</h3>
+    <h3>8.2.1. Remarci</h3>
 
     <p>Tipul unui index și tipul parametrilor săi trebuie să fie cel puțin la fel de accesibile ca și indexul în sine. Pentru mai multe informații despre nivelurile de accesibilitate, consultați "Modificatorii de acces".</p>
 
@@ -251,7 +251,7 @@
         }
     </code></pre>
 
-    <h3>Indexarea utilizând alte valori</h3>
+    <h3>8.2.2. Indexarea utilizând alte valori</h3>
 
     <p>Limbajul C# nu limitează tipul parametrului indexului la integer. De exemplu, poate fi util să folosiți un string cu un index. Un astfel de index ar putea fi implementat căutând string-ul în colecție și returnând valoarea corespunzătoare. Deoarece accesori pot fi supraîncărcați, versiunile string și integer pot coexista.</p>
 
@@ -371,7 +371,7 @@
         }
     </code></pre>
 
-    <h3>Programarea robustă</h3>
+    <h3>8.2.3. Programarea robustă</h3>
 
     <p>Există două modalități principale prin care se poate îmbunătăți securitatea și fiabilitatea indecșilor: </p>
 

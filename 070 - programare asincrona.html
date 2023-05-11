@@ -276,13 +276,13 @@
     <li>Sarcinile asincrone pot fi ușor executate în paralel.</li>
 </ul>
 
-<h3>Folosirea claselor adecvate</h3>
+<h3>7.8.1 Folosirea claselor adecvate</h3>
 
 <p>Exemplele simple din acest subiect demonstrează utilizarea funcțiilor File.WriteAllTextAsync și File.ReadAllTextAsync. Pentru a avea un control mai precis asupra operațiilor de I/O ale fișierelor, utilizați clasa FileStream, care are o opțiune ce permite ca I/O-ul asincron să se producă la nivelul sistemului de operare. Prin utilizarea acestei opțiuni, puteți evita blocarea unui fir de execuție din pool-ul de fire în multe cazuri. Pentru a activa această opțiune, specificați argumentul useAsync=true sau options=FileOptions.Asynchronous în apelul constructorului.</p>
 
 <p>Nu puteți utiliza această opțiune cu StreamReader și StreamWriter dacă le deschideți direct prin specificarea căii fișierului. Cu toate acestea, puteți utiliza această opțiune dacă le furnizați un Stream pe care clasa FileStream l-a deschis. Apelurile asincrone sunt mai rapide în aplicațiile UI, chiar dacă un fir din pool-ul de fire este blocat, deoarece firul UI nu este blocat în timpul așteptării.</p>
 
-<h3>Scrierea textului</h3>
+<h3>7.8.2 Scrierea textului</h3>
 
 <p>Exemplele următoare scriu text într-un fișier. La fiecare declanșare a unei instrucțiuni await, metoda iese imediat. După finalizarea operațiilor de I/O a fișierului, metoda revine la instrucțiunea care urmează după instrucțiunea await. Modificatorul async este inclus în definiția metodelor care utilizează instrucțiunea await.</p>
 
@@ -332,7 +332,7 @@
 
 <p>Prima instrucțiune returnează o sarcină și determină începerea procesării fișierului. A doua instrucțiune, împreună cu await, face ca metoda să iasă imediat și să returneze o altă sarcină. Când procesarea fișierului se va finaliza mai târziu, execuția va reveni la instrucțiunea care urmează după await.</p>
 
-<h3>Citirea textului</h3>
+<h3>7.8.3 Citirea textului</h3>
 
 <p>Următorul exemplu citește textul dintr-un fișier</p>
 
@@ -396,7 +396,7 @@
     }
 </code></pre>
 
-<h3> I/O asincron paralel</h3>
+<h3>7.8.4 I/O asincron paralel</h3>
 
 <p>Următoarele exemple demonstrează procesarea paralelă prin scrierea a 10 fișiere text.</p>
 
