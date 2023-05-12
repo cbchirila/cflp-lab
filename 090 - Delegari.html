@@ -1,5 +1,731 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Delegari</title>
+</head>
+<body>
+<h1>9. Delegări</h1>
 
-<h1>Delegari</h1>
+<ul>
+    <li>9.1.Delegări</li>
+    <li>9.2.Utilizarea Delegărilor</li>
+    <li>9.3.Delegări cu Metode Denumite Versus Metode Anonime</li>
+    <li>9.4.Combinarea Delegărilor. Delegări Multicast</li>
+    <li>9.5.Declarați, Instanțiați și Utilizați Delegări</li>
+</ul>
+
+<hr>
+
+<h2>9.1.Delegări</h2>
 
 <p>
+    O delegare este un tip care reprezintă referințe la metode cu o anumită listă de parametri și tip de returnare.
+    Când instanțiați un delegat, puteți asocia instanța sa cu orice metodă care are o semnătură compatibilă și un tip de returnare.
+    Puteți invoca (sau apela) metoda prin intermediul instanței de delegare.
 </p>
+
+<p>
+    Delegații sunt utilizați pentru a transmite metode ca argumente către alte metode. Handler-ele de evenimente nu sunt nimic altceva decât metode care sunt invocate prin intermediul delegaților.
+    Creați o metodă personalizată și o clasă, cum ar fi un control al ferestrei, poate apela metoda dumneavoastră atunci când apare un anumit eveniment. Următorul exemplu arată o declarație de delegat:
+</p>
+
+<pre><code style="background-color: lightgray;">
+  public delegate int PerformCalculation(int x, int y);
+</code></pre>
+
+<p>
+    Orice metodă din orice clasă sau structură accesibilă, care corespunde tipului de delegat, poate fi atribuită delegatului.
+    Metoda poate fi fie statică, fie o metodă de instanță. Această flexibilitate înseamnă că puteți schimba programatic apelurile de metode sau puteți adăuga cod nou în clase existente.
+</p>
+<div style="background-color: rgb(255, 198, 255);">
+    <strong>
+        Observație!
+    </strong>
+
+    <p>
+        În contextul supraîncărcării metodelor, semnătura unei metode nu include valoarea de returnare. Însă, în contextul delegărilor, semnătura include valoarea de returnare. Cu alte cuvinte, o metodă trebuie să aibă același tip de returnare ca și delegarea.
+    </p>
+</div>
+
+<p>
+    Această abilitate de a face referire la o metodă ca parametru face ca delegații să fie ideali pentru definirea metodelor de apel invers.
+    Puteți scrie o metodă care compară două obiecte în aplicația dumneavoastră.
+    Acea metodă poate fi utilizată într-un delegat pentru un algoritm de sortare.
+    Deoarece codul de comparație este separat de bibliotecă, metoda de sortare poate fi mai generală.
+</p>
+
+<p>
+    În C# 9 au fost adăugați pointeri către funcții pentru scenarii similare, în care aveți nevoie de mai mult control asupra convenției de apelare.
+    Codul asociat unui delegat este invocat utilizând o metodă virtuală adăugată la un tip de delegat.
+    Utilizând pointeri către funcții, puteți specifica diferite convenții.
+</p>
+
+<h3>Prezentare generală</h3>
+<p>
+    Delegările au următoarele proprietăți:
+</p>
+<ul>
+    <li>Delegarile sunt similare pointerilor către funcții din C++, dar delegarile sunt complet orientate pe obiect și, spre deosebire de pointerii către funcții membru din C++, delegații încapsulează atât o instanță a unui obiect, cât și o metodă.</li>
+    <li>Delegarile permit transmiterea metodelor ca parametri.</li>
+    <li>Delegarile pot fi utilizați pentru a defini metode de apel invers.</li>
+    <li>Delegarile pot fi concatenați împreună; de exemplu, pot fi apelate mai multe metode în cadrul unui singur eveniment.</li>
+    <li>Metodele nu trebuie să se potrivească exact cu tipul de delegare.</li>
+    <li>Expresiile lambda sunt o modalitate mai concisă de a scrie blocuri de cod inline. Expresiile lambda (în anumite contexte) sunt compilate în tipuri de delegari.</li>
+</ul>
+
+<hr>
+
+<h2>9.2.Utilizarea Delegărilor</h2>
+<p>
+    O delegare este un tip care encapsulează în siguranță o metodă, similar cu un pointer la o funcție în C și C++. Spre deosebire de pointerii la funcții din C, delegarile sunt orientate pe obiecte, siguri din punct de vedere al tipului și securizați.
+    Tipul unei delegări este definit de numele delegării. În exemplul următor se declară o delegare numită <i>Del</i> care poate encapsula o metodă care primește un șir de caractere ca argument și returnează void:
+</p>
+
+<pre><code style="background-color: lightgray;">
+        public delegate void Del(string message);
+</code></pre>
+
+
+<p>
+    Un obiect delegat este de obicei construit prin furnizarea numelui metodei pe care delegatul o va înveli, sau cu ajutorul unei expresii lambda.
+    Odată ce un delegat este instanțiat, apelul unei metode făcut către delegat va fi transmis de către delegat acelei metode. Parametrii transmiși delegatului de către apelant sunt transmiși metodei, iar valoarea de returnare, dacă există, din metoda respectivă este returnată apelantului de către delegat. Acest lucru se numește invocarea delegatului.
+    Un delegat instanțiat poate fi invocat ca și cum ar fi metoda învelită în sine. De exemplu:
+</p>
+<div style="background-color: lightgray;">
+  <pre><code style="background-color: lightgray;">
+    <p style="color: green;">//Creați o metodă pentru un delegat.</p>
+    public static void DelegateMethod(string message)
+    {
+    Console.WriteLine(message);
+    }
+  </code></pre>
+</div>
+
+<div style="background-color: lightgray;">
+<pre><code>
+  <p style="color: green;">// Instantiați delegatul.</p>
+  Del handler = DelegateMethod;
+  <p style="color: green;">// Apelați delegatul.</p>
+  handler("Hello World");
+</code></pre>
+</div>
+
+<p>
+    Tipurile de delegați sunt derivate din clasa Delegate în .NET.
+    Tipurile de delegați sunt sigilate - nu pot fi derivate - și nu este posibil să se derive clase personalizate din Delegate.
+    Deoarece delegatul instanțiat este un obiect, acesta poate fi transmis ca argument sau atribuit unei proprietăți.
+    Acest lucru permite unei metode să accepte un delegat ca parametru și să apeleze delegatul într-un moment ulterior. Acest lucru este cunoscut sub numele de apel invers asincron și este o metodă obișnuită de a notifica un apelant când un proces lung a fost finalizat.
+    Atunci când un delegat este utilizat în acest mod, codul care utilizează delegatul nu are nevoie de cunoștințe despre implementarea metodei utilizate.
+    Funcționalitatea este similară cu encapsularea oferită de interfețe.
+</p>
+
+<p>
+    Un alt mod obișnuit de utilizare a apelurilor inverse este definirea unei metode personalizate de comparație și transmiterea acelui delegat către o metodă de sortare. Aceasta permite codului apelant să devină parte a algoritmului de sortare.
+    Următoarea metodă exemplu utilizează tipul <i>Del</i> ca parametru:
+</p>
+
+<div style="background-color: lightgray;">
+<pre><code>
+  public static void MethodWithCallback(int param1, int param2, Del callback)
+  {
+    callback("Numarul este: " + (param1 + param2).ToString());
+  }
+</code></pre>
+</div>
+
+<p>Puteți apoi să transmiteți delegatul creat mai sus către acea metodă:</p>
+
+<div style="background-color: lightgray;">
+<pre><code>
+  MethodWithCallback(1, 2, handler);
+</code></pre>
+</div>
+
+<p>și veți primi următorul rezultat în consolă:</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    Numarul este: 3
+  </code></pre>
+</div>
+
+<p>
+    Utilizând delegatul ca o abstracție, metoda <i>"MethodWithCallback"</i> nu trebuie să apeleze consola direct - nu trebuie să fie proiectată având în minte consola. Ceea ce face metoda <i>"MethodWithCallback"</i> este să pregătească un șir de caractere și să-l transmită unei alte metode. Aceasta este deosebit de puternică, deoarece o metodă delegată poate utiliza oricâte parametri.
+</p>
+
+<p>
+    Când un delegat este creat pentru a înveli o metodă de instanță, delegatul face referință atât la instanță cât și la metodă. Un delegat nu are cunoștințe despre tipul instanței în afara metodei pe care o înfășoară, astfel că un delegat poate face referire la orice tip de obiect atâta timp cât există o metodă pe acel obiect care se potrivește cu semnătura delegatului. Atunci când un delegat este creat pentru a înveli o metodă statică, acesta face referință doar la metoda respectivă.
+    Luați în considerare următoarele declarații:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    public class MethodClass
+    {
+        public void Method1(string message) { }
+        public void Method2(string message) { }
+    }
+  </code></pre>
+</div>
+
+<p>
+    Împreună cu metoda statică <i>DelegateMethod</i> prezentată anterior, avem acum trei metode care pot fi învelite de o instanță <i>Del</i>.
+</p>
+
+<p>
+    Un delegat poate apela mai mult de o metodă când este invocat. Aceasta se numește multicasting. Pentru a adăuga o metodă suplimentară în lista de metode a delegatului - lista de invocare - este suficient să adăugați două delegați folosind operatorii de adunare sau adunare cu atribuire ('+' sau '+='). De exemplu:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    var obj = new MethodClass();
+    Del d1 = obj.Method1;
+    Del d2 = obj.Method2;
+    Del d3 = DelegateMethod;
+
+    <p style="color: green;">    //Ambele tipuri de asignare sunt valide.</p>
+    Del allMethodsDelegate = d1 + d2;
+    allMethodsDelegate += d3;
+  </code></pre>
+</div>
+
+<p>
+    La acest punct, <i>allMethodsDelegate</i> conține trei metode în lista sa de invocare - <i>Method1</i>, <i>Method2</i> și <i>DelegateMethod</i>. Cele trei delegați originale, <i>d1</i>, <i>d2</i> și <i>d3</i>, rămân neschimbate. Când se invocă <i>allMethodsDelegate</i>, toate cele trei metode sunt apelate în ordine. Dacă delegatul utilizează parametri de referință, referința este transmisă secvențial fiecăreia dintre cele trei metode, iar orice modificări făcute de o metodă sunt vizibile în metoda următoare.
+    Dacă oricare dintre metode aruncă o excepție care nu este prinsă în interiorul metodei, acea excepție este transmisă apelantului delegatului și nici o metodă ulterioară din lista de invocare nu este apelată. Dacă delegatul are o valoare de returnare și/sau parametri out, acesta returnează valoarea de returnare și parametrii ultimei metode invocate. Pentru a elimina o metodă din lista de invocare, utilizați operatorii de scădere sau scădere cu atribuire (- sau -=). De exemplu:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    <p style="color: green;">   // Elimină Method1</p>
+    allMethodsDelegate -= d1;
+    <p style="color: green;">   // Creează o copie a delegatului allMethodsDelegate eliminând d2 din lista sa de invocare.</p>
+    Del oneMethodDelegate = allMethodsDelegate - d2;
+  </code></pre>
+</div>
+
+<p>
+    Deoarece tipurile de delegați sunt derivate din clasa <i>System.Delegate</i>, metodele și proprietățile definite de acea clasă pot fi apelate pe delegat. De exemplu, pentru a afla numărul de metode din lista de invocare a unui delegat, puteți scrie:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    int invocationCount = d1.GetInvocationList().GetLength(0);
+  </code></pre>
+</div>
+
+<p>
+    Delegații cu mai mult de o metodă în lista de invocare derivă din clasa MulticastDelegate, care este o subclasă a clasei <i>System.Delegate</i>. Codul de mai sus funcționează în ambele cazuri deoarece ambele clase suportă metoda <i>GetInvocationList</i>.
+</p>
+
+<p>
+    Delegații multicast sunt utilizate în mod extensiv în gestionarea evenimentelor. Obiectele sursă a evenimentelor trimit notificări de eveniment către obiectele receptor care s-au înregistrat pentru a primi acel eveniment. Pentru a se înregistra la un eveniment, receptorul creează o metodă special concepută pentru a gestiona evenimentul, apoi creează un delegat pentru acea metodă și îl trece la sursa evenimentului. Sursa apelează delegatul atunci când evenimentul are loc. Delegatul apoi apelează metoda de gestionare a evenimentului pe receptor, transmitând datele evenimentului. Tipul de delegat pentru un anumit eveniment este definit de sursa evenimentului.
+</p>
+
+<p>
+    Compararea delegaților de două tipuri diferite atribuiți la timpul de compilare va duce la o eroare de compilare. Dacă instanțele de delegat sunt static de tipul <i>System.Delegate</i>, atunci compararea este permisă, dar va returna false la timpul de execuție. De exemplu:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    delegate void Delegate1();
+    delegate void Delegate2();
+
+    static void method(Delegate1 d, Delegate2 e, System.Delegate f)
+    {
+      <p style="color: green;">   // Eroare de compilare la timpul de compilare.</p>
+      //Console.WriteLine(d == e);
+
+      <p style="color: green;">   // Corect la timpul de compilare. Fals dacă tipul de execuție al lui f</p>
+      <p style="color: green;">   // nu este același ca cel al lui d.</p>
+      Console.WriteLine(d == f);
+    }
+  </code></pre>
+</div>
+
+<hr>
+
+<h2>9.3.Delegări cu Metode Denumite Versus Metode Anonime</h2>
+
+<p>
+    Un delegat poate fi asociat cu o metodă denumită. Atunci când instantiați un delegat folosind o metodă denumită, metoda este pasată ca parametru, de exemplu:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    <p style="color: green;">   // Declară un delegat.</p>
+    delegate void Del(int x);
+    <p style="color: green;">   // Definiți o metodă cu nume.</p>
+    void DoWork(int k) { /* ... */ }
+    <p style="color: green;">   // Instantiați delegatul folosind metoda ca parametru.</p>
+    Del d = obj.DoWork;
+  </code></pre>
+</div>
+
+<p>
+    Acest lucru se numește utilizarea unei metode cu nume. Delegații construiți cu o metodă cu nume pot încapsula fie o metodă statică, fie o metodă de instanță. Metodele cu nume sunt singura modalitate de a instantia un delegat în versiunile anterioare ale limbajului C#.
+    Cu toate acestea, în situațiile în care crearea unei noi metode reprezintă un efort suplimentar nedorit, C# permite instantierea unui delegat și specificarea imediată a unui bloc de cod pe care delegatul îl va procesa când este apelat. Acest bloc poate conține fie o expresie lambda, fie o metodă anonimă.
+</p>
+
+<p>
+    Metoda pe care o pasați ca parametru al delegatului trebuie să aibă aceeași semnătură ca și declarația delegatului.
+    O instanță de delegat poate încapsula fie o metodă statică, fie o metodă de instanță.
+</p>
+
+<div style="background-color: rgb(255, 198, 255);">
+    <strong>
+        Observație!
+    </strong>
+
+    <p>
+        Deși delegatul poate utiliza un parametru de tip `out`, nu recomandăm utilizarea acestuia cu delegați multicast pentru evenimente, deoarece nu puteți ști care delegat va fi apelat.
+    </p>
+</div>
+
+<p>
+    Începând cu C# 10, grupurile de metode cu o singură supraîncărcare au un <i>tip natural</i>. Aceasta înseamnă că compilatorul poate deduce tipul valorii de returnat și tipurile parametrilor pentru tipul delegatului:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    var read = Console.Read; <p style="color: green;">//Doar o supraîncărcare; tipul Func<int> este dedus.</p>
+    var write = Console.Write; <p style="color: green;">//EROARE: Mai multe supraîncărcări, nu se poate alege unul singur.</p>
+  </code></pre>
+</div>
+
+<h3>Exemple</h3>
+
+<p>
+    Următorul este un exemplu simplu de declarare și utilizare a unui delegat. Observați că atât delegatul, <i>Del</i>, cât și metoda asociată, <i>MultiplyNumbers</i>, au aceeași semnătură.
+</p>
+
+<div style="background-color: lightgray;">
+<pre><code>
+<p style="color: green;">// Declară un delegat</p>
+delegate void Del(int i, double j);
+
+class MathClass
+{
+    static void Main()
+    {
+        MathClass m = new MathClass();
+
+        <p style="color: green;">// Instantierea delegatului folosind "MultiplyNumbers"</p>
+        Del d = m.MultiplyNumbers;
+
+        <p style="color: green;">// Invocarea obiectului delegat</p>
+        Console.WriteLine("Invocând delegatul folosind 'MultiplyNumbers':");
+        for (int i = 1; i <= 5; i++)
+        {
+            d(i, 2);
+        }
+
+        <p style="color: green;">// Păstrează fereastra consolei deschisă în modul de depanare.</p>
+        Console.WriteLine("Apasă orice tastă pentru a ieși.");
+        Console.ReadKey();
+    }
+
+    <p style="color: green;">// Declară metoda asociată</p>
+    void MultiplyNumbers(int m, double n)
+    {
+        Console.Write(m * n + " ");
+    }
+}
+<p style="color: green;">/* Output:</p>
+<p style="color: green;">      Invocând delegatul folosind 'MultiplyNumbers':</p>
+<p style="color: green;">    2 4 6 8 10</p>
+<p style="color: green;">*/</p>
+
+</code></pre>
+</div>
+
+<p>
+    În exemplul următor, un delegat este asociat atât cu metode statice, cât și cu metode de instanță și returnează informații specifice din fiecare:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+  <p style="color: green;">// Declară un delegat</p>
+  delegate void Del();
+  
+  class SampleClass
+  {
+      public void InstanceMethod()
+      {
+          Console.WriteLine("Un mesaj din metoda de instanță.");
+      }
+  
+      static public void StaticMethod()
+      {
+          Console.WriteLine("Un mesaj din metoda statică.");
+      }
+  }
+  
+  class TestSampleClass
+  {
+      static void Main()
+      {
+          var sc = new SampleClass();
+  
+          <p style="color: green;">// Asociază delegatul metodei de instanță:</p>
+          Del d = sc.InstanceMethod;
+          d();
+  
+          <p style="color: green;">// Asociază delegatul metodei statice:</p>
+          d = SampleClass.StaticMethod;
+          d();
+      }
+  }
+  <p style="color: green;">/* Output:</p>
+  <p style="color: green;">      Un mesaj din metoda de instanță.</p>
+  <p style="color: green;">      Un mesaj din metoda statică.</p>
+  <p style="color: green;">*/</p>
+  
+  </code></pre>
+</div>
+
+<hr>
+
+<h2>9.4.Combinarea Delegărilor. Delegări Multicast</h2>
+
+<p>
+    Acest exemplu demonstrează cum să creați delegați multicast. O proprietate utilă a obiectelor delegat este că mai multe obiecte pot fi atribuite unei singure instanțe de delegat folosind operatorul <i>+</i>.
+    Delegatul multicast conține o listă a delegaților atribuiți. Când se apelează delegatul multicast, el invocă delegații din listă, în ordine. Numai delegații de același tip pot fi combinați.
+</p>
+
+<p>
+    Operatorul <i>-</i> poate fi folosit pentru a elimina un delegat component dintr-un delegat multicast.
+</p>
+
+<h3>Exemplu</h3>
+
+<div style="background-color: lightgray;">
+<pre><code>
+  using System;
+
+/<p style="color: green;">// Definiți un delegat personalizat care are un parametru de tip string și returnează void.</p>
+delegate void CustomDel(string s);
+
+class TestClass
+{
+    <p style="color: green;">// Definiți două metode care au aceeași semnătură ca CustomDel.</p>
+    static void Hello(string s)
+    {
+        Console.WriteLine($"  Hello, {s}!");
+    }
+
+    static void Goodbye(string s)
+    {
+        Console.WriteLine($"  Goodbye, {s}!");
+    }
+
+    static void Main()
+    {
+      <p style="color: green;">// Declarați instanțe ale delegatului personalizat.</p>
+      CustomDel hiDel, byeDel, multiDel, multiMinusHiDel;
+
+      <p style="color: green;">// În acest exemplu, puteți omite delegatul personalizat dacă</p>
+      <p style="color: green;">// doriți și să utilizați în schimb Action<string>.</p>
+      <p style="color: green;">// Action<string> hiDel, byeDel, multiDel, multiMinusHiDel;</p>
+
+      <p style="color: green;">// Inițializați obiectul delegat hiDel care face referire la metoda Hello.</p>
+        hiDel = Hello;
+
+      <p style="color: green;">// Inițializați obiectul delegat byeDel care face referire la metoda Goodbye.</p>
+        byeDel = Goodbye;
+
+      <p style="color: green;">// Cele două delegări, hiDel și byeDel, sunt combinate pentru a forma multiDel.</p>
+        multiDel = hiDel + byeDel;
+
+      <p style="color: green;">// Elimină hiDel din delegarea multicăi, lăsându-l doar pe byeDel,</p>
+      <p style="color: green;">// care apelează doar metoda Goodbye.</p>
+        multiMinusHiDel = multiDel - hiDel;
+
+        Console.WriteLine("Se invocă delegatul hiDel:");
+        hiDel("A");
+        Console.WriteLine("Se invocă delegatul byeDel:");
+        byeDel("B");
+        Console.WriteLine("Se invocă delegatul multiDel:");
+        multiDel("C");
+        Console.WriteLine("Se invocă delegatul multiMinusHiDel:");
+        multiMinusHiDel("D");
+    }
+}
+<p style="color: green;">/* Output:</p>
+<p style="color: green;">     Se invocă delegatul hiDel:</p>
+<p style="color: green;">       Hello, A!</p>
+<p style="color: green;">     Se invocă delegatul byeDel:</p>
+<p style="color: green;">       Goodbye, B!</p>
+<p style="color: green;">     Se invocă delegatul multiDel:</p>
+<p style="color: green;">       Hello, C!</p>
+<p style="color: green;">       Goodbye, C!</p>
+<p style="color: green;">     Se invocă delegatul multiMinusHiDel:</p>
+<p style="color: green;">       Goodbye, D!</p>
+<p style="color: green;">*/</p>
+
+</code></pre>
+</div>
+
+<hr>
+
+<h2>9.5.Declarați, Instanțiați și Utilizați Delegări</h2>
+
+<p>
+    Puteți declara delegați folosind oricare dintre următoarele metode:
+</p>
+
+<li>Declarați un tip de delegat și declarați o metodă cu o semnătură corespunzătoare:</li>
+
+<div style="background-color: lightgray;">
+<pre><code>
+  <p style="color: green;">// Declarați un delegat.</p>
+delegate void Del(string str);
+
+<p style="color: green;">// Declarați o metodă cu aceeași semnătură ca delegatul.</p>
+static void Notify(string name)
+{
+    Console.WriteLine($"Notificare primită pentru: {name}");
+}
+</code></pre>
+</div>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    <p style="color: green;">// Creați o instanță a delegatului.</p>
+    Del del1 = new Del(Notify);
+  </code></pre>
+</div>
+
+<li>Alocați un grup de metode unui tip de delegat:</li>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    <p style="color: green;">C# 2.0 oferă o modalitate mai simplă de a declara o instanță a lui Del.</p>
+    Del del2 = Notify;
+  </code></pre>
+</div>
+
+<li>Declarați o metodă anonimă:</li>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    <p style="color: green;">Instantiați `Del` folosind o metodă anonimă.</p>
+    Del del3 = delegate(string name)
+    { Console.WriteLine($"Notificare primită pentru: {name}"); };
+  </code></pre>
+</div>
+
+<li>Utilizați o expresie lambda pentru a instantia Del:</li>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    <p style="color: green;">// Instantiați Del utilizând o expresie lambda.</p>
+    Del del4 = name =>  { Console.WriteLine($"Notificare primită pentru: {name}"); };
+  </code></pre>
+</div>
+
+<p>
+    Următorul exemplu ilustrează declararea, instantierea și utilizarea unui delegate. Clasa BookDB încapsulează o bază de date a unei librării care păstrează o listă de cărți. Aceasta expune o metodă, ProcessPaperbackBooks, care găsește toate cărțile tip Paperback din baza de date și apelează un delegate pentru fiecare. Tipul de delegate utilizat se numește ProcessBookCallback. Clasa Test utilizează această clasă pentru a afișa titlurile și prețul mediu al cărților tip Paperback.
+</p>
+
+<p>
+    Utilizarea delegatelor promovează o bună separare a funcționalității între baza de date a librăriei și codul clientului. Codul clientului nu are cunoștințe despre modul în care cărțile sunt stocate sau despre modul în care codul librăriei găsește cărțile tip Paperback. Codul librăriei nu are cunoștințe despre procesarea care se efectuează asupra cărților tip Paperback după ce le găsește.
+</p>
+
+<h3>Exemplu</h3>
+
+<div style="background-color: lightgray;">
+<pre><code>
+  <p style="color: green;">// Un set de clase pentru gestionarea unei librării:</p>
+  namespace Bookstore
+{
+    using System.Collections;
+
+    
+    <p style="color: green;">// Descrie o carte din lista de cărți:</p>
+    public struct Book
+    {
+        public string Title;        <p style="color: green;">// Titlul cărții.</p>
+        public string Author;       <p style="color: green;">//Autorul cărții.</p>
+        public decimal Price;       <p style="color: green;">//Prețul cărții.</p>
+        public bool Paperback;      <p style="color: green;">//Este Paperback?</p>
+
+        public Book(string title, string author, decimal price, bool paperBack)
+        {
+            Title = title;
+            Author = author;
+            Price = price;
+            Paperback = paperBack;
+        }
+    }
+
+    <p style="color: green;">// Declară un tip de delegate pentru procesarea unei cărți:</p>
+    public delegate void ProcessBookCallback(Book book);
+
+    <p style="color: green;">// Menține o bază de date a cărților.</p>
+    public class BookDB
+    {
+        <p style="color: green;">// Lista tuturor cărților din baza de date:</p>
+        ArrayList list = new ArrayList();
+
+        <p style="color: green;">// Adaugă o carte în baza de date:</p>
+        public void AddBook(string title, string author, decimal price, bool paperBack)
+        {
+            list.Add(new Book(title, author, price, paperBack));
+        }
+
+        <p style="color: green;">// Apelarea unui delegat furnizat pentru fiecare carte de tip paperback pentru a o procesa:</p>
+        public void ProcessPaperbackBooks(ProcessBookCallback processBook)
+        {
+            foreach (Book b in list)
+            {
+                if (b.Paperback)
+                <p style="color: green;">// Apelarea delegatului:</p>
+                    processBook(b);
+            }
+        }
+    }
+}
+
+<p style="color: green;">// Utilizarea claselor Bookstore:</p>
+namespace BookTestClient
+{
+    using Bookstore;
+
+    <p style="color: green;">// Clasa pentru calcularea sumei și mediei prețurilor cărților:</p>
+    class PriceTotaller
+    {
+        int countBooks = 0;
+        decimal priceBooks = 0.0m;
+
+        internal void AddBookToTotal(Book book)
+        {
+            countBooks += 1;
+            priceBooks += book.Price;
+        }
+
+        internal decimal AveragePrice()
+        {
+            return priceBooks / countBooks;
+        }
+    }
+
+    <p style="color: green;">// Clasa pentru testarea bazei de date a cărților:</p>
+    class Test
+    {
+      <p style="color: green;">// Afișează titlul cărții.</p>
+        static void PrintTitle(Book b)
+        {
+            Console.WriteLine($"   {b.Title}");
+        }
+
+        <p style="color: green;">// Execuția începe aici.</p>
+        static void Main()
+        {
+            BookDB bookDB = new BookDB();
+
+            <p style="color: green;">// Inițializează baza de date cu câteva cărți:</p>
+            AddBooks(bookDB);
+
+            <p style="color: green;">// Afișează toate titlurile cărților Paperback:</p>
+            Console.WriteLine("Paperback Book Titles:");
+
+            <p style="color: green;">// Creează un nou obiect delegat asociat cu metoda statică Test.PrintTitle:</p>
+            bookDB.ProcessPaperbackBooks(PrintTitle);
+
+            <p style="color: green;">// Obține prețul mediu al unei cărți broșate utilizând un obiect PriceTotaller:</p>
+            PriceTotaller totaller = new PriceTotaller();
+
+            <p style="color: green;">// Creează un nou obiect delegat asociat cu metoda non-statică AddBookToTotal pe obiectul totaller:</p>
+            bookDB.ProcessPaperbackBooks(totaller.AddBookToTotal);
+
+            Console.WriteLine("Average Paperback Book Price: ${0:#.##}",
+                    totaller.AveragePrice());
+        }
+
+        <p style="color: green;">// Inițializează baza de date a cărților cu câteva cărți de test:</p>
+        static void AddBooks(BookDB bookDB)
+        {
+            bookDB.AddBook("The C Programming Language", "Brian W. Kernighan and Dennis M. Ritchie", 19.95m, true);
+            bookDB.AddBook("The Unicode Standard 2.0", "The Unicode Consortium", 39.95m, true);
+            bookDB.AddBook("The MS-DOS Encyclopedia", "Ray Duncan", 129.95m, false);
+            bookDB.AddBook("Dogbert's Clues for the Clueless", "Scott Adams", 12.00m, true);
+        }
+    }
+}
+<p style="color: green;">/* Output:</p>
+<p style="color: green;"> Paperback Book Titles:</p>
+<p style="color: green;">   The C Programming Language</p>
+<p style="color: green;">   The Unicode Standard 2.0</p>
+<p style="color: green;">   Dogbert's Clues for the Clueless</p>
+<p style="color: green;"> Average Paperback Book Price: $23.97</p>
+<p style="color: green;">*/</p>
+
+</code></pre>
+</div>
+
+<h3>Programarea robustă</h3>
+
+<li>Declararea unui delegat</li>
+
+<p>
+    Următoarea declarație definește un nou tip de delegat.
+</p>
+
+<div style="background-color: lightgray;">
+<pre><code>
+  public delegate void ProcessBookCallback(Book book);
+</code></pre>
+</div>
+
+<p>
+    Fiecare tip de delegat descrie numărul și tipurile argumentelor, precum și tipul valorii de returnare a metodelor pe care le poate încapsula. În orice moment când este nevoie de un nou set de tipuri de argumente sau tip de valoare de returnare, trebuie declarat un nou tip de delegat.
+</p>
+
+<li>Instantierea unui delegat.</li>
+
+<p>
+    După ce un tip de delegat a fost declarat, un obiect delegat trebuie creat și asociat cu o anumită metodă. În exemplul anterior, acest lucru se face prin transmiterea metodei PrintTitle către metoda ProcessPaperbackBooks, după cum se arată în exemplul următor:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    bookDB.ProcessPaperbackBooks(PrintTitle);
+  </code></pre>
+</div>
+
+<p>
+    Acest lucru creează un nou obiect delegat asociat cu metoda statică Test.PrintTitle. Similar, metoda non-statică AddBookToTotal de pe obiectul totaller este transmisă în exemplul următor:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    bookDB.ProcessPaperbackBooks(totaller.AddBookToTotal);
+  </code></pre>
+</div>
+
+<p>
+    În ambele cazuri se transmite un nou obiect delegat către metoda ProcessPaperbackBooks.
+</p>
+
+<p>
+    După ce un delegat este creat, metoda cu care este asociat nu se schimbă niciodată; obiectele delegat sunt imutabile.
+</p>
+
+<li>Apelarea unui delegat</li>
+
+<p>
+    După ce un obiect delegat este creat, acesta este în mod obișnuit transmis către alte coduri care vor apela delegatul. Un obiect delegat este apelat folosind numele obiectului delegat, urmat de argumentele plasate între paranteze care vor fi transmise delegatului. Mai jos este prezentat un exemplu de apel al unui delegat:
+</p>
+
+<div style="background-color: lightgray;">
+  <pre><code>
+    processBook(b);
+  </code></pre>
+</div>
+
+<p>
+    Un obiect delegat poate fi apelat fie în mod sincron, așa cum este prezentat în acest exemplu, fie în mod asincron, folosind metodele <i>BeginInvoke</i> și <i>EndInvoke</i>.
+</p>
+
+</body>
+</html>

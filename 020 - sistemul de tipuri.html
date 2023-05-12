@@ -360,7 +360,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     lucrul cu modelele de date.
 </p>
 
-<h3>Când se folosesc înregistrările</h3>
+<h3>2.5.1. Când se folosesc înregistrările</h3>
 <p>
     Luați în considerare utilizarea unei înregistrări în locul unei clase sau structuri în următoarele scenarii:
 </p>
@@ -369,7 +369,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     <li>Doriți să definiți un tip pentru care obiectele sunt imuabile.</li>
 </ul>
 
-<h4>Egalitatea valorilor</h4>
+<h4>2.5.1.1 Egalitatea valorilor</h4>
 <p>
     În cazul înregistrărilor, egalitatea valorilor înseamnă că două variabile de tipul înregistrare sunt egale dacă
     tipurile se potrivesc și dacă toate valorile proprietăților și câmpurilor se potrivesc. Pentru alte tipuri de
@@ -384,7 +384,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     sunt adecvate pentru a fi utilizate ca tipuri de entități în Entity Framework Core.
 </p>
 
-<h4>Imuabilitatea</h4>
+<h4>2.5.1.2 Imuabilitatea</h4>
 <p>
     Un tip imuabil este un tip care vă împiedică să modificați valorile proprietăților sau ale câmpurilor unui obiect
     după ce acesta a fost instanțiat. Imuabilitatea poate fi utilă atunci când aveți nevoie ca un tip să fie thread-safe
@@ -392,11 +392,11 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     sintaxă concisă pentru crearea și lucrul cu tipuri imuabile.
 </p>
 <p>
-    Imutabilitatea nu este adecvată pentru toate scenariile de date. Entity Framework Core, de exemplu, nu permite
+    Imuabilitatea nu este adecvată pentru toate scenariile de date. Entity Framework Core, de exemplu, nu permite
     actualizarea cu tipuri de entități imuabile.
 </p>
 
-<h3>Cum diferă înregistrările de clase și structuri</h3>
+<h3>2.5.2 Cum diferă înregistrările de clase și structuri</h3>
 <p>
     Aceeași sintaxă care declară și instanțiază clasele sau structurile poate fi utilizată pentru înregistrări. Trebuie
     doar să înlocuiți cuvântul cheie <code>class</code> cu <code>record</code> sau să utilizați <code>record sturct</code>
@@ -425,7 +425,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     Compilatorul sintetizează o metodă <code>Deconstruct</code> pentru structurile de înregistrări poziționale.
 </p>
 
-<h3>Exemple</h3>
+<h3>2.5.3 Exemple</h3>
 <p>
     Următorul exemplu definește o înregistrare publică care utilizează parametri poziționali pentru a declara și a
     instanția o înregistrare. Apoi, imprimă numele tipului și valorile proprietăților:
@@ -946,7 +946,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     utilizați obiectul <code>StringInfo</code>.
 </p>
 
-<h3>string vs System.String</h3>
+<h3>2.9.1 string vs System.String</h3>
 <p>
     În C#, cuvântul cheie <code>string</code> este un alias pentru <code>String</code>. Prin urmare, <code>String</code>
     și <code>string</code> sunt echivalente. Se recomandă utilizarea aliasului furnizat <code>string</code>,
@@ -955,7 +955,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     limbajul C# supraîncarcă unii operatori pentru a simplifica operațiile comune cu șiruri de caractere.
 </p>
 
-<h3>Declararea și inițializarea șirurilor de caractere</h3>
+<h3>2.9.2 Declararea și inițializarea șirurilor de caractere</h3>
 <p>
     Puteți declara și inițializa șirurile de caractere în diferite feluri, precum se arată în exemplul următor:
 </p>
@@ -1006,7 +1006,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     înainte de a încerca să îl accesați.
 </p>
 
-<h3>Imuabilitatea șirurilor de caractere</h3>
+<h3>2.9.3 Imuabilitatea șirurilor de caractere</h3>
 <p>
     Obiectele de tip string sunt <i>imuabile</i>: nu pot fi modificate după ce au fost create. Toate metodele
     <code>String</code> și toți operatorii C# care par să modifice un șir de caractere returnează de fapt
@@ -1048,7 +1048,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 
-<h3>Literalii de șiruri de caractere între ghilimele</h3>
+<h3>2.9.4 Literalii de șiruri de caractere între ghilimele</h3>
 <p>
     Șirurile de caractere între ghilimele încep și se termină cu un singur caracter de ghilimele duble
     (<code>"</code>) pe aceeași linie. Șirurile de caractere între ghilimele sunt cele mai potrivite pentru
@@ -1072,7 +1072,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 
-<h3>Șiruri literale de caractere literale verbatim</h3>
+<h3>2.9.5 Șiruri literale de caractere literale verbatim</h3>
 <p>
     Literalii de șiruri de caractere verbatim sunt mai convenabili pentru șiruri de caractere cu mai multe
     linii, șiruri care conțin caractere backslash sau ghilimele duble înglobate. Șirurile Verbatim păstrează
@@ -1102,7 +1102,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 
-<h3>Șiruri literale brute</h3>
+<h3>2.9.6 Șiruri literale brute</h3>
 <p>
     Începând cu C# 11, puteți utiliza literali de șiruri de caractere brute pentru a crea mai ușor șiruri de
     caractere cu mai multe linii sau pentru a utiliza orice caractere care necesită escape. Literalii de
@@ -1228,7 +1228,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 
-<h3>Secvențe escape a șirurilor de caractere</h3>
+<h3>2.9.7 Secvențe escape a șirurilor de caractere</h3>
 <table>
     <thead>
         <tr>
@@ -1331,7 +1331,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     apărea în fereastra de supraveghere ca "C:\files.txt".
 </p>
 
-<h3>Șiruri de caractere formatate</h3>
+<h3>2.9.8 Șiruri de caractere formatate</h3>
 <p>
     Un șir de caractere formatat este un șir de caractere al cărui conținut este determinat în mod dinamic în
     momentul execuției. Aceste șiruri sunt create prin încorporarea expresiilor interpolate sau a caracterelor
@@ -1339,7 +1339,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     (<code>{...}</code>) va fi transformat într-o valoare și va fi emis ca șir formatat la momentul execuției.
     Există două metode de creare a șirurilor formatate: interpolarea șirurilor și formatarea compozită.
 </p>
-<h4>Interpolarea șirurilor de caractere</h4>
+<h4>2.9.8.1 Interpolarea șirurilor de caractere</h4>
 <p>
     Șirurile interpolate sunt identificate prin caracterul special <code>$</code> și includ expresii interpolate
     între paranteze.
@@ -1388,7 +1388,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 
-<h4>Interpolarea șirurilor de caractere verbatim</h4>
+<h4>2.9.8.2 Interpolarea șirurilor de caractere verbatim</h4>
 <p>
     C# permite, de asemenea, interpolarea textuală a șirurilor de caractere, de exemplu pe mai multe linii,
     utilizând sintaxa <code>$@</code> sau <code>@$</code>.
@@ -1415,7 +1415,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 
-<h4>Formatarea compozită</h4>
+<h4>2.9.8.3 Formatarea compozită</h4>
 <p>
     <code>String.Format</code> utilizează spații libere între paranteze pentru a crea un șir de formatat.
     Acest exemplu are ca rezultat o ieșire similară cu metoda de interpolare a șirurilor de caractere utilizată mai sus.
@@ -1434,7 +1434,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 
-<h3>Subșiruri</h3>
+<h3>2.9.9 Subșiruri</h3>
 <p>
     O subșir este orice secvență de caractere conținută într-un șir de caractere. Utilizați metoda <code>Substring</code>
     pentru a crea un nou șir de caractere dintr-o porțiune a șirului original. Puteți căuta una sau mai multe
@@ -1456,7 +1456,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
         // index = 7
     </code>
 </pre>
-<h3>Accesarea caracterelor individuale</h3>
+<h3>2.9.10 Accesarea caracterelor individuale</h3>
 <p>
     Puteți utiliza notația de tip vector cu o valoare de index pentru a obține acces read-only la caractere
     individuale, ca în exemplul următor:
@@ -1498,7 +1498,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 
-<h3>Șiruri nule și șiruri vide</h3>
+<h3>2.9.11 Șiruri nule și șiruri vide</h3>
 <p>
     Un șir vid este o instanță a unui obiect <code>System.String</code> care conține zero caractere. Șirurile
     vide sunt utilizate adesea în diverse scenarii de programare pentru a reprezenta un câmp de text gol. Puteți
@@ -1552,7 +1552,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 
-<h3>Folosirea stringBuilder pentru crearea rapidă a șirurilor de caractere</h3>
+<h3>2.9.12 Folosirea stringBuilder pentru crearea rapidă a șirurilor de caractere</h3>
 <p>
     Operațiile cu șiruri de caractere în .NET sunt foarte optimizate și, în majoritatea cazurilor, nu au un
     impact semnificativ asupra performanței. Cu toate acestea, în anumite scenarii, cum ar fi buclele strânse
@@ -1593,7 +1593,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 
-<h3>Șiruri de caractere, metode de extensie și LINQ</h3>
+<h3>2.9.13 Șiruri de caractere, metode de extensie și LINQ</h3>
 <p>
     Deoarece tipul String implementează <code>IEnumerable&ltT&gt</code>, puteți utiliza metodele de extensie
     definite în clasa <code>Enumerable</code> pentru șirurile de caractere. Pentru a evita dezordinea vizuală,
