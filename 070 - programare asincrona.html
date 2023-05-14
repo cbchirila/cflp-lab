@@ -1,6 +1,665 @@
 
 <h1>Programare asincrona</h1>
+<div>
+<h2>7.1 Async si await</h2>
 
+<p>Solicitarea datelor dintr-o rețea, accesarea unei baze de date sau citirea și scrierea într-un sistem de fișiere, necesită utilizarea programării asincrone. De asemenea, puteți avea cod legat de procesor, cum ar fi efectuarea unui calcul scump, care este, de asemenea, un scenariu bun pentru scrierea de cod asincron.</p>
+	<p>C# are un model de programare asincronă la nivel de limbaj, care permite scrierea ușoară a codului asincron fără a fi nevoie să manevreze apelurile înapoi sau să se conformeze unei biblioteci care susține asincronia. Urmează ceea ce se numește Modelul de Asincronizare bazat pe Sarcini (TAP).</p>
+	<h3><b>Prezentarea generală a modelului asincron</b></h3>
+	<p>Baza programării asincrone o reprezintă obiectele Task și Task&lt;T&gt;, care modelează operațiile asincrone. Acestea sunt acceptate de cuvintele cheie async și await. Modelul este destul de simplu în majoritatea cazurilor:</p>
+	<ol>
+		<li>Pentru codul legat de I/O, așteptați o operație care returnează un Task sau Task&lt;T&gt; într-un metoda async.</li>
+		<li>Pentru codul legat de procesor, așteptați o operație care este pornită pe un fir de fundal cu metoda Task.Run.</li>
+	</ol>
+	<p>Cuvântul cheie await este locul unde se întâmplă magia. Acesta cedează controlul apelantului metodei care a efectuat așteptarea și permite în cele din urmă o interfață utilizator sau un serviciu să fie receptiv. Deși există modalități de abordare a codului asincron în afara de async și await, acest articol se concentrează pe construcțiile la nivel de limbaj.</p>
+
+ <h3><b>Exemplu legat de I/O: Descărcarea datelor dintr-un serviciu web</b></h3>
+	<p>Poate fi necesar să descărcați unele date dintr-un serviciu web atunci când se apasă un buton, dar nu doriți să blocați firul de interfață utilizator. Acest lucru poate fi realizat astfel, utilizând clasa System.Net.Http.HttpClient:</p>
+	<div>
+		<pre>
+<code>private readonly HttpClient _httpClient = new HttpClient();
+downloadButton.Clicked += async (o, e) =>
+{
+// This line will yield control to the UI as the request
+// from the web service is happening.
+//
+// The UI thread is now free to perform other work.
+var stringData = await _httpClient.GetStringAsync(URL);
+DoSomethingWithData(stringData);
+};</code>
+</pre>
+</div>
+<p>Codul exprimă intenția (descărcarea datelor în mod asincron) fără a se bloca în interacțiunea cu obiectele Task.</p>
+
+<h3><b>Exemplu legat de CPU: Efectuarea unui calcul pentru un joc</b></h3>
+	<p>Să spunem că scrieți un joc mobil în care apăsarea unui buton poate cauza daune la mai mulți inamici de pe ecran. Efectuarea calculelor poate fi costisitoare, iar dacă se efectuează pe firul de interfață utilizator, jocul va părea să se oprească în timp ce se efectuează calculele!</p>
+	<p>Cel mai bun mod de a gestiona aceasta este de a începe un fir de execuție de fundal, care efectuează lucrul folosind Task.Run și așteaptă rezultatul său folosind await. Acest lucru permite interfeței de utilizator să fie netedă în timp ce lucrul este efectuat.</p>
+	<div>
+		<pre>
+<code>private DamageResult CalculateDamageDone()
+{
+    // Code omitted:
+    //
+    // Does an expensive calculation and returns
+    // the result of that calculation.
+}
+calculateButton.Clicked += async (o, e) =>
+{
+// This line will yield control to the UI while CalculateDamageDone()
+// performs its work. The UI thread is free to perform other work.
+var damageResult = await Task.Run(() => CalculateDamageDone());
+DisplayDamage(damageResult);
+};</code>
+</pre>
+</div>
+<p>Acest cod exprimă clar intenția evenimentului de clic al butonului, nu necesită gestionarea manuală a unui fir de execuție de fundal și o face într-un mod non-blocant.</p>
+
+<h3>Puncte cheie pentru a înțelege:</h3>
+
+<p>Codul asincron poate fi utilizat atât pentru cod legat de I/O, cât și pentru cel legat de procesor, dar în mod diferit pentru fiecare scenariu.</p>
+
+<p>Codul asincron utilizează <code>Task&lt;T&gt;</code> și <code>Task</code>, care sunt construcții utilizate pentru a modela lucrul care se face în fundal.</p>
+
+<p>Cuvântul cheie <code>async</code> transformă o metodă într-o metodă asincronă, ceea ce vă permite să utilizați cuvântul cheie <code>await</code> în corpul acesteia.</p>
+
+<p>Atunci când este aplicat cuvântul cheie <code>await</code>, acesta suspendă apelul metodei și oferă controlul înapoi apelantului său până când sarcina așteptată este finalizată.</p>
+
+<p><code>await</code> poate fi utilizat doar în interiorul unei metode asincrone.</p>
+
+<h3>Recunoașterea lucrului legat de procesor și cel legat de I/O</h3>
+
+<p>Primele două exemple din acest ghid arată cum puteți utiliza <code>async</code> și <code>await</code> pentru lucrul legat de I/O și de procesor. Este important să puteți identifica când o sarcină pe care trebuie să o efectuați este legată de I/O sau de procesor, deoarece acest lucru poate afecta semnificativ performanța codului și ar putea duce la utilizarea incorectă a anumitor construcții.</p>
+
+<p>Iată două întrebări pe care ar trebui să le puneți înainte de a scrie cod:</p>
+
+<ol>
+  <li>Va "aștepta" codul dvs. ceva, cum ar fi date dintr-o bază de date?</li>
+  <ul>
+    <li>Dacă răspunsul este "da", atunci lucrul dvs. este legat de I/O.</li>
+  </ul>
+  <li>Va efectua codul dvs. o calculație costisitoare?</li>
+  <ul>
+    <li>Dacă ați răspuns "da", atunci lucrul dvs. este legat de procesor.</li>
+  </ul>
+</ol>
+
+<p>Dacă sarcina pe care o aveți este legată de I/O, utilizați <code>async</code> și <code>await</code> fără <code>Task.Run</code>. Nu ar trebui să utilizați biblioteca paralelă de sarcini (<code>Task Parallel Library</code>).</p>
+
+<p>Dacă sarcina pe care o aveți este legată de procesor și vă interesează reactivitatea, utilizați <code>async</code> și <code>await</code>, dar declanșați sarcina pe un alt fir cu <code>Task.Run</code>. Dacă sarcina este potrivită pentru concurență și paralelism, luați în considerare și utilizarea bibliotecii paralele de sarcini (<code>Task Parallel Library</code>).</p>
+
+<p>În plus, ar trebui întotdeauna să măsurați execuția codului dvs. De exemplu, s-ar putea să vă aflați într-o situație în care lucrul dvs. legat de procesor nu este suficient de costisitor în comparație cu supraîncărcarea de comutare a contextului când se utilizează mai multe fire de execuție. Fiecare alegere are un compromis și ar trebui să alegeți compromisul corect pentru situația dvs.</p>
+
+<h3>Informații importante și sfaturi</h3>
+  <p>Cu programarea asincronă, există câteva detalii de ținut minte pentru a preveni comportamentul neașteptat.</p>
+  <ul>
+    <li>Metodele asincrone trebuie să aibă cuvântul cheie <code>await</code> în corpul lor, altfel nu vor da randament!</li>
+    <li>Este important să țineți asta în minte. Dacă <code>await</code> nu este utilizat în corpul unei metode asincrone, compilatorul C# generează o atenționare, dar codul se compilează și rulează ca și cum ar fi o metodă normală. Acest lucru este extrem de ineficient, deoarece mașina de stare generată de compilatorul C# pentru metoda asincronă nu realizează nimic.</li>
+    <li>Adăugați "<code>Async</code>" ca sufix pentru fiecare nume de metodă asincronă pe care o scrieți. Aceasta este convenția utilizată în .NET pentru a diferenția mai ușor metodele sincrone și asincrone. Anumite metode care nu sunt apelate explicit de codul dvs. (cum ar fi evenimentele sau metodele controlerului web) nu se aplică neapărat. Deoarece nu sunt apelate explicit de codul dvs., a fi explicit în privința denumirii lor nu este la fel de important.</li>
+    <li><code>async void</code> ar trebui să fie folosit doar pentru gestionarii de evenimente. <code>async void</code> este singura modalitate de a permite gestionarilor de evenimente asincrone să funcționeze, deoarece evenimentele nu au tipuri de returnare (astfel nu pot folosi <code>Task</code> și <code>Task&lt;T&gt;</code>). Orice altă utilizare a <code>async void</code> nu urmează modelul TAP și poate fi dificil de utilizat, cum ar fi:</li>
+    <ul>
+      <li>Excepțiile aruncate într-o metodă <code>async void</code> nu pot fi prinse în afara acelei metode.</li>
+      <li>Metodele <code>async void</code> sunt dificil de testat.</li>
+      <li>Metodele <code>async void</code> pot cauza efecte secundare negative dacă apelantul nu se așteaptă să fie async.</li>
+    </ul>
+    <p>Fiți atenți atunci când utilizați lambda-uri asincrone în expresiile LINQ</p>
+<p>Expresiile lambda în LINQ utilizează execuția amânată, ceea ce înseamnă că codul ar putea fi executat într-un moment în care nu vă așteptați. Introducerea sarcinilor blocante în acesta poate duce ușor la blocarea dacă nu este scris corect. În plus, încorporarea codului asincron în acest fel poate face și mai dificilă raționamentul despre execuția codului.</p>
+</div>
+
+<div>
+<h2>7.2 Task asynchronous programming model</h2>
+<p>Folosind programarea asincrona, puteti evita problemele de performanta si imbunatati reactia aplicatiei dumneavoastra. Cu toate acestea, tehniciile traditionale pentru scrierea de aplicatii asincrone pot fi complicate, ceea ce face dificila scrierea, depanarea si intretinerea lor.</p>
+	<p>C# suporta o abordare simplificata, programarea asincrona, care utilizeaza suportul asincron din timpul de executie .NET. Compilatorul face munca dificila pe care dezvoltatorul o realiza inainte, iar aplicatia dumneavoastra pastreaza o structura logica care seamana cu codul sincron. In consecinta, beneficiati de toate avantajele programarii asincrone cu o fractiune din efortul anterior.</p>
+	<p>Acest subiect ofera o prezentare generala a momentului si modului de utilizare a programarii asincrone si include link-uri catre subiecte de suport care contin detalii si exemple.</p>
+    <p>Asincronia îmbunătățește responsivitatea</p>
+<p>Asincronia este esențială pentru activitățile care pot fi blocate, cum ar fi accesul la web. Accesul la o resursă web poate fi uneori lent sau întârziat. Dacă o astfel de activitate este blocată într-un proces sincron, întreaga aplicație trebuie să aștepte. Într-un proces asincron, aplicația poate continua cu alte lucrări care nu depind de resursa web până când sarcina potențial blocantă se termină.</p>
+<p>Asincronia este deosebit de valoroasă pentru aplicațiile care accesează firul UI deoarece toată activitatea legată de UI împărtășește în mod obișnuit un fir. Dacă orice proces este blocat într-o aplicație sincronă, toate sunt blocate. Aplicația dvs. nu mai răspunde și ați putea concluziona că a eșuat când de fapt doar așteaptă.</p>
+<p>Atunci când utilizați metode asincrone, aplicația continuă să răspundă la interacțiunile cu UI-ul. Puteți redimensiona sau minimiza o fereastră, de exemplu, sau puteți închide aplicația dacă nu doriți să așteptați să se termine.</p>
+<p>Abordarea bazată pe async adaugă echivalentul unei transmisii automate la lista de opțiuni pe care le puteți alege atunci când proiectați operațiuni asincrone. Adică beneficiați de toate avantajele programării asincrone tradiționale, dar cu mult mai puțin efort din partea dezvoltatorului.</p>
+
+<p>Metodele Async sunt ușor de scris</p>
+<p>Cuvintele cheie async și await în C# sunt inima programării asincrone. Folosind aceste două cuvinte cheie, puteți utiliza resursele din .NET Framework, .NET Core sau Windows Runtime pentru a crea o metodă asincronă aproape la fel de ușor ca și o metodă sincronă. Metodele asincrone pe care le definiți folosind cuvântul cheie async sunt denumite metode async.</p>
+
+<p>Următorul exemplu arată o metodă async. Aproape totul din cod ar trebui să vă fie familiar.</p>
+
+<p>Puteți găsi un exemplu complet de Windows Presentation Foundation (WPF) disponibil pentru descărcare de la <a href="https://docs.microsoft.com/dotnet/csharp/programming-guide/concepts/async/asynchronous-programming-with-async-and-await">Programarea asincronă cu async și await în C#</a>.</p>
+
+<pre><code class="language-csharp">public async Task&lt;int&gt; GetUrlContentLengthAsync()
+{
+    var client = new HttpClient();
+
+    Task&lt;string&gt; getStringTask =
+        client.GetStringAsync("https://learn.microsoft.com/dotnet");
+
+    DoIndependentWork();
+
+    string contents = await getStringTask;
+
+    return contents.Length;
+}
+
+void DoIndependentWork()
+{
+    Console.WriteLine("Working...");
+}</code></pre>
+
+<p>Puteți învăța mai multe practici din exemplul anterior. Începeți cu semnătura metodei. Aceasta include modificatorul async. Tipul de returnare este Task&lt;int&gt; (<a href="https://docs.microsoft.com/dotnet/csharp/programming-guide/concepts/async/how-to-define-a-return-type-for-an-async-method">Consultați secțiunea „Tipuri de returnare” pentru mai multe opțiuni</a>). Numele metodei se termină în Async. În corpul metodei, GetStringAsync returnează un Task&lt;string&gt;. Acest lucru înseamnă că, atunci când așteptați task-ul, veți obține un șir de caractere (conținuturi). Înainte de așteptarea task-ului, puteți efectua lucrări care nu depind de șirul de la GetStringAsync.</p>
+
+<p>Acordați o atenție deosebită operatorului await. Aceasta suspendă GetUrlContentLengthAsync:</p>
+
+<ul>
+  <li>GetUrlContentLengthAsync nu poate continua până când getStringTask este complet.</li>
+  <li>Între timp, controlul se întoarce la apelantul lui GetUrlContentLengthAsync.</li>
+  <li>Controlul se reia aici când getStringTask este complet.</li>
+  <li>Operatorul await apoi recuperează rezultatul sub forma unui șir de caractere din getStringTask.</li>
+</ul>
+
+<p>Instrucțiunea return specifică un rezultat întreg. Orice metode care așteaptă GetUrlContentLengthAsync vor recupera valoarea lungimii.</p>
+
+<h3>Tipuri de returnare și parametri</h3>
+<p>De obicei, o metodă async returnează un Task sau un Task&lt;TResult&gt;. În interiorul unei metode async, operatorul await se aplică la un Task returnat dintr-un apel la o altă metodă async.</p>
+<p>Specificați Task&lt;TResult&gt; ca tipul de returnare dacă metoda conține o instrucțiune return care specifică un operand de tip TResult.</p>
+<p>Folosiți Task ca tipul de returnare dacă metoda nu are o instrucțiune return sau are o instrucțiune return care nu returnează un operand.</p>
+<p>Puteți specifica și orice alt tip de returnare, cu condiția ca tipul să includă o metodă GetAwaiter. ValueTask&lt;TResult&gt; este un exemplu de astfel de tip. Este disponibil în pachetul NuGet System.Threading.Tasks.Extension.</p>
+<p>Următorul exemplu arată cum declarați și apelați o metodă care returnează un Task&lt;TResult&gt; sau un Task:</p>
+<pre><code class="lang-csharp">async Task&lt;int&gt; GetTaskOfTResultAsync()
+{
+    int hours = 0;
+    await Task.Delay(0);
+
+    return hours;
+}
+
+
+Task&lt;int&gt; returnedTaskTResult = GetTaskOfTResultAsync();
+int intResult = await returnedTaskTResult;
+// Single line
+// int intResult = await GetTaskOfTResultAsync();
+
+async Task GetTaskAsync()
+{
+    await Task.Delay(0);
+    // No return statement needed
+}
+
+Task returnedTask = GetTaskAsync();
+await returnedTask;
+// Single line
+await GetTaskAsync();</code></pre>
+<p>Fiecare task returnat reprezintă o lucrare în desfășurare. Un task încapsulează informații despre starea procesului asincron și, în cele din urmă, fie rezultatul final al procesului, fie excepția pe care procesul o ridică dacă nu reușește.</p>
+<p>O metodă async poate avea, de asemenea, un tip de returnare void. Acest tip de returnare este utilizat în principal pentru a defini manipulatoare de evenimente, unde un tip de returnare void este necesar. Manipulatoarele de evenimente asincrone servesc adesea ca punct de pornire pentru programele asincrone.</p>
+<p>O metodă async cu un tip de returnare void nu poate fi așteptată, iar apelantul unei metode care returnează void nu poate captura nicio excepție pe care metoda o aruncă.</p>
+<p>O metodă async nu poate declara parametri in, ref sau out, dar metoda poate apela metode care au astfel de parametri. Similar, o metodă async nu poate returna o valoare prin referință, deși poate apela metode cu valori returnate prin ref.</p>
+
+
+
+</div>
+
+<div>
+<h2>7.3 Async return types</h2>
+
+<pre>
+Metodele asincrone pot avea următoarele tipuri de returnare:
+<ul>
+    <li><code>Task</code>, pentru o metodă asincronă care efectuează o operație, dar nu returnează niciun rezultat.</li>
+    <li><code>Task&lt;TResult&gt;</code>, pentru o metodă asincronă care returnează o valoare.</li>
+    <li><code>void</code>, pentru un manipulator de evenimente.</li>
+    <li>Orice tip care are o metodă <code>GetAwaiter</code> accesibilă. Obiectul returnat de metoda <code>GetAwaiter</code> trebuie să implementeze interfața <code>System.Runtime.CompilerServices.ICriticalNotifyCompletion</code>.</li>
+    <li><code>IAsyncEnumerable&lt;T&gt;</code>, pentru o metodă asincronă care returnează un flux asincron.</li>
+</ul>
+</pre>
+
+
+<h3>Tipul de returnare Task</h3>
+
+<p>Metodele asincrone care nu conțin o declarație de returnare sau care conțin o declarație de returnare care nu returnează un operand au de obicei un tip de returnare Task. Astfel de metode returnează void dacă rulează sincron. Dacă utilizați un tip de returnare Task pentru o metodă asincronă, o metodă apelată poate utiliza un operator await pentru a suspenda finalizarea apelantului până când metoda asincronă apelată se termină.</p>
+
+<p>În exemplul următor, metoda WaitAndApologizeAsync nu conține o declarație de returnare, deci metoda returnează un obiect Task. Returnarea unui Task permite apelarea asincronă a metodei WaitAndApologizeAsync. Tipul Task nu include o proprietate Result deoarece nu are o valoare de returnat.</p>
+
+<pre>
+<code>
+public static async Task DisplayCurrentInfoAsync()
+{
+    await WaitAndApologizeAsync();
+
+    Console.WriteLine($"Astăzi este {DateTime.Now:D}");
+    Console.WriteLine($"Ora curentă este {DateTime.Now.TimeOfDay:t}");
+    Console.WriteLine("Temperatura curentă este de 76 de grade.");
+}
+
+static async Task WaitAndApologizeAsync()
+{
+    await Task.Delay(2000);
+
+    Console.WriteLine("Îmi pare rău pentru întârziere...\n");
+}
+</code>
+</pre>
+
+<p>Metoda WaitAndApologizeAsync este așteptată folosind o instrucțiune await în loc de o expresie await, similar cu instrucțiunea de apel pentru o metodă de returnare sincronă. Aplicarea unui operator await în acest caz nu produce o valoare. Când operandul drept al unui await este un Task<TResult>, expresia await produce un rezultat de tip T. Când operandul drept al unui await este un Task, await și operandul său sunt o instrucțiune.</p>
+
+<p>Puteți separa apelul metodei WaitAndApologizeAsync de aplicarea unui operator await, așa cum arată codul următor. Totuși, rețineți că un Task nu are o proprietate Result și că nu se produce nicio valoare atunci când se aplică un operator await la un Task.</p>
+
+<h3>Tipul de returnare Task&lt;TResult&gt;</h3>
+<p>
+Tipul de returnare Task&lt;TResult&gt; este utilizat pentru o metodă async care conține o declarație return cu un operand TResult.
+</p>
+<p>
+În exemplul de mai jos, metoda GetLeisureHoursAsync conține o declarație return care returnează un număr întreg. Declararea metodei trebuie să specifice un tip de returnare de Task&lt;int&gt;. Metoda async FromResult este un substituent pentru o operație care returnează o DayOfWeek.
+</p>
+<pre><code class="language-csharp">
+public static async Task ShowTodaysInfoAsync()
+{
+    string message =
+        $"Today is {DateTime.Today:D}\n" +
+        "Today's hours of leisure: " +
+        $"{await GetLeisureHoursAsync()}";
+
+    Console.WriteLine(message);
+}
+
+static async Task&lt;int&gt; GetLeisureHoursAsync()
+{
+    DayOfWeek today = await Task.FromResult(DateTime.Now.DayOfWeek);
+
+    int leisureHours =
+        today is DayOfWeek.Saturday || today is DayOfWeek.Sunday
+        ? 16 : 5;
+
+    return leisureHours;
+}
+</code></pre>
+<p>
+Când GetLeisureHoursAsync este apelat dintr-o expresie await în metoda ShowTodaysInfo, expresia await recuperează valoarea întreagă (valoarea lui leisureHours) care este stocată în sarcina returnată de metoda GetLeisureHours. Pentru mai multe informații despre expresii await, consultați await.
+</p>
+<p>
+Puteți înțelege mai bine modul în care await recuperează rezultatul dintr-un Task&lt;T&gt; prin separarea apelului la GetLeisureHoursAsync de aplicarea await, așa cum arată codul de mai jos. Un apel la metoda GetLeisureHoursAsync care nu este așteptată imediat returnează un Task&lt;int&gt;, așa cum v-ați aștepta din declarația metodei. Sarcina este atribuită variabilei getLeisureHoursTask în exemplul. Deoarece getLeisureHoursTask este un Task&lt;TResult&gt;, conține o proprietate Result de tip TResult. În acest caz, TResult reprezintă un tip întreg. Când await este aplicat la getLeisureHoursTask, expresia await evaluează la conținutul proprietății Result a getLeisureHoursTask. Valoarea este atribuită variabilei ret.
+</p>
+
+<h3>Tipul de returnare void</h3>
+<p>
+Folosiți tipul de returnare vid în handler-ele de evenimente asincrone, care necesită un tip de returnare vid. Pentru metodele care nu returnează o valoare, alte decât handler-ele de evenimente, ar trebui să returnați în schimb un Task, deoarece o metodă async care returnează vid nu poate fi așteptată. Orice apelant al unei astfel de metode trebuie să continue până la finalizare fără așteptarea finalizării metodei async apelate. Apelantul trebuie să fie independent de orice valori sau excepții generate de metoda async.
+</p>
+<p>
+Apelantul unei metode async care returnează void nu poate prinde excepțiile aruncate din metoda respectivă. Astfel de excepții nemanipulate sunt susceptibile să cauzeze eșecul aplicației. Dacă o metodă care returnează un Task sau Task<TResult> aruncă o excepție, aceasta este stocată în task-ul returnat. Excepția este relansată atunci când task-ul este așteptat. Asigurați-vă că orice metodă async care poate produce o excepție are un tip de returnare de Task sau Task<TResult> și că apelurile către metoda respectivă sunt așteptate.
+</p>
+<p>
+Următorul exemplu arată comportamentul unui handler de evenimente async. În codul de exemplu, un handler de evenimente async trebuie să-i informeze firul principal când acesta se termină. Apoi, firul principal poate aștepta ca un handler de evenimente async să se finalizeze înainte de a ieși din program.
+</p>
+<pre><code class="lang-csharp">public class NaiveButton
+{
+    public event EventHandler? Clicked;
+
+    public void Click()
+    {
+        Console.WriteLine("Somebody has clicked a button. Let's raise the event...");
+        Clicked?.Invoke(this, EventArgs.Empty);
+        Console.WriteLine("All listeners are notified.");
+    }
+}
+
+public class AsyncVoidExample
+{
+    static readonly TaskCompletionSource&lt;bool&gt; s_tcs = new TaskCompletionSource&lt;bool&gt;();
+
+    public static async Task MultipleEventHandlersAsync()
+    {
+        Task&lt;bool&gt; secondHandlerFinished = s_tcs.Task;
+
+        var button = new NaiveButton();
+
+        button.Clicked += OnButtonClicked1;
+        button.Clicked += OnButtonClicked2Async;
+        button.Clicked += OnButtonClicked3;
+
+        Console.WriteLine("Before button.Click() is called...");
+        button.Click();
+        Console.WriteLine("After button.Click() is called...");
+
+        await secondHandlerFinished;
+    }
+
+    private static void OnButtonClicked1(object? sender, EventArgs e)
+    {
+        Console.WriteLine("   Handler 1 is starting...");
+        Task.Delay(100).Wait();
+        Console.WriteLine("   Handler 1 is done.");
+    }
+
+    private static async void OnButtonClicked2Async(object? sender, EventArgs e)
+    {
+        Console.WriteLine("   Handler 2 is starting...");
+        Task.Delay(100).Wait();
+        Console.WriteLine("   Handler 2 is about to go async...");
+        await Task.Delay(500);
+        Console.WriteLine("   Handler 2 is done.");
+        s_tcs.SetResult(true);
+    }
+
+    private static void OnButtonClicked3(object? sender, EventArgs e)
+    {
+        Console.WriteLine("   Handler 3 is starting...");
+        Task.Delay(100).Wait();
+        Console.WriteLine("   Handler 3 is done.");
+    }
+}
+// Example output:
+//
+// Before button.Click() is called...
+// Somebody has clicked a button. Let's raise the event...
+//    Handler 1 is starting...
+//    Handler 1 is done.
+//    Handler 2 is starting...
+//    Handler 2 is about to go async...
+//    Handler 3 is starting...
+//    Handler 3 is done.
+// All listeners are notified.
+// After button.Click() is called...
+//    Handler 2 is done.</code></pre>
+
+<h3>Tipuri generalizate de returnare asincronă și ValueTask&lt;TResult&gt;</h3>
+<p>O metodă asincronă poate returna orice tip care are o metodă GetAwaiter accesibilă, care returnează o instanță a unui tip așteptat. În plus, tipul returnat de metoda GetAwaiter trebuie să aibă atributul System.Runtime.CompilerServices.AsyncMethodBuilderAttribute. Puteți afla mai multe în <a href="https://docs.microsoft.com/dotnet/csharp/language-reference/compiler-options/attributes-that-control-runtime-behavior/asyncmethodbuilderattribute">articolul despre atribute citit de compilator</a> sau în <a href="https://github.com/dotnet/csharplang/blob/master/proposals/csharp-7.3/async-streams.md#value-task-based-asynchronous-streams">specificația de funcționalitate pentru tipurile de returnare de tip Task</a>.</p>
+<p>Această funcționalitate este complementară cu expresiile așteptabile, care descriu cerințele pentru operandul de așteptare. Tipurile generalizate de returnare asincronă permit compilatorului să genereze metode asincrone care returnează diferite tipuri. Tipurile generalizate de returnare asincronă au permis îmbunătățiri de performanță în bibliotecile .NET. Deoarece Task și Task&lt;TResult&gt; sunt tipuri de referință, alocarea de memorie în căile de performanță critice, în special atunci când alocările apar în bucle strânse, poate afecta negativ performanța. Suportul pentru tipurile de returnare generalizate înseamnă că puteți returna un tip de valoare ușor în locul unui tip de referință pentru a evita alocările suplimentare de memorie.</p>
+<p>.NET furnizează structura System.Threading.Tasks.ValueTask&lt;TResult&gt; ca o implementare ușoară a unei valori de returnare a sarcinilor generalizate. Pentru a utiliza tipul System.Threading.Tasks.ValueTask&lt;TResult&gt;, trebuie să adăugați pachetul NuGet System.Threading.Tasks.Extensions la proiectul dvs. Exemplul următor utilizează structura ValueTask&lt;TResult&gt; pentru a obține valoarea a două zaruri.</p>
+<pre><code class="lang-csharp">class Program
+{
+    static readonly Random s_rnd = new Random();
+
+    static async Task Main() =>
+        Console.WriteLine("You rolled {await GetDiceRollAsync()}");
+
+    static async ValueTask&lt;int&gt; GetDiceRollAsync()
+    {
+        Console.WriteLine("Shaking dice...");
+
+        int roll1 = await RollAsync();
+        int roll2 = await RollAsync();
+
+        return roll1 + roll2;
+    }
+
+    static async ValueTask&lt;int&gt; RollAsync()
+    {
+        await Task.Delay(500);
+
+        int diceRoll = s_rnd.Next(1, 7);
+        return diceRoll;
+    }
+}
+// Example output:
+//    Shaking dice...
+//    You rolled 8
+</code></pre>
+
+<h3>Fluxuri asincrone cu IAsyncEnumerable&lt;T&gt;</h3>
+<p>O metodă asincronă poate returna un flux asincron, reprezentat de IAsyncEnumerable&lt;T&gt;. Un flux asincron oferă o modalitate de a enumera elementele citite dintr-un flux atunci când elementele sunt generate în bucăți cu apeluri asincrone repetate. Exemplul următor arată o metodă asincronă care generează un flux asincron:</p>
+
+<pre><code class="lang-csharp">static async IAsyncEnumerable<string> ReadWordsFromStreamAsync()
+{
+    string data =
+        "This is a line of text.
+              Here is the second line of text.
+              And there is one more for good measure.
+              Wait, that was the penultimate line."
+
+    using var readStream = new StringReader(data);
+
+    string? line = await readStream.ReadLineAsync();
+    while (line != null)
+    {
+        foreach (string word in line.Split(' ', StringSplitOptions.RemoveEmptyEntries))
+        {
+            yield return word;
+        }
+
+        line = await readStream.ReadLineAsync();
+    }
+}
+</code>
+</pre>
+</div>
+
+<div>
+<h2>7.4 Anularea unei liste de sarcini</h2>
+<p>Puteți anula o aplicație console asincronă dacă nu doriți să așteptați să se termine. Urmarind exemplul din acest topic, puteți adăuga o anulare la o aplicație care descarcă conținutul unei liste de site-uri web. Puteți anula multe sarcini prin asocierea instanței CancellationTokenSource cu fiecare sarcină. Dacă selectați tasta Enter, se anulează toate sarcinile care nu sunt încă finalizate.</p>
+
+<h3>Acest tutorial acoperă:</h3>
+<ul>
+  <li>Crearea unei aplicații console .NET</li>
+  <li>Scrierea unei aplicații asincrone care suportă anularea</li>
+  <li>Demonstrarea semnalizării anularii.</li>
+</ul>
+
+<h3>In definitia clasei Program, adaugati:</h3>
+<pre><code class="lang-csharp">static readonly CancellationTokenSource s_cts = new CancellationTokenSource();
+
+static readonly HttpClient s_client = new HttpClient
+{
+    MaxResponseContentBufferSize = 1_000_000
+};
+
+static readonly IEnumerable<string> s_urlList = new string[]
+{
+    &quot;https://learn.microsoft.com&quot;,
+    &quot;https://learn.microsoft.com/aspnet/core&quot;,
+    &quot;https://learn.microsoft.com/azure&quot;,
+    &quot;https://learn.microsoft.com/azure/devops&quot;,
+    &quot;https://learn.microsoft.com/dotnet&quot;,
+    &quot;https://learn.microsoft.com/dynamics365&quot;,
+    &quot;https://learn.microsoft.com/education&quot;,
+    &quot;https://learn.microsoft.com/enterprise-mobility-security&quot;,
+    &quot;https://learn.microsoft.com/gaming&quot;,
+    &quot;https://learn.microsoft.com/graph&quot;,
+    &quot;https://learn.microsoft.com/microsoft-365&quot;,
+    &quot;https://learn.microsoft.com/office&quot;,
+    &quot;https://learn.microsoft.com/powershell&quot;,
+    &quot;https://learn.microsoft.com/sql&quot;,
+    &quot;https://learn.microsoft.com/surface&quot;,
+    &quot;https://learn.microsoft.com/system-center&quot;,
+    &quot;https://learn.microsoft.com/visualstudio&quot;,
+    &quot;https://learn.microsoft.com/windows&quot;,
+    &quot;https://learn.microsoft.com/xamarin&quot;
+};
+</code>
+</pre>
+
+<h3>Updatati entry point-ul aplicatiei: </h3>
+
+<pre><code class="lang-csharp">static async Task Main()
+{
+    Console.WriteLine(&quot;Application started.&quot;);
+    Console.WriteLine(&quot;Press the ENTER key to cancel...\n&quot;);
+
+    Task cancelTask = Task.Run(() =>
+    {
+        while (Console.ReadKey().Key != ConsoleKey.Enter)
+        {
+            Console.WriteLine(&quot;Press the ENTER key to cancel...&quot;);
+        }
+
+        Console.WriteLine(&quot;\nENTER key pressed: cancelling downloads.\n&quot;);
+        s_cts.Cancel();
+    });
+
+    Task sumPageSizesTask = SumPageSizesAsync();
+
+    Task finishedTask = await Task.WhenAny(new[] { cancelTask, sumPageSizesTask });
+    if (finishedTask == cancelTask)
+    {
+        // wait for the cancellation to take place:
+        try
+        {
+            await sumPageSizesTask;
+            Console.WriteLine(&quot;Download task completed before cancel request was processed.&quot;);
+        }
+        catch (TaskCanceledException)
+        {
+            Console.WriteLine(&quot;Download task has been cancelled.&quot;);
+        }
+    }
+
+    Console.WriteLine(&quot;Application ending.&quot;);
+}
+</code></pre>
+
+<h3>Creati metoda asincrona SumPageSizes</h3>
+<pre><code class="lang-csharp">static async Task SumPageSizesAsync()
+{
+    var stopwatch = Stopwatch.StartNew();
+
+    int total = 0;
+    foreach (string url in s_urlList)
+    {
+        int contentLength = await ProcessUrlAsync(url, s_client, s_cts.Token);
+        total += contentLength;
+    }
+
+    stopwatch.Stop();
+
+    Console.WriteLine($&quot;\nTotal bytes returned:  {total:#,#}&quot;);
+    Console.WriteLine($&quot;Elapsed time:          {stopwatch.Elapsed}\n&quot;);
+}
+</code>
+</pre>
+
+<h3>Creati metoda asincrona de procesare</h3>
+<pre>
+<code class="lang-csharp">static async Task<int> ProcessUrlAsync(string url, HttpClient client, CancellationToken token)
+{
+    HttpResponseMessage response = await client.GetAsync(url, token);
+    byte[] content = await response.Content.ReadAsByteArrayAsync(token);
+    Console.WriteLine($&quot;{url,-60} {content.Length,10:#,#}&quot;);
+
+    return content.Length;
+}
+</code>
+</pre>
+</div>
+
+<div>
+<h2>7.5 Anularea unui task asincron dupa o perioada de timp</h2>
+  <p>Puteți anula o operație asincronă după un anumit timp folosind metoda CancellationTokenSource.CancelAfter dacă nu doriți să așteptați finalizarea operației. Această metodă programează anularea oricăror sarcini asociate care nu sunt finalizate în perioada de timp desemnată de expresia CancelAfter.</p>
+   <p>Acest exemplu adaugă codului dezvoltat în <a href="https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/async/cancel-an-async-task-or-a-list-of-tasks">Anulează o listă de sarcini (C#)</a> pentru a descărca o listă de site-uri web și pentru a afișa lungimea conținutului fiecăruia.</p>
+   <p>Această prezentare acoperă:</p>
+   <ul>
+      <li>Actualizarea unei aplicații .NET console existente</li>
+      <li>Programarea unei anulări</li>
+   </ul>
+
+   <h3>Updatati entry point-ul aplicatiei</h3>
+   <pre>
+   <code class="lang-csharp">static async Task Main()
+{
+    Console.WriteLine(&quot;Application started.&quot;);
+
+    try
+    {
+        s_cts.CancelAfter(3500);
+
+        await SumPageSizesAsync();
+    }
+    catch (OperationCanceledException)
+    {
+        Console.WriteLine(&quot;\nTasks cancelled: timed out.\n&quot;);
+    }
+    finally
+    {
+        s_cts.Dispose();
+    }
+
+    Console.WriteLine(&quot;Application ending.&quot;);
+}
+</code>
+   </pre>
+
+   <h3>Exemplu complet</h3>
+   <pre>
+   <code class="lang-csharp">using System.Diagnostics;
+
+class Program
+{
+    static readonly CancellationTokenSource s_cts = new CancellationTokenSource();
+
+    static readonly HttpClient s_client = new HttpClient
+    {
+        MaxResponseContentBufferSize = 1_000_000
+    };
+
+    static readonly IEnumerable<string> s_urlList = new string[]
+    {
+            &quot;https://learn.microsoft.com&quot;,
+            &quot;https://learn.microsoft.com/aspnet/core&quot;,
+            &quot;https://learn.microsoft.com/azure&quot;,
+            &quot;https://learn.microsoft.com/azure/devops&quot;,
+            &quot;https://learn.microsoft.com/dotnet&quot;,
+            &quot;https://learn.microsoft.com/dynamics365&quot;,
+            &quot;https://learn.microsoft.com/education&quot;,
+            &quot;https://learn.microsoft.com/enterprise-mobility-security&quot;,
+            &quot;https://learn.microsoft.com/gaming&quot;,
+            &quot;https://learn.microsoft.com/graph&quot;,
+            &quot;https://learn.microsoft.com/microsoft-365&quot;,
+            &quot;https://learn.microsoft.com/office&quot;,
+            &quot;https://learn.microsoft.com/powershell&quot;,
+            &quot;https://learn.microsoft.com/sql&quot;,
+            &quot;https://learn.microsoft.com/surface&quot;,
+            &quot;https://learn.microsoft.com/system-center&quot;,
+            &quot;https://learn.microsoft.com/visualstudio&quot;,
+            &quot;https://learn.microsoft.com/windows&quot;,
+            &quot;https://learn.microsoft.com/xamarin&quot;
+    };
+
+    static async Task Main()
+    {
+        Console.WriteLine(&quot;Application started.&quot;);
+
+        try
+        {
+            s_cts.CancelAfter(3500);
+
+            await SumPageSizesAsync();
+        }
+        catch (OperationCanceledException)
+        {
+            Console.WriteLine(&quot;\nTasks cancelled: timed out.\n&quot;);
+        }
+        finally
+        {
+            s_cts.Dispose();
+        }
+
+        Console.WriteLine(&quot;Application ending.&quot;);
+    }
+
+    static async Task SumPageSizesAsync()
+    {
+        var stopwatch = Stopwatch.StartNew();
+
+        int total = 0;
+        foreach (string url in s_urlList)
+        {
+            int contentLength = await ProcessUrlAsync(url, s_client, s_cts.Token);
+            total += contentLength;
+        }
+
+        stopwatch.Stop();
+
+        Console.WriteLine($&quot;\nTotal bytes returned:  {total:#,#}&quot;);
+        Console.WriteLine($&quot;Elapsed time:          {stopwatch.Elapsed}\n&quot;);
+    }
+
+    static async Task<int> ProcessUrlAsync(string url, HttpClient client, CancellationToken token)
+    {
+        HttpResponseMessage response = await client.GetAsync(url, token);
+        byte[] content = await response.Content.ReadAsByteArrayAsync(token);
+        Console.WriteLine($&quot;{url,-60} {content.Length,10:#,#}&quot;);
+
+        return content.Length;
+    }
+}
+</code>
+   </pre>
+
+
+</div>
 <h2>7.7 Procesarea sarcinilor asincrone pe măsură ce acestea sunt finalizate</h2>
 
 <p>Prin utilizarea Task.WhenAny, puteți să începeți mai multe sarcini în același timp și să le procesați una câte una pe măsură ce sunt finalizate, în loc să le procesați în ordinea în care au fost începute.</p>
