@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <body>
     <h1>3.1 Transmiterea parametrilor</h1>
 
@@ -44,8 +43,8 @@
     //Parametrul x este transmis prin valoare.
     //Modificările aduse lui x nu vor afecta valoarea inițială a lui x.
     { 
-    x *= x; 
-    System.Console.WriteLine("The value inside the method: {0}", x); 
+        x *= x; 
+        System.Console.WriteLine("The value inside the method: {0}", x); 
     } 
     /* Ieșire: 
     The value before calling the method: 5 
@@ -117,6 +116,7 @@
         Cu toate acestea, încercarea de a realoca parametrul într-o locație de memorie diferită funcționează numai în
         cadrul metodei și nu afectează variabila originală, arr.</p>
 
+        <pre><code>
     int[] arr = { 1, 4, 5 };
     System.Console.WriteLine("Inside Main, before calling the method, the first element is: {0}", arr[0]);
 
@@ -125,16 +125,16 @@
 
     static void Change(int[] pArray)
     {
-    pArray[0] = 888; //Acastă modificare afecteaza elementul inițial.
-    pArray = new int[5] { -3, -1, -2, -3, -4 }; //Această schimbare este locală.
-    System.Console.WriteLine("Inside the method, the first element is: {0}", pArray[0]);
+        pArray[0] = 888; //Acastă modificare afecteaza elementul inițial.
+        pArray = new int[5] { -3, -1, -2, -3, -4 }; //Această schimbare este locală.
+        System.Console.WriteLine("Inside the method, the first element is: {0}", pArray[0]);
     }
     /* Ieșire:
     Inside Main, before calling the method, the first element is: 1
     Inside the method, the first element is: -3
     Inside Main, after calling the method, the first element is: 888
     */
-
+</code></pre>
     <p>În exemplul precedent, matricea, arr, care este un tip de referință, este transmisă metodei fără parametrul ref.
         Într-un astfel de caz, o copie a referinței, care indică arr, este transmisă metodei. Rezultatul arată că este
         posibil ca metoda să modifice conținutul unui element de matrice, în acest caz de la 1 la 888. Cu toate acestea,
@@ -168,9 +168,9 @@
     static void Change(ref int[] pArray) 
     { 
     // Ambele din următoarele modificări vor afecta variabilele inițiale:
-    pArray[0] = 888; 
-    pArray = new int[5] { -3, -1, -2, -3, -4 }; 
-    System.Console.WriteLine("Inside the method, the first element is: {0}", pArray[0]); 
+        pArray[0] = 888; 
+        pArray = new int[5] { -3, -1, -2, -3, -4 }; 
+        System.Console.WriteLine("Inside the method, the first element is: {0}", pArray[0]); 
     } 
     /* Ieșire: 
     Inside Main, before calling the method, the first element is: 1 
@@ -259,15 +259,15 @@ class TestClassAndStruct {
         modificări aduse argumentului sunt vizibile de la apelant.</p>
 
 
-    <h1>3.5 modificatorul "in"</h1>
+    <h1>3.5 Modificatorul "in"</h1>
 
     <p>Cuvântul-cheie <code>in</code> determină ca argumentele să fie transmise prin referință, dar asigură că
         argumentul nu este modificat. Face din parametrul formal un alias pentru argument, care trebuie să fie o
         variabilă.
         Cu alte cuvinte, orice operație asupra parametrului este realizată asupra argumentului.
         Este similar cu cuvintele-cheie <code>ref</code> sau <code>out</code>, cu excepția faptului că argumentele
-        <code>in</code> nu pot fi modificate de către metoda apelată.
-        ,în timp ce argumentele <code>ref</code> pot fi modificate, argumentele "out" trebuie modificate de către metoda
+        <code>in</code> nu pot fi modificate de către metoda apelată
+        , în timp ce argumentele <code>ref</code> pot fi modificate, argumentele "out" trebuie modificate de către metoda
         apelată. Acele modificări sunt observabile în contextul apelului.
     </p>
 
@@ -276,66 +276,38 @@ class TestClassAndStruct {
     InArgExample(readonlyArgument);
     Console.WriteLine(readonlyArgument);     // valoarea rămâne 44
 
-void InArgExample(in int number)
-{
-    // Scoateți comentariul din următoarea linie pentru a vedea eroarea CS8331
-    //number = 19;
-}
+    void InArgExample(in int number)
+    {
+        // Scoateți comentariul din următoarea linie pentru a vedea eroarea CS8331
+        //number = 19;
+    }
 </code></pre>
 
     <p>Exemplul precedent demonstrează că modificatorul <code>in</code> nu este necesar la locul apelului. Este necesar
         doar în declarația metodei.</p>
 
-    <p><strong>Notă</strong></p>
-
     <p>Cuvântul-cheie <code>in</code> poate fi, de asemenea, folosit cu un parametru de tip generic pentru a specifica
         că parametrul de tip este contravariant,
-        ca parte a unei instrucțiuni foreach sau ca parte a unei clauză <code>join</code> într-o interogare LINQ. Pentru
-        mai multe informații despre utilizarea cuvântului-cheie "in" în aceste contexte, consultați "in", care oferă
-        link-uri către toate aceste utilizări.</p>
-
-    <p>Variabilele transmise ca argumente <code>in</code> trebuie să fie inițializate înainte de a fi trecute în apelul
+        ca parte a unei instrucțiuni <code>foreach</code> sau ca parte a unei clauze <code>join</code> într-o interogare LINQ. Variabilele transmise ca argumente <code>in</code> trebuie să fie inițializate înainte de a fi trecute în apelul
         metodei. Cu toate acestea, metoda apelată nu poate atribui o valoare sau modifica argumentul.</p>
 
-    <p>Deși modificatorii de parametri <code>in</code>, <code>out</code> și <code>ref</code> sunt considerați parte a
-        unei semnături, membrii declarați într-un singur tip nu pot diferi în semnătură doar prin intermediul
-        <code>in</code>, <code>ref</code> și <code>out</code>.
-        Prin urmare, metodele nu pot fi overloaded dacă singura diferență este că o metodă preia un argument
-        <code>ref</code> sau <code>out</code>, iar cealaltă preia un argument <code>in</code>.
     </p>
-    <p>De exemplu, următorul cod nu se va compila:</p>
 
+    <p>Supraîncărcarea prin prezența parametrului <code>in</code> este permisă:</p>
 
     <pre><code>
-class CS0663_Example
-{
-    // Eroare de compilare CS0663: "Nu se pot defini metode overloaded care diferă doar în , ref și out".
-    public void SampleMethod(in int i) { }
-    public void SampleMethod(ref int i) { }
-}
-    </code>
-    </pre>
-    </p>
-
-    <p>
-        Supraîncărcarea bazată pe prezența parametrului <code>in</code> este permisă:
-    </p>
-
-    <pre>
-<code>
 class InOverloads
 {
     public void SampleMethod(in int i) { }
     public void SampleMethod(int i) { }
 }
-</code>
-</pre>
-
+</code></pre>
+    <h2>Reguli de rezoluție a supraîncărcării</h2>
     <p>
-        Regulile de rezolvare a supraîncărcării pentru metode cu argumente prin valoare vs <code>in</code> pot fi
+        Regulile de rezoluție a supraîncărcării pentru metode cu argumente prin valoare vs <code>in</code> pot fi
         ințelese prin motivația pentru argumentele <code>in</code>.
         Definirea metodelor utilizând parametrii <code>in</code> este o potențială optimizare de performanță. Unele
-        tipuri de argumente <code>struct</code> pot fi mari ca dimensiune, și când metodele sunt apelate în bucle
+        tipuri de argumente <code>struct</code> pot fi mari ca dimensiune, iar când metodele sunt apelate în bucle
         strânse sau căi critice de cod,
         costul copierii acelor structuri poate fi critic. Metodele declară parametri <code>in</code> pentru a specifica
         că argumentele pot fi transmise prin referință în mod sigur pentru că metoda apelată nu modifică starea acelui
@@ -343,7 +315,7 @@ class InOverloads
     </p>
 
     <p>
-        Specificarea <code>in</code> pentru argumente la locul apelului este, de obicei, opțională. Nu există nicio
+        Specificarea <code>in</code> argumentelor la locul apelului este, de obicei, opțională. Nu există nicio
         diferență semantică între transmiterea argumentelor prin valoare și transmiterea lor prin referință utilizând
         modificatorul <code>in</code>. Modificatorul<code>in</code> la locul apelului este opțional deoarece nu trebuie
         să indicați că valoarea argumentului ar putea fi schimbată.
@@ -351,27 +323,18 @@ class InOverloads
         referință, nu prin valoare. Utilizarea explicită a <code>in</code> are următoarele două efecte:
     </p>
 
-    <ul>
-        <li>În primul rând, specificarea <code>in</code> la locul apelului forțează compilatorul să selecteze o metodă
+            <p>În primul rând, specificarea <code>in</code> la locul apelului forțează compilatorul să selecteze o metodă
             definită cu un parametru <code>in</code> corespunzător. În caz contrar, atunci când două metode diferă doar
-            prin prezenta <code>in</code>, supraîncărcarea cu argumentele prin valoare este o potrivire mai bună.</li>
-        <li>În al doilea rând, specificarea <code>in</code> declară intenția de a transmite un argument prin referință.
+            prin prezenta <code>in</code>, supraîncărcarea cu argumentele prin valoare este o potrivire mai bună.</p>
+            <p>În al doilea rând, specificarea <code>in</code> declară intenția de a transmite un argument prin referință.
             Argumentul folosit cu <code>in</code> trebuie să reprezinte o locație la care se poate face referință
             directă. Se aplică aceleași reguli generale pentru argumente <code>out</code> si <code>ref</code>: Nu puteți
             utiliza constante, proprietăți obilnuite sau alte expresii care produc valori.
             În caz contrar, omiterea <code>in</code> la locul apelului informează compilatorul ca veți permite să creeze
             o variabilă temporară pentru a fi transmisă prin referință numai pentru citirea metodei.
             Compilatorul creează o variabilă temporară pentru a depași mai multe restricții cu argumentele
-            <code>in</code>:
-        </li>
-    </ul>
-    În primul rând, specificarea termenului <code>in</code> declară intenția dvs. de a trece un argument prin
-    referință. Argumentul utilizat cu <code>in</code> trebuie să reprezinte o locație la care se poate face
-    referire directă. Aceleași reguli generale se aplică și la argumentele <code>out</code> și <code>ref</code>:
-    nu puteți utiliza constante, proprietăți obișnuite sau alte expresii care produc valori. În caz contrar,
-    omițerea termenului <code>in</code> la locul de apel informează compilatorul că veți permite crearea unei
-    variabile temporare pentru a fi trecută prin referință doar pentru citire la metoda respectivă. Compilatorul
-    creează o variabilă temporară pentru a depăși mai multe restricții cu argumentele <code>in</code>:
+            <code>in</code>: </p>
+        
     <ul>
         <li> O variabilă temporară permite constantele în timpul compilării ca parametri <code>in</code>.</li>
         <li> O variabilă temporară permite proprietăți sau alte expresii ca parametri <code>in</code>.</li>
@@ -404,8 +367,7 @@ class InOverloads
 </code>
 </pre>
 
-    <p> Să presupunem acum că există o altă metodă care utilizează argumente prin valoare. Rezultatele se
-        schimbă
+    <p> Să presupunem acum că există o altă metodă care utilizează argumente prin valoare. Rezultatele se schimbă
         așa cum se arată în codul de mai jos:</p>
     <pre>
     <code>
@@ -430,12 +392,11 @@ Method(i); // apelează suprasarcina trecută prin valoare
 </pre>
 
 
-    <h1>ref (referință C#)</h1>
+    <h1>3.6 Cuvântul cheie ref </h1>
 
 
     <p>Cuvântul cheie <code>ref</code> indică faptul că o variabilă este o referință sau un alias pentru un alt
-        obiect.
-        Este folosit în cinci contexte diferite:</p>
+        obiect. Este folosit în cinci contexte diferite:</p>
 
     <ul>
         <li>Într-o semnătură de metodă și într-un apel de metodă, pentru a trece un argument unei metode prin
@@ -453,25 +414,23 @@ Method(i); // apelează suprasarcina trecută prin valoare
     </ul>
 
     <h2>Transmiterea unui argument prin referință</h2>
-    <p>Când este utilizat în lista de parametri a unei metode, cuvântul cheie ref indică faptul că un argument
-        este transmis prin referință, nu prin valoare. Cuvântul cheie ref face din parametrul formal un alias
+    <p>Când este utilizat în lista de parametri a unei metode, cuvântul cheie <code>ref</code> indică faptul că un argument
+        este transmis prin referință, nu prin valoare. Cuvântul cheie <code>ref</code> face din parametrul formal un alias
         pentru argument, care trebuie să fie o variabilă. Cu alte cuvinte, orice operație asupra parametrului se
         face pe argument.</p>
 
     <p>De exemplu, să presupunem că apelantul transmite o expresie variabilă locală sau o expresie de acces la
-        elementul de matrice. Metoda apelată poate înlocui apoi obiectul la care se referă parametrul ref. În
+        elementul de matrice. Metoda apelată poate înlocui apoi obiectul la care se referă parametrul <code>ref</code>. În
         acest caz, variabila locală a apelantului sau elementul matricei se referă la noul obiect când metoda
         revine.</p>
 
-    Notă
-
-    <p>Nu confundați conceptul de trecere prin referință cu conceptul de tipuri de referință. Cele două concepte
-        nu sunt aceleași. Un parametru de metodă poate fi modificat prin ref, indiferent dacă este un tip de
+    <p>Nu confundați conceptul de trecere prin referință cu conceptul de tipuri de referință.
+         Un parametru de metodă poate fi modificat prin ref, indiferent dacă este un tip de
         valoare sau un tip de referință. Nu există box de tip valoare atunci când este transmis prin referință.
 
-        Pentru a utiliza un parametru ref, atât definiția metodei, cât și metoda de apelare trebuie să utilizeze
-        în mod explicit cuvântul cheie ref, așa cum se arată în exemplul următor. (Cu excepția faptului că
-        metoda de apelare poate omite ref la efectuarea unui apel COM.)</p>
+        Pentru a utiliza un parametru <code>ref</code>, atât definiția metodei, cât și metoda de apelare trebuie să utilizeze
+        în mod explicit cuvântul cheie <code>ref</code>, așa cum se arată în exemplul următor. (Cu excepția faptului că
+        metoda de apelare poate omite <code>ref</code> la efectuarea unui apel COM.)</p>
 
     <pre>
 <code>
@@ -487,28 +446,8 @@ Console.WriteLine(number);
 </code>
 </pre>
 
-    <p>Un argument care este transmis unui parametru ref sau în trebuie inițializat înainte de a fi transmis.
-        Această cerință diferă de parametrii out, ale căror argumente nu trebuie să fie inițializate în mod
-        explicit înainte de a fi transmise.</p>
-
-    <p>Membrii unei clase nu pot avea semnături care diferă doar prin referință, intrare sau ieșire. O eroare de
-        compilator apare dacă singura diferență între doi membri ai unui tip este că unul dintre ei are un
-        parametru ref și celălalt are un parametru out sau in. Următorul cod, de exemplu, nu se compila.</p>
-
-    <pre>
-<code>
-    class CS0663_Example
-{
-    // Compiler error CS0663: "Cannot define overloaded
-    // methods that differ only on ref and out".
-    public void SampleMethod(out int i) { }
-    public void SampleMethod(ref int i) { }
-}
-</code>
-</pre>
-
-    <p>Cu toate acestea, metodele pot fi supraîncărcate atunci când o metodă are un parametru ref, in sau out,
-        iar cealaltă are un parametru care este transmis după valoare, așa cum se arată în exemplul următor.</p>
+    <p>Cu toate acestea, metodele pot fi supraîncărcate atunci când o metodă are un parametru <code>ref</code>, <code>in</code> sau <code>out</code>,
+        iar cealaltă are un parametru care este transmis după valoare, ca în exemplul următor.</p>
 
     <pre>
 <code>
@@ -520,30 +459,31 @@ Console.WriteLine(number);
 </code>
 </pre>
 
-    <p>În alte situații care necesită potrivirea semnăturii, cum ar fi ascunderea sau suprascrierea, in, ref și
-        out fac parte din semnătură și nu se potrivesc între ele.</p>
+    <p>În alte situații care necesită potrivirea semnăturii, cum ar fi ascunderea sau suprascrierea, <code>ref</code>, <code>in</code> și <code>out</code> fac parte din semnătură și nu se potrivesc între ele.</p>
 
-    <p>Proprietățile nu sunt variabile. Sunt metode și nu pot fi transmise parametrilor ref.</p>
+    <p>Proprietățile nu sunt variabile. Sunt metode și nu pot fi transmise parametrilor <code>ref</code>.</p>
 
-    <p>Nu puteți utiliza cuvintele cheie ref, in și out pentru următoarele tipuri de metode:</p>
-
+    <p>Nu puteți utiliza cuvintele cheie <code>in</code>, <code>ref</code> și <code>out</code> pentru următoarele
+        tipuri de metode:</p>
     <ul>
-        <li>Metode asincrone, pe care le definiți folosind modificatorul asincron.
-        <li>Metode iteratoare, care includ o declarație de returnare a randamentului sau de pauză a
-            randamentului.
-
+        <li>Metode asincrone, pe care le definiți folosind modificatorul <code>async</code>.</li>
+        <li>Metode iteratoare, care includ un <code>yield</code> sau o instrucțiune <code>yield break</code>.
+        </li>
     </ul>
-
-    metodele de extensie au, de asemenea, restricții privind utilizarea acestor cuvinte cheie:
+    <p>În plus, metodele de extensie au următoarele restricții:</p>
     <ul>
-        <li>Cuvântul cheie out nu poate fi folosit pe primul argument al unei metode de extensie.
-        <li>Cuvântul cheie ref nu poate fi folosit pe primul argument al unei metode de extensie când argumentul
-            nu este o structură sau un tip generic care nu este constrâns să fie o structură.
-        <li>Cuvântul cheie in nu poate fi folosit decât dacă primul argument este o structură. Cuvântul cheie in
-            nu poate fi folosit pe niciun tip generic, chiar și atunci când este constrâns să fie o structură.
+        <li>Cuvântul cheie <code>out</code> nu poate fi folosit pe primul argument al unei metode de extensie.
+        </li>
+        <li>Cuvântul cheie <code>ref</code> nu poate fi folosit pe primul argument al unei metode de extensie
+            când argumentul nu este o structură sau un tip generic care nu este constrâns să fie o structură.
+        </li>
+        <li>Cuvântul <code>in</code> cheie nu poate fi folosit decât dacă primul argument este o structură.
+            Cuvântul <code>in</code> cheie nu poate fi folosit pe niciun tip generic, chiar și atunci când este
+            constrâns să fie o structură.</li>
     </ul>
 
     <h2>Transmiterea unui argument prin referință: Un exemplu</h2>
+
     <p>Exemplele anterioare transmit tipuri de valori prin referință. De asemenea, puteți utiliza cuvântul cheie
         ref pentru a transmite tipuri de referință prin referință. Transmiterea unui tip de referință prin
         referință permite metodei apelate să înlocuiască obiectul la care se referă parametrul de referință în
@@ -607,32 +547,17 @@ private static void ModifyProductsByReference()
             GetCurrentPrice returnează o valoare Decimal prin referință.</li>
     </ul>
 
-    <pre>
-<code>
-public ref decimal GetCurrentPrice()
-</code>
-</pre>
+    <pre><code>public ref decimal GetCurrentPrice()</code></pre>
 
-    <p>Puteți accesa o valoare prin referință în același mod. În unele cazuri, accesarea unei valori prin
-        referință crește performanța prin evitarea unei operațiuni de copiere potențial costisitoare. De
-        exemplu, următoarea instrucțiune arată cum se definește o variabilă locală ref care este utilizată
-        pentru a face referire la o valoare.</p>
+<ul><li>Între token-ul return și variabila returnată într-o instrucțiune <code>return</code> în metodă. De exemplu:</li></ul>
 
-    <pre>
-    <code>
-return ref DecimalArray[0];
-    </code>
-</pre>
+    <pre><code>return ref DecimalArray[0];</code></pre>
 
-    <p>În ambele exemple, cuvântul cheie ref trebuie folosit în ambele locuri, sau compilatorul generează
-        eroarea CS8172, „Nu se poate inițializa o variabilă de referință secundară cu o valoare”.
+    <p>Pentru ca apelantul să modifice starea obiectului, valoarea returnată de referință trebuie să fie stocată într-o variabilă care este definită în mod explicit ca un ref local.
 
-        Variabila de iterație a instrucțiunii foreach poate fi o variabilă locală ref locală sau ref locală
-        numai pentru citire. Puteți reatribui o variabilă locală ref local sau doar citire ref cu operatorul de
-        atribuire ref.</p>
+        Iată un exemplu de returnare ref mai complet, care arată atât semnătura metodei, cât și corpul metodei.</p>
 
-    <pre>
-    <code>
+    <pre><code>
 public static ref int Find(int[,] matrix, Func<int, bool> predicate)
 {
     for (int i = 0; i < matrix.GetLength(0); i++)
@@ -643,9 +568,10 @@ public static ref int Find(int[,] matrix, Func<int, bool> predicate)
 }
     </code>
 </pre>
-    <p>Metoda apelată poate, de asemenea, să declare valoarea returnată ca ref readonlysă returneze valoarea
+    <p>Metoda apelată poate, de asemenea, să declare valoarea returnată ca <code>ref readonly</code> să returneze valoarea
         prin referință și să impună ca codul apelant să nu modifice valoarea returnată. Metoda de apelare poate
-        evita copierea valorii returnate prin stocarea valorii într-o variabilă locală de doar citire ref .</p>
+        evita copierea valorii returnate prin stocarea valorii într-o variabilă ref readonly.</p>
+
     <h2>Ref readonly</h2>
 
     <p>Un ref readonly local este folosit pentru a se referi la valorile returnate de o metodă sau proprietate
@@ -653,53 +579,48 @@ public static ref int Find(int[,] matrix, Func<int, bool> predicate)
         proprietățile unei variabile locale ref cu o variabilă readonly: este un alias pentru stocarea căreia
         i-a fost atribuită și nu poate fi modificată.</p>
 
-    <p>Definiți o referință locală folosind refcuvântul cheie în două locuri:</p>
+    <p>Definiți un ref local folosind cuvântul cheie <code>ref</code> în două locuri:</p>
 
     <ul>
         <li>Înainte de declararea variabilei.</li>
         <li>Imediat înainte de apelul la metoda care returnează valoarea prin referință.</li>
     </ul>
 
-    <p>De exemplu, următoarea instrucțiune definește o valoare ref locală care este returnată de o metodă numită
-        GetEstimatedValue:</p>
+    <p>De exemplu, următoarea instrucțiune definește o valoare ref local care este returnată de o metodă numită
+        <code>GetEstimatedValue:</code></p>
 
-    <pre>
-    <code>
-ref decimal estValue = ref Building.GetEstimatedValue();
-    </code>
-</pre>
+    <pre><code>ref decimal estValue = ref Building.GetEstimatedValue();</code></pre>
 
     <p>Puteți accesa o valoare prin referință în același mod. În unele cazuri, accesarea unei valori prin
         referință crește performanța prin evitarea unei operațiuni de copiere potențial costisitoare. De
         exemplu, următoarea instrucțiune arată cum se definește o variabilă locală ref care este utilizată
         pentru a face referire la o valoare.</p>
-    <pre>
-    <code>
-ref VeryLargeStruct reflocal = ref veryLargeStruct;
-    </code>
-</pre>
 
-    <p>În ambele exemple, refcuvântul cheie trebuie utilizat în ambele locuri, sau compilatorul generează
+    <pre><code>ref VeryLargeStruct reflocal = ref veryLargeStruct;</code></pre>
+
+    <p>În ambele exemple, cuvântul cheie <code>ref</code> trebuie utilizat în ambele locuri, altfel compilatorul
+        generează
         eroarea CS8172, „Nu se poate inițializa o variabilă de referință secundară cu o valoare”.</p>
 
-    <p>Variabila de iterație a foreach instrucțiunii poate fi o variabilă locală ref locală sau ref locală numai
-        pentru citire. Pentru mai multe informații, consultați articolul pentru fiecare declarație . Puteți
-        reatribui o variabilă locală ref local sau doar citire ref cu operatorul de atribuire ref .</p>
+    <p>Variabila de iterație a instrucțiunii <code>foreach</code> poate fi o variabilă ref local sau ref readonly
+        . Puteți reatribui o variabilă ref local sau ref readonly cu operatorul de atribuire ref .</p>
 
-    <h2>Local doar pentru citire</h2>
+    <h2>Ref Local doar pentru citire</h2>
 
     <p>Un ref local de numai citire este folosit pentru a face referire la valorile returnate de o metodă sau
-        proprietate care are ref readonlyîn semnătură și folosește return ref. O ref readonlyvariabilă combină
-        proprietățile unei refvariabile locale cu o readonlyvariabilă: este un alias pentru stocarea căreia i-a
+        proprietate care are <code>ref readonly</code> în semnătură și folosește <code>return ref</code>. O variabilă
+        <code>ref readonly</code> combină
+        proprietățile unei variabile <code>ref</code> locale cu o variabilă <code>readonly</code>: este un alias pentru
+        stocarea căreia i-a
         fost atribuită și nu poate fi modificată.</p>
 
-    <p>Următorul exemplu definește o clasă Book care are două câmpuri String, Titlu și Autor. De asemenea,
-        definește o clasă BookCollection care include o matrice privată de obiecte Book. Obiectele individuale
-        de carte sunt returnate prin referință prin apelarea metodei sale GetBookByTitle.</p>
-
-    <pre>
-    <code>
-        public class Book
+    <p>Următorul exemplu definește o clasă <code>Book</code> care are două câmpuri <code>String </code>,
+        <code>Title</code> și <code>Author</code>. De asemenea,
+        definește o clasă <code>BookCollection</code> care include un vector privat de obiecte <code>Book</code>.
+        Obiectele individuale
+        de carte sunt returnate prin referință prin apelarea metodei sale <code>GetBookByTitle</code>.</p>
+    <pre><code>
+public class Book
 {
     public string Author;
     public string Title;
@@ -731,9 +652,9 @@ public class BookCollection
         Console.WriteLine();
     }
 }
-    </code>
-</pre>
-    <p>Când apelantul stochează valoarea returnată de metoda GetBookByTitle ca ref local, modificările pe care
+    </code></pre>
+    <p>Când apelantul stochează valoarea returnată de metoda GetBookByTitle ca <code>ref</code> local, modificările pe
+        care
         apelantul le face la valoarea returnată sunt reflectate în obiectul BookCollection, după cum arată
         următorul exemplu.</p>
 
@@ -755,10 +676,11 @@ bc.ListBooks();
     </code>
 </pre>
 
-    <h2>Câmpuri de ref</h2>
+    <h2>Câmpurile ref</h2>
 
-    <p>În ref structtipuri, puteți declara câmpuri care sunt refcâmpuri. refcâmpurile sunt valide numai în ref
-        structtipuri pentru a se asigura că referința nu supraviețuiește obiectului la care se referă. Această
+    <p>În ref struct tipuri, puteți declara câmpuri care sunt <code>ref</code> câmpuri. Câmpurile <code>ref</code> sunt
+        valide numai în ref
+        struct tipuri pentru a se asigura că referința nu supraviețuiește obiectului la care se referă. Această
         caracteristică permite tipuri precum System.Span<T> :</p>
 
     <pre>
@@ -773,16 +695,22 @@ public readonly ref struct Span<T>
     </code>
 </pre>
 
-    <h1>Modificatorul de parametru <code>out</code></h1>
+    <h1>3.7 Modificatorul de parametru <code>out</code></h1>
 
-    <p>Cuvântul outcheie face ca argumentele să fie transmise prin referință. Face din parametrul formal un
+    <p>Cuvântul cheie <code>out</code> face ca argumentele să fie transmise prin referință. Face din parametrul formal
+        un
         alias pentru argument, care trebuie să fie o variabilă. Cu alte cuvinte, orice operație asupra
-        parametrului se face pe argument. Este ca și cuvântul cheie ref , cu excepția faptului că refnecesită ca
-        variabila să fie inițializată înainte de a fi transmisă. Este, de asemenea, ca și cuvântul cheie in , cu
-        excepția faptului că innu permite metodei apelate să modifice valoarea argumentului. Pentru a utiliza un
-        outparametru, atât definiția metodei, cât și metoda de apelare trebuie să utilizeze în mod explicit
-        outcuvântul cheie. De exemplu:</p>
-    <pre><code class="language-csharp">int initializeInMethod;
+        parametrului se face pe argument. Este ca și cuvântul cheie <code>ref</code>, cu excepția faptului că
+        <code>ref</code> necesită ca
+        variabila să fie inițializată înainte de a fi transmisă. Este, de asemenea, ca și cuvântul cheie <code>in</code>
+        , cu
+        excepția faptului că <code>in</code> nu permite metodei apelate să modifice valoarea argumentului. Pentru a
+        utiliza un
+        parametru <code>out</code>, atât definiția metodei, cât și metoda de apelare trebuie să utilizeze în mod
+        explicit
+        cuvântul cheie <code>out</code>. De exemplu:</p>
+
+    <pre><code>int initializeInMethod;
 OutArgExample(out initializeInMethod);
 Console.WriteLine(initializeInMethod);     // value is now 44
 
@@ -790,58 +718,42 @@ void OutArgExample(out int number)
 {
     number = 44;
 }</code></pre>
-    <p><strong>Notă</strong></p>
-    <p>Cuvântul outcheie poate fi folosit și cu un parametru de tip generic pentru a specifica faptul că
-        parametrul de tip este covariant. Pentru mai multe informații despre utilizarea cuvântului outcheie în
-        acest context, consultați (Modificator generic) .</p>
-    <p>Variabilele transmise ca outargumente nu trebuie să fie inițializate înainte de a fi transmise într-un
+    <p>Cuvântul cheie <code>out</code> poate fi folosit și cu un parametru de tip generic pentru a specifica faptul că
+        parametrul de tip este covariant.</p>
+    <p>Variabilele transmise ca argumente <code>out</code> nu trebuie să fie inițializate înainte de a fi transmise
+        într-un
         apel de metodă. Cu toate acestea, metoda apelată este necesară pentru a atribui o valoare înainte ca
         metoda să revină.</p>
-    <p>Cuvintele cheie in, refși outnu sunt considerate parte a semnăturii metodei în scopul rezolvării
+    <p>Cuvintele cheie <code>ref</code>, <code>in</code> si <code>out</code> nu sunt considerate parte a semnăturii
+        metodei în scopul rezolvării
         supraîncărcării. Prin urmare, metodele nu pot fi supraîncărcate dacă singura diferență este că o metodă
-        ia un argument refsau in, iar cealaltă un outargument. Următorul cod, de exemplu, nu se va compila:</p>
-    <pre><code class="language-csharp">class CS0663_Example
+        ia un argument <code>ref</code> sau <code>in</code>, iar cealaltă un argument <code>out</code>. Următorul cod,
+        de exemplu, nu va compila:</p>
+    <pre><code>class CS0663_Example
 {
     // Compiler error CS0663: "Cannot define overloaded
     // methods that differ only on ref and out".
     public void SampleMethod(out int i) { }
     public void SampleMethod(ref int i) { }
 }</code></pre>
-    <p>Supraîncărcarea este legală, totuși, dacă o metodă ia un argument ref, in, sau out, iar cealaltă nu are
-        niciunul dintre acești modificatori, astfel:</p>
-    <pre><code class="language-csharp">class OutOverloadExample
+    <p>Supraîncărcarea este potrivită, totuși, dacă o metodă ia un argument <code>ref</code>, <code>in</code> sau
+        <code>out</code>
+        , iar cealaltă nu are niciunul dintre acești modificatori:</p>
+    <pre><code>class OutOverloadExample
 {
     public void SampleMethod(int i) { }
     public void SampleMethod(out int i) =&gt; i = 5;
 }</code></pre>
     <p>Compilatorul alege cea mai bună supraîncărcare prin potrivirea modificatorilor de parametri de la locul
         apelului cu modificatorii de parametri utilizați în apelul de metodă.</p>
-    <p>Propriet
 
-    <p>Proprietățile nu sunt variabile și, prin urmare, nu pot fi transmise ca <code>out</code> parametri.</p>
-    <p>Nu puteți utiliza cuvintele cheie <code>in</code>, <code>ref</code>și <code>out</code>pentru următoarele
-        tipuri de metode:</p>
-    <ul>
-        <li>Metode asincrone, pe care le definiți folosind modificatorul <code>async</code>.</li>
-        <li>Metode iteratoare, care includ un <code>yield</code> sau <code>yield break</code>o instrucțiune.
-        </li>
+    <p>Proprietățile nu sunt variabile și, prin urmare, nu pot fi transmise ca parametri <code>out</code>.</p>
     </ul>
-    <p>În plus, metodele de extensie au următoarele restricții:</p>
-    <ul>
-        <li>Cuvântul <code>out</code> cheie nu poate fi folosit pe primul argument al unei metode de extensie.
-        </li>
-        <li>Cuvântul <code>ref</code> cheie nu poate fi folosit pe primul argument al unei metode de extensie
-            când argumentul nu este o structură sau un tip generic care nu este constrâns să fie o structură.
-        </li>
-        <li>Cuvântul <code>in</code> cheie nu poate fi folosit decât dacă primul argument este o structură.
-            Cuvântul <code>in</code> cheie nu poate fi folosit pe niciun tip generic, chiar și atunci când este
-            constrâns să fie o structură.</li>
-    </ul>
-    <p>Declararea <code>out</code> parametrilor</p>
+    <h2>Declararea parametrilor <code>out</code></h2>
     <p>Declararea unei metode cu <code>out</code> argumente este o soluție clasică pentru a returna mai multe
         valori. Luați în considerare tupluri de valoare pentru scenarii similare. Următorul exemplu folosește
         <code>out</code>pentru a returna trei variabile cu un singur apel de metodă. Al treilea argument este
-        atribuit <code>null</code>. Acest lucru permite metodelor să returneze valori opțional.
+        atribuit <code>null</code>. Acest lucru permite metodelor să returneze valori opționale.
     </p>
     <pre>
 <code>
@@ -867,8 +779,9 @@ void Method(out int answer, out string message, out string? stillNull)
 </code>
 </pre>
     <p>Apelarea unei metode cu un <code>out</code> argument</p>
-    <p>Puteți declara o variabilă într-o instrucțiune separată înainte de a o trece ca <code>out</code>
-        argument. Următorul exemplu declară o variabilă numită numberînainte de a fi transmisă metodei Int32.TryParse , care
+    <p>Puteți declara o variabilă într-o instrucțiune separată înainte de a o trece ca argumentul <code>out</code>.
+        Următorul exemplu declară o variabilă numită <code>number</code> înainte de a fi transmisă metodei
+        Int32.TryParse , care
         încearcă să convertească un șir într-un număr.</p>
 
     <code><pre>
@@ -883,10 +796,12 @@ else
 //       Converted '1640' to 1640
                     </pre></code>
 
-    <p>De asemenea, puteți declara outvariabila în lista de argumente a apelului de metodă, mai degrabă decât într-o
+    <p>De asemenea, puteți declara variabila <code>out</code> în lista de argumente a apelului de metodă, mai degrabă
+        decât într-o
         declarație de variabilă separată. Acest lucru produce un cod mai compact, mai ușor de citit și, de asemenea, vă
         împiedică să atribuiți din neatenție o valoare variabilei înainte de apelul metodei. Următorul exemplu este ca
-        exemplul anterior, cu excepția faptului că definește variabila numberîn apelul la metoda Int32.TryParse .</p>
+        exemplul anterior, cu excepția faptului că definește variabila <code>number</code> în apelul la metoda
+        Int32.TryParse .</p>
 
     <code><pre>
 string numberAsString = "1640";
@@ -899,7 +814,8 @@ else
 //       Converted '1640' to 1640
                     </pre></code>
 
-    <p>În exemplul anterior, numbervariabila este puternic tipizată ca int. De asemenea, puteți declara o variabilă
+    <p>În exemplul anterior, variabila <code>number</code> este puternic tipizată ca int. De asemenea, puteți declara o
+        variabilă
         locală implicit tipizată, așa cum face următorul exemplu.</p>
 
     <code><pre>
