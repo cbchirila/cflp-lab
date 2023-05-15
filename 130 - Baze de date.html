@@ -1,6 +1,6 @@
 <html>
 <head>
-    <title>Laborator 9 - Baze de date</title>
+    <title>Capitolul 13 - Baze de date</title>
 </head>
 <body>
 
@@ -24,13 +24,13 @@
 
 </style>
 
-<h1>Laboratorul 9. Aplicație ASP.NET cu baze de date</h1>
+<h1>Capitolul 13. Aplicație ASP.NET cu baze de date</h1>
 
 <p><i>În cadrul acestui laborator vom învăța să creem aplicații ASP.NET. În prima parte a laboratorului vom învăța cum să
     facem partea de interfață a aplicațiilor, iar în a doua parte vom învăța cum vom scrie cod sursă pentru controale și
     forme.</i></p>
 
-<h2>1. Baza de date</h2>
+<h2>13.1. Baza de date</h2>
 
 <p>
     Vom crea o nouă bază de date cu numele ”Firma” în Microsoft SQL Server. Baza de date va conține următoarele tabele:
@@ -50,7 +50,7 @@
 <img src="images/130/campuri04.jpg" alt="">
 <br>
 <br>
-<h2>2. Pagina de Autentificare</h2>
+<h2>13.2. Pagina de Autentificare</h2>
 <p>Vom adăuga proiectului o nouă clasă (ConexiuneBD.cs) în care vom inițializa conexiunea la baza de date. Codul sursă al aceste clase este următorul:</p>
 <pre>
     <code>using Microsoft.Win32;
@@ -224,7 +224,7 @@ namespace Aplicatie_ASP.NET_cu_Baze_de_date
 }</code>
 </pre>
 
-<h2>3. Pagina de înregistrare</h2>
+<h2>13.3. Pagina de înregistrare</h2>
 <img src="images\130\pagina-de-inregistrare.jpg" alt="Pagina de înregistrare">
 <br>
 
@@ -267,7 +267,7 @@ namespace Aplicatie_ASP.NET_cu_Baze_de_date
     </code>
 </pre>
 
-<h2>4. Pagina Principală</h2>
+<h2>13.4. Pagina Principală</h2>
 <p>În cadrul paginii principale avem următoarele funcționalități (Figura 2):</p>
 <ul>
     <li>Vom avea un tabel cu toți angajații firmei</li>
@@ -417,7 +417,7 @@ namespace Aplicatie_ASP.NET_cu_Baze_de_date
     }</code>
 </pre>
 
-<h2>5. Pagina Adăugare Angajat</h2>
+<h2>13.5. Pagina Adăugare Angajat</h2>
 <p>În cadrul acestei pagini vom putea adăuga un nou angajat în cadrul firmei, în tabelul Angajati (Figura 3).</p>
 <img src="images\130\figura03-adaugare-angajat.jpg" alt="">
 <h3>Figura 3. Adăugare angajat</h3>
@@ -466,7 +466,7 @@ namespace Aplicatie_ASP.NET_cu_Baze_de_date
     </code>
 </pre>
 
-<h2>6. Pagina Alocare proiect la un angajat</h2>
+<h2>13.6. Pagina Alocare proiect la un angajat</h2>
 <p>În cadrul acestei pagini vom putea aloca un nou proiect unui angajat selectat din GridView, în tabelul AlocareProiecte (Figura 4).</p>
 <img src="images\130\figura04-alocare-proiecte.jpg" alt="">
 <br>
@@ -547,7 +547,7 @@ SqlDataReader dr;</code>
     </code>
 </pre>
 
-<h2>7. Pagina Completare chestionar</h2>
+<h2>13.7. Pagina Completare chestionar</h2>
 <p>În cadrul acestei pagini vom putea completa diferite chestionare legate de activitatea în firmă (Figura 5).</p>
 <p>Chestionarul va fi generat automat în funcție de fișierul selectat în pagina anterioară, controalele generându-se automat dintr-un fișier xml.</p>
 <img src="images\130\figura05-chestionare.jpg" alt="">
