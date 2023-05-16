@@ -1,5 +1,697 @@
+<!DOCTYPE html>
 
-<h1>LINQ</h1>
 
-<p>
-</p>
+<html>
+
+<head>
+  <meta charset="UTF-8">
+
+    <title>  LINQ </title>
+	<meta name="viewport" content="width=device-width, initial-scale=1" />
+</head>
+
+
+<body>
+
+	<h1>11. LINQ </h1>
+
+    <h2> 11.1 Language-Integrated Query (LINQ) </h2>
+
+
+	<p> 
+		În această lecție veți învăța concepte de NET.Core și de C#. Veți învăța să:
+			<ul>
+				<li>Generați secvențe de cod folosind LINQ</li>
+				<li>Scrieți metode care pot fi folosite cu ușurință în interogările LINQ</li>
+				<li>Să faceți distincție între evaluarea rapidă și cea lentă</li>
+			</ul>
+	</p>
+
+
+	<p>
+		Veți învăța aceste tehnici construind o aplicație care demonstrează una din abilitățile de bază ale unui
+ 		magician: amestecarea faro. Amestecarea faro este o tehnică de amestecare a cărților de joc, în care jumătate
+		din pachet este ținut în fiecare mână cu degetele mari spre interior, apoi cărțile sunt eliberate de degetele mari, astfel
+	 	încât acestea să cadă pe masă intercalate.
+	</p>
+
+
+	<p>
+		Magicienii folosesc această tehnică deoarece fiecare carte se află într-o ordine cunoscută după fiecare amestecare,
+		iar ordinea se repetă.
+	</p>
+
+
+	<p>
+		Aplicația pe care o veți dezvolta va crea un pachet de cărți și va efectua o secvență de amestecări,
+ 		tipărind secvența de fiecare dată. De asemenea, veți compara ordinea originală cu ordinea actualizată.
+	</p>
+
+
+	<p>
+		Acest tutorial are mai mulți pași. După fiecare pas, veți putea rula aplicația și veți putea vedea progresul.
+		De asemenea, puteți vedea exemplul complet în repository-ul GitHub.
+	</p>
+
+
+	<h3> Cerințe preliminare </h3>
+	
+	<p> 
+		Va trebui să instalați .NET Core. Puteți găsi instrucțiunile de instalare pe pagina de descărcare .NET Core.
+		Aplicația poate fi rulată pe Windows, Ubuntu Linux, sau OS X,  sau într-un container
+		Docker. În descrierile de mai jos este folosit editorul Visual Studio Code, care este un editor open-source, 
+		compatibil cu multe sisteme de operare.
+		Puteți folosi orice editor cu care sunteți obișnuiți.
+	</p>
+
+
+
+	<h3> Crearea Aplicației </h3>
+
+	<p>   
+		Primul pas este să creați o nouă aplicație. Deschideți un terminal și creați un nou director pentru
+		aplicația dumneavoastră. Deschideți acesta ca director curent. Introduceți comanda "dotnet new console" 
+		în terminal. Această comandă va inițializa o aplicație "Hello World".
+	</p>
+	
+
+
+	<h3> Crearea setului de date </h3>
+
+	<p>
+		Înainte de a începe, asigurați-vă că liniile de mai jos se regăsesc la începutul fișierului Program.cs generat de
+		comanda "dotnet new console".	
+	</p>
+
+
+	<pre>
+	<code>
+	// Program.cs
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+	</code>
+	</pre>
+
+	<p>
+		Dacă aceste trei linii (declararea instrucțiunilor "using") nu se regăsesc la începutul fișierului, programul nu va 
+		compila.
+	</p>
+
+	<p>
+		Acum că aveți toate resursele la îndemână, imaginați-vă cum arată un pachet de cărți.  
+		În general, un pachet de cărți are 4 culori, iar fiecare culoare are 13 cărți. Ați putea să creați o casă numită Card
+		și să introduceți manual o colecție de obiecte de tip Card. Cu LINQ, puteți fi mai concis decât modul obișnuit de a crea
+		un pachet de cărți. În loc să creați o clasă Card, puteți crea două secvențe pentru a reprezenta culorile și valorile.
+		Veți crea o pereche foarte simplă de metode de iterare care vor genera valorile și culorile ca IEnumerable<T> de șiruri de caractere:
+	</p>
+
+	<pre>
+	<code>
+	// Program.cs
+	// Metoda Main()
+	
+	static IEnumerable<string> Suits()
+	{
+		yield return "clubs";
+		yield return "diamonds";
+		yield return "hearts";
+		yield return "spades";
+	}
+	
+	static IEnumerable<string> Ranks()
+	{
+		yield return "two";
+		yield return "three";
+		yield return "four";
+		yield return "five";
+		yield return "six";
+		yield return "seven";
+		yield return "eight";
+		yield return "nine";
+		yield return "ten";
+		yield return "jack";
+		yield return "queen";
+		yield return "king";
+		yield return "ace";
+	}
+	</code>
+	</pre>
+
+	<p>
+	</p>
+
+	<p>
+		Plasați codul de mai sus sub metoda Main din fișierul Program.cs. Aceste două metode utilizează sintaxa "yield return"
+		pentru a produce o secvență în timpul rulării. Compilatorul construiește un obiect care implementează IEnumerable<T> și generează
+		secvența de șiruri de caractere pe măsură ce sunt solicitate. Acum, utilizați aceste metode de iterator pentru a crea pachetul de cărți.
+		Veți plasa interogarea LINQ în metoda noastră Main.
+	</p>
+
+	<pre>
+	<code>
+	// Program.cs
+	static void Main(string[] args)
+	{
+		var startingDeck = from s in Suits()
+			from r in Ranks()
+			select new { Suit = s, Rank = r };
+		
+		//Afișează în consolă fiecare carte pe care am generat-o și am plasat-o în startingDeck.
+		foreach (var card in startingDeck)
+		{
+			Console.WriteLine(card);
+		}
+	}
+	</code>
+	</pre>
+
+
+	<p>
+		Clauzele from multiple produc un SelectMany, care creează o singură secvență combinând fiecare element din prima secvență
+		cu fiecare element din a doua secvență. Ordinea este importantă! Primul element din prima secvență sursă
+		(Culorile) este combinat cu fiecare element din a doua secvență (Numere). Acest lucru produce toate cele treisprezece cărți ale
+		primei culori. Acest proces se repetă cu fiecare element din prima secvență (Culorile).
+		Rezultatul final este un pachet de cărți ordonat după culori, urmat de numerele cărților.
+		Este important să țineți minte că, indiferent dacă alegeți să scrieți interogările LINQ în sintaxa de interogare
+		utilizată mai sus sau să utilizați în schimb sintaxa de metodă, este întotdeauna posibil să treceți de la o formă de sintaxă
+		la cealaltă. Interogarea de mai sus scrisă în sintaxa de interogare poate fi scrisă în sintaxa de metodă ca:
+	</p>
+
+	<pre>
+	<code>
+		var startingDeck = Suits().SelectMany(suit => Ranks().Select(rank => new { Suit = suit, Rank = rank }));
+	</code>
+	</pre>
+
+	<p>
+		Compilatorul traduce instrucțiunile LINQ scrise cu sintaxa de interogare în metoda echivalentă de sintaxă de apel.
+		Prin urmare, indiferent de alegerea de sintaxă, cele două versiuni ale interogării produc același rezultat.
+		Alegeți sintaxa care funcționează cel mai bine pentru situația voastră: de exemplu, dacă lucrați într-o echipă în care unii membri au
+		dificultăți cu sintaxa de metodă, încercați să alegeți utilizarea sintaxei de interogare.
+
+		Rulați exemplul pe care l-ați construit până în acest moment.
+		Se vor afișa toate cele 52 de cărți din pachet. Poate fi foarte util să rulați acest exemplu cu un debugger pentru
+		a observa modul în care metodele Suits() și Ranks() sunt executate.
+		Puteți vedea clar că fiecare șir de caractere din fiecare secvență este generat doar atunci când este necesar.
+	</p>
+	<img src="https://learn.microsoft.com/en-us/dotnet/csharp/tutorials/media/working-with-linq/console-52-card-application.png" height="350px"></img>
+
+
+	<h3> Manipularea ordinii </h3>
+
+	<p>
+		În continuare, vom prezenta  modul în care amestecăm cărțile din pachet.
+		Primul pas în orice amestecare bună este să împarți pachetul în două. Metodele Take și Skip care fac parte din API-urile LINQ
+		îți oferă această opțiune. Inserați-le sub bucla foreach:
+	</p>
+
+	<pre>
+	<code>
+	// Program.cs
+	public static void Main(string[] args)
+	{
+		var startingDeck = from s in Suits()
+			from r in Ranks()
+			select new { Suit = s, Rank = r };
+	
+		foreach (var c in startingDeck)
+		{
+			Console.WriteLine(c);
+		}
+	
+		// 52 de cărți în pachet, deci 52 / 2 = 26
+		var top = startingDeck.Take(26);
+		var bottom = startingDeck.Skip(26);
+	}
+	</code>
+	</pre>
+
+	<p>
+
+		Cu toate acestea, în biblioteca standard nu există o metodă de amestecare pe care să o puteți folosi, astfel că va trebui să vă creați
+		o metodă proprie. Metoda de amestecare pe care o vei crea ilustrează mai multe tehnici pe care le vei folosi în programele bazate pe LINQ,
+		astfel încât fiecare etapă a acestui proces va fi explicată pe pași.
+	</p>
+	<p>
+		Pentru a adăuga funcționalitate în interacțiunea cu IEnumerable<T> pe care îl veți primi din interogările LINQ,
+		va trebui să scrieți anumite tipuri de metode speciale numite metode de extensie (extension methods).
+		Pe scurt, o metodă de extensie este o metodă statică specializată care adaugă noi funcționalități unui tip deja existent,
+		fără a fi nevoie să modifici tipul original la care vreți să adaugi funcționalitate.
+	</p>
+
+	<p>
+		Creați programul Extensions.cs în care adăugați următoarea clasă statică:
+	</p>
+
+	<pre>
+	<code>
+	// Extensions.cs
+	using System;
+	using System.Collections.Generic;
+	using System.Linq;
+
+	namespace LinqFaroShuffle
+	{
+	public static class Extensions
+	{
+		public static IEnumerable<T> InterleaveSequenceWith<T>(this IEnumerable<T> first, IEnumerable<T> second)
+		{
+			// Aici va fi implemenatrea
+		}
+	}
+	}
+	</code>
+	</pre>
+
+	<p>
+		Uitați-vă la semnătura metodei, în special la parametri:
+	</p>
+
+	<pre>
+	<code>
+	public static IEnumerable<T> InterleaveSequenceWith<T> (this IEnumerable<T> first, IEnumerable<T> second)
+	</code>
+	</pre>
+
+	<p>
+		Puteți observa adăugarea modificatorului "this" în primul argument al metodei.
+		Acest lucru înseamnă că puteți apela metoda ca și cum ar fi o metodă membru a tipului primului argument.
+		Această declarație de metodă urmează un standard în care tipurile de intrare și ieșire sunt IEnumerable<T>.
+		Această practică permite metodelor LINQ să fie conectate în lanț pentru a efectua interogări mai complexe.
+	</p>
+
+	<p>
+		Desigur, deoarece ați împărțit pachetul în două jumătăți, va trebui să le uniți împreună.
+		În cod, aceasta înseamnă că veți enumera simultan ambele secvențe pe care le-ați obținut prin intermediul metodelor Take și Skip,
+		intercalând elementele și creând o singură secvență: pachetul de cărți amestecat.
+		Scrierea unei metode LINQ care funcționează cu două secvențe necesită înțelegerea modului în care funcționează IEnumerable<T>.
+	</p>
+
+	<p>
+		Interfața IEnumerable<T> are o singură metodă: GetEnumerator.
+		Obiectul returnat de GetEnumerator are o metodă pentru a trece la următorul element și o proprietate care obține
+		elementul curent din secvență. Veți utiliza acești doi membri pentru a enumera colecția și a returna elementele.
+		Această metodă Interleave va fi o metodă iterator, deci în loc să construiți o colecție și să o returnați, veți utiliza sintaxa
+		yield return prezentată mai sus.
+	</p>
+
+	<p>
+		Implementarea acestei metode:
+	</p>
+
+	<pre>
+	<code>
+	public static IEnumerable<T> InterleaveSequenceWith<T>
+		(this IEnumerable<T> first, IEnumerable<T> second)
+	{
+		var firstIter = first.GetEnumerator();
+		var secondIter = second.GetEnumerator();
+	
+		while (firstIter.MoveNext() && secondIter.MoveNext())
+		{
+			yield return firstIter.Current;
+			yield return secondIter.Current;
+		}
+	}
+	</code>
+	</pre>
+
+	<p>
+		Acum că ați scris această metodă, întoarceți-vă în metoda Main și amestecați pachetul o singură dată:
+	</p>
+
+	<pre>
+	<code>
+	// Program.cs
+	public static void Main(string[] args)
+	{
+		var startingDeck = from s in Suits()
+						from r in Ranks()
+						select new { Suit = s, Rank = r };
+
+		foreach (var c in startingDeck)
+		{
+			Console.WriteLine(c);
+		}
+
+		var top = startingDeck.Take(26);
+		var bottom = startingDeck.Skip(26);
+		var shuffle = top.InterleaveSequenceWith(bottom);
+
+		foreach (var c in shuffle)
+		{
+			Console.WriteLine(c);
+		}
+	}
+	</code>
+	</pre>
+
+
+	<h3> Comparări </h3>
+
+	<p>
+		Câte amestecări sunt necesare pentru a reface ordinea inițială a pachetului?
+		Pentru a afla acest lucru, va trebui să scrieți o metodă care determină dacă două secvențe sunt egale.
+		După ce aveți această metodă, va trebui să plasați codul care amestecă pachetul într-o buclă și să verificați când pachetul
+		revine la ordinea inițială.
+	</p>
+
+	<p>
+		Scrierea unei metode pentru a determina dacă cele două secvențe sunt egale ar trebui să fie simplă.
+		Este o structură similară cu metoda pe care ați scris-o pentru a amesteca pachetul.
+		Doar că de data aceasta, în loc să returnați fiecare element, veți compara elementele corespunzătoare din fiecare secvență.
+		Când întreaga secvență a fost enumerată, dacă fiecare element se potrivește, secvențele sunt la fel:
+	</p>
+
+	<pre>
+	<code>
+	public static bool SequenceEquals<T>
+		(this IEnumerable<T> first, IEnumerable<T> second)
+	{
+		var firstIter = first.GetEnumerator();
+		var secondIter = second.GetEnumerator();
+	
+		while ((firstIter?.MoveNext() == true) && secondIter.MoveNext())
+		{
+			if ((firstIter.Current is not null) && !firstIter.Current.Equals(secondIter.Current))
+			{
+				return false;
+			}
+		}
+	
+		return true;
+	}
+	</code>
+	</pre>
+
+
+	<p>
+		Aceasta arată o a doua proprietate LINQ: metodele terminale. Acestea iau o secvență la intrare (sau în acest caz, două secvențe) și
+		returnează o singură valoare. Atunci când se folosesc metode terminale, acestea sunt întotdeauna ultima metodă
+		dintr-o secvență de metode pentru o interogare LINQ, de unde și numele "terminal".
+	</p>
+
+	<p>
+		Puteți vedea acest lucru când folosiți codul pentru a determina dacă cartea de joc este din nou în ordinea inițială.
+		Puneți codul într-o buclă și opriț-vă atunci când secvența este din nou în ordinea inițială prin folosirea metodei SequenceEquals().
+		Metoda SequenceEquals uste întotdeauna ultima metodă în orice interogare, deoarece returnează o singură valoare în loc de o secvență:
+	</p>
+
+	<pre>
+	<code>
+	// Program.cs
+	static void Main(string[] args)
+	{
+		// Construirea pachetului de cărți
+
+		// Amestecarea pachetului folosind metoda InterleaveSequenceWith<T>();
+
+		var times = 0;
+		// Putem refolosi variabila, sau putem crea una nouă
+		shuffle = startingDeck;
+		do
+		{
+			shuffle = shuffle.Take(26).InterleaveSequenceWith(shuffle.Skip(26));
+
+			foreach (var card in shuffle)
+			{
+				Console.WriteLine(card);
+			}
+			Console.WriteLine();
+			times++;
+
+		} while (!startingDeck.SequenceEquals(shuffle));
+
+		Console.WriteLine(times);
+	}
+	</code>
+	</pre>
+
+	<p>
+		Rulați codul pe care l-ați scris până acum și observați cum, la fiecare combinare, se amestecă pachetul.
+		După 8 amestecări, pachetul revine la ordinea inițială în care a fost creat din interogarea inițială.
+	</p>
+
+	<h3>Optimizări</h3>
+
+	<p>
+		Am construit până acum un exemplu care efectuează o amestecare "în afară" (out shuffle), în care cărțile de sus și de jos rămân
+		aceleași la fiecare iterație. Să facem o schimbare: vom folosi o amestecare "înăuntru" (in shuffle), în care toate cele 52 de cărți
+		își schimbă poziția.
+		Pentru o amestecare "înăuntru", trebuie să interschimbați pachetul astfel încât prima carte din partea de jos devine prima carte din pachet.
+		Aceasta înseamnă că ultima carte din partea de sus devine cartea de jos. Aceasta este o simplă modificare a unei singure linii de cod.
+		Modificați interogarea de amestecare actuală prin schimbarea pozițiilor Take și Skip.
+		Acest lucru va schimba ordinea jumătăților superioare și inferioare ale pachetului:
+	</p>
+
+	<pre>
+	<code>
+	shuffle = shuffle.Skip(26).InterleaveSequenceWith(shuffle.Take(26));
+	</code>
+	</pre>
+
+	<p>
+		Rulați programul din nou, și veți observa că sunt necesare 52 de iterații pentru ca pachetul să-și rearanjeze cărțile.
+		De asemenea, veți începe să observați unele degradări serioase de performanță pe măsură ce programul continuă să ruleze.
+	</p>
+
+	<p>
+		Există mai multe motive pentru această degradare a performanței.
+		Puteți aborda una dintre principalele cauze ale acestei scăderi de performanță: utilizarea ineficientă a evaluării leneșe.
+	</p>
+
+	<p>
+		Pe scurt, evaluarea leneșă înseamnă că evaluarea unei declarații nu este efectuată până când nu este necesară valoarea sa.
+		Interogările LINQ sunt declarații care sunt evaluate leneș. Secvențele sunt generate numai atunci când elementele sunt solicitate.
+		De obicei, acesta este un beneficiu major al LINQ. Cu toate acestea, într-un caz precum acest program, acest lucru 
+		determină o creștere exponențială a timpului de execuție.
+	</p>
+
+	<p>
+		Amintiți-vă că am generat pachetul inițial folosind o interogare LINQ.
+		Fiecare amestecare este generată prin efectuarea a trei interogări LINQ pe pachetul anterior.
+		Toate acestea sunt efectuate în mod leneș. Acest lucru înseamnă că ele sunt efectuate din nou de fiecare dată când secvența este solicitată.
+		Până când ajungeți la a 52-a iterație, regenerați pachetul inițial de multe, multe ori. Vom scrie un log pentru a demonstra
+		acest aspect.
+	</p>
+
+	<p>
+		În fișierul Extensions.cs, inserați metoda de mai jos.
+		Această metodă creează un fișier nou numit debug.log în directorul proiectului și înregistrează ce interogare se execută în prezent în fișierul log.
+		Această metodă poate fi atașată la orice interogare pentru a memeora că a fost executată.
+	</p>
+
+	<pre>
+	<code>
+	public static IEnumerable<T> LogQuery<T>
+		(this IEnumerable<T> sequence, string tag)
+	{
+		// File.AppendText creează un nou fișier dacă nu există.
+		using (var writer = File.AppendText("debug.log"))
+		{
+			writer.WriteLine($"Executing Query {tag}");
+		}
+	
+		return sequence;
+	}
+	</code>
+	</pre>
+
+	<p>
+		Veți vedea o linie roșie sub fișierul "File", ceea ce înseamnă că nu există.
+		Nu va fi compilat, deoarece compilatorul nu știe ce este "File". Pentru a rezolva problema,
+		asigurați-vă că adăugați următoarea linie de cod sub prima linie din Extensions.cs:
+	</p>
+
+	<pre>
+	<code>
+	using System.IO;
+	</code>
+	</pre>
+
+	<p>
+		Acest lucru ar trebui să rezolve problema, iar eroarea va dispărea.
+	</p>
+
+	<p>
+		Următorul pas este să înregistrați fiecare query prin adăugarea descrierii acestuia în log.
+	</p>
+
+	<pre>
+	<code>
+	// Program.cs
+	public static void Main(string[] args)
+	{
+		var startingDeck = (from s in Suits().LogQuery("Suit Generation")
+							from r in Ranks().LogQuery("Rank Generation")
+							select new { Suit = s, Rank = r }).LogQuery("Starting Deck");
+
+		foreach (var c in startingDeck)
+		{
+			Console.WriteLine(c);
+		}
+
+		Console.WriteLine();
+		var times = 0;
+		var shuffle = startingDeck;
+
+		do
+		{
+			// Out shuffle
+			/*
+			shuffle = shuffle.Take(26)
+				.LogQuery("Top Half")
+				.InterleaveSequenceWith(shuffle.Skip(26)
+				.LogQuery("Bottom Half"))
+				.LogQuery("Shuffle");
+			*/
+
+			// In shuffle
+			shuffle = shuffle.Skip(26).LogQuery("Bottom Half")
+					.InterleaveSequenceWith(shuffle.Take(26).LogQuery("Top Half"))
+					.LogQuery("Shuffle");
+
+			foreach (var c in shuffle)
+			{
+				Console.WriteLine(c);
+			}
+
+			times++;
+			Console.WriteLine(times);
+		} while (!startingDeck.SequenceEquals(shuffle));
+
+		Console.WriteLine(times);
+	}
+	</code>
+	</pre>
+
+
+	<p>
+		Observați că nu înregistrați fiecare accesare a interogării.
+		Înregistrați doar atunci când creați interogarea originală.
+		Rularea programului durează mult timp, dar acum puteți vedea motivul.
+		Dacă vă pierdeți răbdarea rulând "in shuffle", folosiți metoda "out shuffle".
+		Încă veți vedea efectele evaluării leneșe. La o singură rulare, acesta execută 2592 de interogări, inclusiv generarea tuturor
+		numerelor și culorilor.		
+	</p>
+
+	<p>
+		Puteții îmbunătăți performanța codului pentru a reduce numărul de execuții făcute.
+		O soluție simplă este să salvați în cache rezultatele interogării LINQ inițiale care construiește pachetul de cărți.
+		Momentan interogările se execută de fiecare dată când bucla do-while trece printr-o iterație, refăcând pachetul
+		de cărți și amestecându-l de fiecare dată. Pentru a salva în cache pachetul de cărți, puteți folosi metodele LINQ ToArray și ToList;
+		când le atașați la interogări, ele vor executa aceleași instrucțiuni pe care le-ați specificat, dar acum vor stoca rezultatele într-un array
+		sau o listă. Adăugați metoda LINQ ToArray la ambele interogări și rulați
+		programul din nou:
+	</p>
+
+	<pre>
+	<code>
+	public static void Main(string[] args)
+	{
+		IEnumerable<Suit>? suits = Suits();
+		IEnumerable<Rank>? ranks = Ranks();
+
+		if ((suits is null) || (ranks is null))
+			return;
+
+		var startingDeck = (from s in suits.LogQuery("Suit Generation")
+							from r in ranks.LogQuery("Value Generation")
+							select new { Suit = s, Rank = r })
+							.LogQuery("Starting Deck")
+							.ToArray();
+
+		foreach (var c in startingDeck)
+		{
+			Console.WriteLine(c);
+		}
+
+		Console.WriteLine();
+
+		var times = 0;
+		var shuffle = startingDeck;
+
+		do
+		{
+			/*
+			shuffle = shuffle.Take(26)
+				.LogQuery("Top Half")
+				.InterleaveSequenceWith(shuffle.Skip(26).LogQuery("Bottom Half"))
+				.LogQuery("Shuffle")
+				.ToArray();
+			*/
+
+			shuffle = shuffle.Skip(26)
+				.LogQuery("Bottom Half")
+				.InterleaveSequenceWith(shuffle.Take(26).LogQuery("Top Half"))
+				.LogQuery("Shuffle")
+				.ToArray();
+
+			foreach (var c in shuffle)
+			{
+				Console.WriteLine(c);
+			}
+
+			times++;
+			Console.WriteLine(times);
+		} while (!startingDeck.SequenceEquals(shuffle));
+
+		Console.WriteLine(times);
+	}
+	</code>	
+	</pre>
+
+
+	<p>
+		Acum, metoda "out shuffle" a fost redusă la 30 de interogări.
+		Rulați codul din nou cu "in shuffle" și veți vedea îmbunătățiri similare: acum execută doar 162 de interogări.
+	</p>
+
+	<p>
+		Vă rugăm să rețineți că acest exemplu este conceput pentru a evidenția cazurile de utilizare în care evaluarea leneșă
+		poate cauza dificultăți de performanță în cod. Deși este important să se vadă unde evaluarea leneșă poate afecta performanța
+		codului, este la fel de important să se înțeleagă că nu toate interogările ar trebui să ruleze cu evaluare rapidă.
+		Diferența de performanță fără utilizarea ToArray se datorează faptului că fiecare nouă amestecare
+		a pachetului de cărți este construită din amestecarea anterioară. Folosirea evaluării leneșe înseamnă că fiecare nouă
+		configurație a pachetului este construită din pachetul inițial, executând chiar și codul care a construit startingDeck.
+		Aceasta cauzează o degradare a performanței.
+	</p>
+
+	<p>
+		În practică, unii algoritmi funcționează bine folosind evaluarea rapidă (eager evaluation),
+		în timp ce altele rulează bine folosind evaluarea leneșă (lazy evaluation).
+		În general, evaluarea leneșă este o alegere mai bună atunci când sursa de date este un proces separat,
+		cum ar fi un motor de baze de date. Evaluarea leneșă permite interogări mai complexe să execute doar o singură deplasare
+		către procesul bazei de date și înapoi la restul codului vostru.
+		LINQ este flexibil în privința utilizării evaluării leneșe sau imediate, așa că măsoară procesele voastre și alege tipul
+		de evaluare care îți oferă cea mai bună performanță.
+	</p>
+
+	<h3> Concluzii </h3>
+
+	<p>
+		În acestă lecție, ați învățat:
+	</p>
+
+	<ul>
+        <li>Utilizarea interogărilor LINQ pentru a agrega date într-o secvență semnificativă.</li>
+        <li>Scrierea de metode de extensie pentru a adăuga propria funcționalitate personalizată la interogările LINQ</li>
+        <li> Identificarea problemelor de performanță, cum ar fi viteza degradată.</li>
+        <li>Evaluarea leneșă și evaluarea rapidă în ceea ce privește interogările LINQ și implicațiile pe care le pot avea asupra performanței interogării.</li>
+    </ul>
+
+	<p>
+		În afară de LINQ, ați învățat puțin despre o tehnică pe care magicienii o folosesc pentru trucuri cu cărți.
+		Magicienii folosesc amestecul Faro pentru că pot controla unde se mută fiecare carte în pachet.
+		Acum că știți, nu stricați surpriza pentru ceilalți!
+	</p>
+
+	
+
+</body>
+
+</html>
+
+
+
