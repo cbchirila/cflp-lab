@@ -3,6 +3,9 @@
 <html>
 
 <head>
+    
+	<meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <title> Evenimente </title>
 </head>
 
@@ -14,6 +17,8 @@
         <li>10.2 Evenimente - Prezentare generală</li>
         <li>10.3 Evenimente - Prezentare generală</li>
         <li>10.4 Evenimente - Prezentare generală</li>
+        <li>10.5 Evenimente - Cum să implementați evenimente pe interfețe</li>
+        <li>10.6 Evenimente - Cum să implementați accesori de evenimente personalizate</li>
     </ul>
 
 
@@ -679,6 +684,288 @@
          */
 
         </code>
+</pre>
+
+	<h1> 10.5 Cum să implementați evenimente pe interfețe (Ghid de programare C#) </h1>
+
+
+	<p>
+		O interfață poate declara un eveniment. Exemplul următor arată cum să implementați evenimentele de interfață
+		într-o clasă. În principiu, regulile sunt aceleași ca atunci când
+		implementați orice metodă sau proprietate de interfață.
+
+	</p>
+
+
+	<h2> Implementarea evenimentelor de interfață într-o clasă </h2>
+
+	<p>
+		Declarați evenimentul în clasa voastră și apoi invocați metoda în zonele corespunzătoare.
+	</p>
+
+
+	<pre>
+  <code>
+  namespace ImplementInterfaceEvents  
+  {  
+    public interface IDrawingObject  
+    {  
+      event EventHandler ShapeChanged;  
+    } 
+
+    public class MyEventArgs : EventArgs
+    {  
+      // membrii clasei  
+    }  
+
+    public class Shape : IDrawingObject  
+    {  
+      public event EventHandler ShapeChanged;  
+
+      void ChangeShape()  
+      {  
+        // Faceți ceva aici înainte de eveniment...   
+
+        OnShapeChanged(new MyEventArgs(/*arguments*/));  
+
+        // sau faceți ceva aici după eveniment.
+      }  
+      
+      protected virtual void OnShapeChanged(MyEventArgs e)  
+      {  
+        ShapeChanged?.Invoke(this, e);  
+      }
+    }  
+
+  }
+	</code>
+</pre>
+
+
+	<h2> Exemplu </h2>
+
+
+		<p>
+			Următorul exemplu arată cum să gestionați situația în care clasa moștenește două sau mai multe interfețe,
+			iar fiecare interfață conține un eveniment cu același nume.
+			În acest caz, trebuie să furnizați o implementare explicită a interfeței pentru cel puțin unul din
+			evenimente.
+			Atunci când scrieți o implementare explicită a unei interfețe pentru un eveniment, trebuie să scrieți și
+			accesorii de adăugare și eliminare a evenimentelor. În general,
+			acestea sunt furnizate de compilator, dar în acest caz, compilatorul nu le poate furniza.
+
+		</p>
+
+		<p>
+			Prin furnizarea propriilor accesori, puteți specifica dacă cele două evenimente sunt reprezentate de același
+			eveniment
+			în clasa dumneavoastră sau de evenimente diferite.
+			De exemplu, dacă evenimentele trebuie ridicate în momente diferite conform specificațiilor interfeței,
+			puteți asocia fiecare
+			eveniment cu o implementare separată în clasa dumneavoastră.
+			În exemplul următor, abonații determină ce eveniment OnDraw vor primi prin convertirea referinței shape
+			la o interfață IShape
+			sau IDrawingObject.
+		</p>
+
+
+		<pre>
+<code>		
+  namespace WrapTwoInterfaceEvents
+  {
+    using System;
+
+    public interface IDrawingObject
+    {
+      // Apelați evenimentul înainte de a apela
+      // obiectul.
+      event EventHandler OnDraw;
+    }
+
+    public interface IShape
+    {
+      // Apelați eveniemntul înainte de a apela
+      // obiectul.
+      event EventHandler OnDraw;
+    }
+
+    // Clasa moștenește două interfețe, fiecare cu evenimentul
+    // OnDraw propriu.
+
+    public class Shape : IDrawingObject, IShape
+    {
+      // Creați un eveniment pentru fiecare interfață
+      event EventHandler PreDrawEvent;
+      event EventHandler PostDrawEvent;
+
+      object objectLock = new Object();
+
+        
+      //Implementare explicită necesară.
+      // Asoiați IDrawingObject cu
+      // PreDrawEvent
+      #region IDrawingObjectOnDraw
+
+      event EventHandler IDrawingObject.OnDraw
+      {
+        add
+        {
+          lock (objectLock)
+          {
+            PreDrawEvent += value;
+          }
+        }
+
+        remove
+        {
+          lock (objectLock)
+          {
+            PreDrawEvent -= value;
+          }
+        }
+      }
+
+      #endregion
+      //Implementare explicită necesară.
+      //Asociați IShape cu
+      //PostDrawEvent
+
+      event EventHandler IShape.OnDraw
+      {
+        add
+        {
+          lock (objectLock)
+          {
+            PostDrawEvent += value;
+          }
+        }
+
+        remove
+        {
+          lock (objectLock)
+          {
+            PostDrawEvent -= value;
+          }
+        }
+      }
+
+      //Pentru a simplifica, această metodă implementează
+      //ambele interfețe.
+
+      public void Draw()
+      {
+        //Apelați evenimentul IDrawingObject înainte de a desena obiectul.
+
+        PreDrawEvent?.Invoke(this, EventArgs.Empty);
+
+        Console.WriteLine("Drawing a shape.");
+
+        //Apelați evenimentul IShape după ce obiectul este desenat.
+        PostDrawEvent?.Invoke(this, EventArgs.Empty);
+      }
+    }
+
+    public class Subscriber1
+    {
+      // Declarați obiectul Shape ca un IDrawingObject
+      public Subscriber1(Shape shape)
+      {
+        IDrawingObject d = (IDrawingObject)shape;
+        d.OnDraw += d_OnDraw;
+      }
+
+      void d_OnDraw(object sender, EventArgs e)
+      {
+        Console.WriteLine("Sub1 receives the IDrawingObject event.");
+      }
+    }
+
+    //Declarați obiectul Shape ca un IShape
+    public class Subscriber2
+    {
+      public Subscriber2(Shape shape)
+      {
+        IShape d = (IShape)shape;
+        d.OnDraw += d_OnDraw;
+      }
+
+      void d_OnDraw(object sender, EventArgs e)
+      {
+        Console.WriteLine("Sub2 receives the IShape event.");
+      }
+    }
+
+    public class Program
+    {
+      static void Main(string[] args)
+      {
+        Shape shape = new Shape();
+        Subscriber1 sub = new Subscriber1(shape);
+        Subscriber2 sub2 = new Subscriber2(shape);
+        shape.Draw();
+
+        // Păstrați consola deschisă în modul debug.
+        System.Console.WriteLine("Press any key to exit.");
+        System.Console.ReadKey();
+      }
+    }
+  }
+
+  /* 
+
+  Ieșiri:
+    Sub1 primește evenimentul IDrawingObject.
+    Desenați o formă.
+    Sub2 primește evenimentul IShape.
+
+  */
+
+</code>
+</pre>
+
+
+
+<h1> 10.6 Cum să implementați accesori de evenimente personalizate (Ghidul de programare C#)</h1>
+
+<p>
+  Un eveniment este un tip special de delegat multicast care poate fi invocat numai din interiorul clasei în care este declarat.
+  Codul client se abonează la eveniment furnizând o referință către o metodă care trebuie invocată atunci când evenimentul este declanșat.
+  Aceste metode sunt adăugate la lista de invocare a delegatului prin intermediul accesorilor de eveniment, care seamănă cu accesorii de proprietate,
+  cu excepția faptului că accesorii de eveniment sunt denumiți add și remove. De obicei, nu trebuie să furnizați accesori personalizați
+  pentru evenimente. Atunci când nu sunt furnizați în cod, compilatorul le va adăuga automat.
+  Cu toate acestea, în unele cazuri, poate fi necesar să furnizați un comportament personalizat.
+  Un astfel de caz este prezentat în tema/lecția "Cum să implementați evenimente de interfață".
+</p>
+
+<h2> Exemplu </h2>
+
+<p>
+  Exemplul următor arată cum să implementați accesorii personalizați add și remove pentru evenimente.
+  Deși puteți înlocui orice cod în interiorul accesorilor, vă recomandăm să blocați evenimentul înainte de a adăuga sau elimina o nouă
+  metodă de tratare a evenimentelor.
+</p>
+
+<pre>
+<code>
+  event EventHandler IDrawingObject.OnDraw
+  {
+    add
+    {
+      lock (objectLock)
+      {
+          PreDrawEvent += value;
+      }
+    }
+    remove
+    {
+      lock (objectLock)
+      {
+          PreDrawEvent -= value;
+      }
+    }
+  }
+
+</code>
 </pre>
 
 
