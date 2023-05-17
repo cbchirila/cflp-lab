@@ -2936,6 +2936,56 @@
         <li>Comanda produce aceast output: <code>The factorial of 3 is 6.</code></li>
     </ol>
     <p><span style="color: #BF40BF;"><b>Notă: </b> Când rulați o aplicație în Visual Studio, puteți specifica
-            argumentele
-            de linie de comandă în <b>Debug Page, Project Designer</b> .</span>
+            argumentele de linie de comandă în <b>Debug Page, Project Designer</b> .</span>
+    </p>
+    <h1>1.7 Declarații de nivel superior - programe fără metode <code>Main</code></h1>
+    <p>
+        Începând cu C# 9, nu trebuie să includeți în mod explicit o metodă <code>Main</code> într-un proiect aplicație
+        consolă. În
+        schimb, puteți utiliza instrucțiunile de nivel superior pentru a minimiza codul pe care trebuie să îl
+        scrieți. În acest caz, compilatorul generează o clasă și o metodă <code>Main</code> capunct de intrare
+        aplicație.
+    </p>
+    <p>Iată un fișier <i>Program.cs</i> care este un program C# complet în C# 10:</p>
+    <pre>
+        <code>
+            //C#
+            Console.WriteLine("Hello World!");
+        </code>
+    </pre>
+    <p>
+        Declarațiile de nivel superior vă permit să scrieți programe simple pentru servicii mici, cum ar fi Azure
+        Functions și GitHub Actions. De asemenea, facilitează pentru noii programatori C# să înceapă să învețe și să
+        scrie cod.
+    </p>
+    <p>Următoarele secțiuni explică regulile cu privire la ceea ce poți și ce nu poți face cu declarațiile de nivel
+        superior.
+    </p>
+    <h2>Un singur fișier de nivel superior</h2>
+    <p>
+        O aplicație trebuie să aibă un singur punct de intrare. Un proiect poate avea un singur fișier cu instrucțiuni
+        de nivel superior. Introducerea instrucțiunilor de nivel superior în mai mult de un fișier dintr-un proiect are
+        ca rezultat următoarea eroare de compilator:
+    </p>
+    <pre>
+        <code>
+            CS8802 Only one compilation unit can have top-level statements.
+        </code>
+    </pre>
+    <p>Un proiect poate avea orice număr de fișiere suplimentare de cod sursă care nu au instrucțiuni de nivel superior.
+    </p>
+    <h2>Fără alte puncte de intrare</h2>
+    <p>Puteți scrie o metodă <code>Main</code> în mod explicit, dar nu poate funcționa ca punct de intrare. Compilatorul
+        generează următorul avertisment:
+    </p>
+    <pre>
+        <code>
+            CS7022 The entry point of the program is global code; ignoring 'Main()' entry point.
+        </code>
+    </pre>
+    <p>Într-un proiect cu instrucțiuni de nivel superior, nu puteți utiliza opțiunea de compilare
+        <span style="color: blue;">-main</span> pentru a selecta punctul de intrare,
+        chiar dacă proiectul are una sau mai multe metode <code>Main</code>.
+    </p>
+    <h2>Directivele <code>using</code></h2>
 </body>
