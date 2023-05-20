@@ -2988,4 +2988,139 @@
         chiar dacă proiectul are una sau mai multe metode <code>Main</code>.
     </p>
     <h2>Directivele <code>using</code></h2>
+    <p>
+        Dacă includeți directive <code>using</code>, acestea trebuie să apară pe primul loc în fișier, ca în acest exemplu:
+    </p>
+    <pre>
+        <code>
+            //C#
+            using System.Text;
+
+            StringBuilder builder = new();
+            builder.AppendLine("Hello");
+            builder.AppendLine("World!");
+            
+            Console.WriteLine(builder.ToString());
+        </code>
+    </pre>
+    <h2>Namespace-ul global</h2>
+    <p>Declarațiile de nivel superior sunt implicit în namespace-ul global.</p>
+    <h2>Namespace-uri și definiții de tip</h2>
+    <p>
+        Un fișier cu instrucțiuni de nivel superior poate conține, de asemenea, namespace-uri și definiții de tip, 
+        dar acestea trebuie să vină după instrucțiunile de nivel superior. De exemplu:
+    </p>
+    <pre>
+        <code>
+            MyClass.TestMethod();
+            MyNamespace.MyClass.MyMethod();
+
+            public class MyClass
+            {
+                public static void TestMethod()
+                {
+                    Console.WriteLine("Hello World!");
+                }
+
+            }
+
+            namespace MyNamespace
+            {
+                class MyClass
+                {
+                    public static void MyMethod()
+                    {
+                        Console.WriteLine("Hello World from MyNamespace.MyClass.MyMethod!");
+                    }
+                }
+            }
+        </code>
+    </pre>
+    <h2><code>args</code></h2>
+    <p>
+        Declarațiile de nivel superior pot face referire la variabila <code>args</code> pentru a accesa orice argument din linia de comandă 
+        care a fost introdus. Variabila <code>args</code> nu este niciodată nulă, dar este <b>lungimea</b> zero dacă nu au fost 
+        furnizate argumente de linie de comandă. De exemplu:
+    </p>
+    <pre>
+        <code>
+            //C#
+            if (args.Length > 0)
+            {
+                foreach (var arg in args)
+                {
+                    Console.WriteLine($"Argument={arg}");
+                }
+            }
+            else
+            {
+                Console.WriteLine("No arguments");
+            }
+        </code>
+    </pre>
+    <h2><code>await</code></h2>
+    <p>Puteți apela o metodă asincronă folosind <code>await</code>. De exemplu:</p>
+    <pre>
+        <code>
+            //C#
+            Console.Write("Hello ");
+            await Task.Delay(5000);
+            Console.WriteLine("World!");
+        </code>
+    </pre>
+    <h2>Cod de ieșire pentru proces</h2>
+    <p>
+        Pentru a returna o valoare <code>int</code> când aplicația se termină, utilizați instrucțiunea <code>return</code> 
+        așa cum ați face într-o metodă <code>Main</code> care returnează un int. De exemplu:
+    </p>
+    <pre>
+        <code>
+            //C#
+            string? s = Console.ReadLine();
+
+            int returnValue = int.Parse(s ?? "-1");
+            return returnValue;
+        </code>
+    </pre>
+    <h2>Metoda "entry point" implicită</h2>
+    <p>
+        Compilatorul generează o metodă care să servească drept punct de intrare în program pentru un proiect cu instrucțiuni de nivel superior. 
+        Numele acestei metode nu este de fapt <code>Main</code>, este un detaliu de implementare la care codul nu poate face referire direct. 
+        Semnătura metodei depinde dacă declarațiile de nivel superior conțin cuvântul cheie <code>await</code> sau 
+        instrucțiunea <code>return</code>. Următorul tabel arată cum ar arăta semnătura metodei, folosind numele metodei 
+        <code>Main</code> în tabel pentru comoditate.
+    </p>
+    <table style="border-collapse: collapse; width: 40%;">
+        <tr style="background-color: #f2f2f2;">
+            <th style="border: 1px solid black; padding: 8px; text-align: left;">Codul de nivel superior conține</th>
+            <th style="border: 1px solid black; padding: 8px; text-align: left;">Semnătura implicită <code>Main</code>
+            </th>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black; padding: 8px; text-align: left;"><code>await</code> si
+                <code>return</code>
+            </td>
+            <td style="border: 1px solid black; padding: 8px; text-align: left;"><code>static async Task&lt;int&gt; Main(string[] args)</code></td>
+        </tr>
+        <tr style="background-color: #f2f2f2;">
+            <td style="border: 1px solid black; padding: 8px; text-align: left;"><code>await</code></td>
+            <td style="border: 1px solid black; padding: 8px; text-align: left;">
+                <code>static async Task Main(string[] args)</code>
+            </td>
+        </tr>
+        <tr>
+            <td style="border: 1px solid black; padding: 8px; text-align: left;"><code>return</code></td>
+            <td style="border: 1px solid black; padding: 8px; text-align: left;">
+                <code>static int Main(string[] args)</code>
+            </td>
+        </tr>
+        <tr style="background-color: #f2f2f2;">
+            <td style="border: 1px solid black; padding: 8px; text-align: left;">Nici <code>await</code> nici
+                <code>return</code>
+            </td>
+            <td style="border: 1px solid black; padding: 8px; text-align: left;">
+                <code>static void Main(string[] args)</code>
+            </td>
+        </tr>
+    </table>
 </body>
