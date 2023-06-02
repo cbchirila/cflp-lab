@@ -1,10 +1,551 @@
 <h1>2. Sistemul de tipuri</h1>
 
+<h2>2.1 Tipurile limbajului C#</h2>
+
+<p> C# este un limbaj puternic tipizat. Fiecare variabilă și constantă are un tip, la fel ca fiecare expresie care
+    se evaluează printr-o valoare. Fiecare declarație de metodă specifică un nume, tipul și felul (valoare, referință
+    sau output)
+    pentru fiecare parametru de intrare și pentru valoarea returnată. Biblioteca de clase .NET definește tipuri numerice
+    încorporate și tipuri complexe care reprezintă o mare varietate de structuri. Acestea includ sistemul de fișiere,
+    conexiunile de rețea, colecțiile și vectorii de obiecte și datele. Un program tipic C# folosește tipuri din
+    biblioteca de clase și tipuri definite de utilizator care modelează conceptele care sunt specifice domeniului
+    problemei programului.
+</p>
+
+<p>Informațiile stocate într-un tip pot include următoarele elemente:</p>
+
+<ul>
+    <li>Spațiul de stocare pe care îl necesită o variabilă de acel tip.</li>
+    <li>Valorile maxime și minime pe care le poate stoca.</li>
+    <li>Membrii (metode, câmpuri, evenimente și așa mai departe) pe care îi conține.</li>
+    <li>Tipul de bază de la care moștenește.</li>
+    <li>Interfața (interfețele) pe care le implementează.</li>
+    <li>Tipurile de operațiuni care sunt permise.</li>
+</ul>
+
+<p> Compilatorul folosește informațiile tipurilor pentru a se asigura că toate operațiunile care sunt efectuate în cod
+    sunt permise de către acel tip. De exemplu, dacă declarați o variabilă de tip <span style="color: blue;">int</span>,
+    compilatorul vă permite să utilizați variabila în operații de adunare și scădere.
+    Dacă încercați să efectuați aceleași operații pe o variabilă de tip <span style="color: blue;">bool</span>,
+    compilatorul generează o eroare, așa cum se arată în exemplul următor:
+</p>
+
+<pre>
+    <code>
+        //C#
+        int a = 5;
+        int b = a + 2; //OK
+
+        bool test = true;
+
+        // Error. Operator '+' cannot be applied to operands of type 'int' and 'bool'.
+        int c = a + test;
+    </code>
+</pre>
+
+<p><span style="color: #BF40BF;"><b>Notă: </b> Spre deosebire de C si C++, în C# <code>bool</code> nu este convertibil
+        în <code>int</code>.</span>
+</p>
+
+<p> Compilatorul încorporează informațiile tipurilor în fișierul executabil ca metadate. Common Language Runtime (CLR)
+    utilizează acele metadate în timpul execuției pentru a garanta și mai mult siguranța tipului atunci când alocă și
+    recuperează memoria.
+</p>
+
+<h3>Specificarea tipurilor în declarațiile de variabile</h3>
+
+<p> Când declarați o variabilă sau o constantă într-un program, trebuie fie să specificați tipul acesteia, fie să
+    utilizați cuvântul cheie <span style="color: blue;">var</span> pentru a permite compilatorului să deducă tipul.
+    Următorul exemplu arată câteva declarații de variabile care utilizează atât tipuri numerice încorporate,
+    cât și tipuri complexe definite de utilizator:
+</p>
+
+<pre>
+    <code>
+        //C#
+        // Declaration only:
+        float temperature;
+        string name;
+        MyClass myClass;
+
+        // Declaration with initializers (four examples):
+        char firstLetter = 'C';
+        var limit = 3;
+        int[] source = { 0, 1, 2, 3, 4, 5 };
+        var query = from item in source
+                    where item <= limit
+                    select item;
+    </code>
+</pre>
+
+<p>Tipurile parametrilor metodei și valorile returnate sunt specificate în declarația metodei. Următoarea semnătură
+    arată o metodă care necesită un argument <code>int</code> de intrare și returnează un șir:
+</p>
+
+<pre>
+    <code>
+        //C#
+        public string GetName(int ID)
+        {
+            if (ID < names.Length)
+                return names[ID];
+            else
+                return String.Empty;
+        }
+        private string[] names = { "Spencer", "Sally", "Doug" };
+    </code>
+</pre>
+
+<p>După ce declarați o variabilă, nu o puteți redeclara cu un tip nou și nu puteți atribui o valoare incompatibilă cu
+    tipul ei declarat. De exemplu, nu puteți declara un <code>int</code> și apoi să îi atribuiți o valoare booleană
+    <code>true</code>. Cu toate acestea, valorile pot fi convertite în alte tipuri, de exemplu atunci când sunt
+    atribuite
+    unor variabile noi sau transmise ca argumente de metodă. O <i>conversie de tip</i> care nu provoacă pierderi de
+    date este efectuată automat de compilator. O conversie care ar putea cauza pierderi de date necesită un
+    <i>cast</i> în codul sursă.
+</p>
+
+<h3>Tipuri predefinite</h3>
+
+<p>
+    C# oferă un set standard de tipuri predefinite. Acestea reprezintă numere întregi, valori în virgulă mobilă,
+    expresii booleene, caractere text, valori zecimale și alte tipuri de date. Există, de asemenea, tipuri predefinite
+    <code>string</code> și
+    <code>object</code>. Aceste tipuri sunt disponibile pentru utilizare în orice program C#.
+</p>
+
+<h3>Tipuri definite de utilizator</h3>
+
+<p>
+    Pentru definirea propriilor tipuri se utilizează constructele <span style="color: blue;">struct</span>,
+    <span style="color: blue;">class</span>, <span style="color: blue;">interface</span>,
+    <span style="color: blue;">enum</span> și
+    <span style="color: blue;">record</span>. Biblioteca de
+    clase .NET în sine este o colecție de tipuri personalizate pe care le puteți utiliza în propriile aplicații. În mod
+    implicit, cele mai frecvent utilizate tipuri din biblioteca de clase sunt disponibile în orice program C#. Altele
+    devin disponibile numai atunci când adăugați în mod explicit o referință de proiect la codul mașină care le
+    definește.
+    După ce compilatorul are o referință la codul mașină, puteți declara variabile (și constante) ale tipurilor
+    declarate în
+    acel cod mașină în codul sursă.
+</p>
+
+<h3>Common Type System</h3>
+
+<p>
+    Este important să înțelegeți două puncte fundamentale despre sistemul de tipuri în .NET:
+</p>
+
+<ul>
+    <li>
+        Susține principiul moștenirii. Tipurile pot deriva din alte tipuri, numite <i>tipuri de bază</i>. Tipul derivat
+        moștenește (cu unele restricții) metodele, proprietățile și alți membri ai tipului de bază. Tipul de bază poate
+        deriva la rândul său dintr-un alt tip, caz în care tipul derivat moștenește membrii ambelor tipuri de bază din
+        ierarhia sa de moștenire. Toate tipurile, inclusiv tipurile numerice predefinite, cum ar fi <span
+            style="color: blue;">System.Int32</span> (cuvânt
+        cheie C#: <code>int</code>), derivă dintr-un singur tip de bază, care este <span
+            style="color: blue;">System.Object</span> (cuvânt cheie C#:
+        <code>object</code>). Această ierarhie de tip unificată se numește <span style="color: blue;">Common Type
+            System</span> (CTS).
+    </li>
+    <li>
+        Fiecare tip din CTS este definit fie ca un <i>tip valoare</i>, fie ca un <i>tip referință</i>. Aceste tipuri
+        includ toate
+        tipurile personalizate din biblioteca de clase .NET și, de asemenea, propriile tipuri definite de utilizator.
+        Tipurile pe care le definiți folosind cuvântul cheie <code>struct</code> sunt tipuri valoare; toate tipurile
+        numerice
+        predefinite sunt <code>struct</code>-uri. Tipurile pe care le definiți folosind cuvântul cheie
+        <code>class</code> sau
+        <code>record</code> sunt tipuri
+        referință. Tipurile referință și tipurile valori au reguli diferite de compilare și comportament diferit
+        la timpul de execuție.
+    </li>
+</ul>
+
+<p>Următoarea ilustrație arată relația dintre tipurile valori și tipurile referință în CTS.</p>
+<img src="images/img020.png">
+
+<p><span style="color: #BF40BF;"><b>Notă:</b>
+        Puteți observa că cele mai frecvent utilizate tipuri sunt toate organizate namespace-ul <b>System</b>. Cu toate
+        acestea, namespace-ul în care este conținut un tip nu are nicio legătură cu faptul că este un ti valoare
+        sau un tip referință.
+    </span>
+</p>
+
+<p>
+    Clasele și structurile sunt două dintre constructele de bază ale sistemului de tip comun în .NET. C# 9 adaugă
+    înregistrările, care sunt un fel de clasă. Fiecare este în esență o structură de date care încapsulează un set de
+    date
+    și comportamente care formează împreună o unitate logică. Datele și comportamentele sunt <i>membrii</i> clasei,
+    structurii sau înregistrării. Membrii includ metodele, proprietățile, evenimentele și așa mai departe, așa cum vor
+    fi prezentate mai târziu.
+</p>
+
+<p>
+    O declarație de clasă, structură sau înregistrare este ca o schemă care este folosită pentru a crea instanțe sau
+    obiecte în timpul rulării. Dacă definiți o clasă, o structură sau o înregistrare numită <code>Person</code>,
+    <code>Person</code> este numele
+    tipului. Dacă declarați și inițializați o variabilă <code>p</code> de tip <code>Person</code>, <code>p</code> se
+    spune că este un obiect sau o instanță a lui
+    <code>Person</code>. Pot fi create mai multe instanțe de același tip <code>Person</code> și fiecare instanță poate
+    avea valori diferite în
+    proprietățile și câmpurile sale.
+</p>
+
+<p>
+    O clasă este un tip referință. Atunci când este creat un obiect de acest tip, variabila căreia îi este atribuit
+    obiectul deține doar o referință la acea memorie. Când referința la obiect este atribuită unei noi variabile, noua
+    variabilă se referă la obiectul original. Modificările efectuate printr-o variabilă sunt reflectate în cealaltă
+    variabilă deoarece ambele se referă la aceleași date.
+</p>
+
+<p>
+    O structură este un tip valoare. Când este creată o structură, variabila căreia îi este atribuită structura deține
+    datele reale ale structurii. Când structura este atribuită unei variabile noi, aceasta este copiată. Variabila nouă
+    și variabila originală conțin, prin urmare, două copii separate ale acelorași date. Modificările aduse unei copii nu
+    afectează cealaltă copie.
+</p>
+
+<p>
+    Tipurile de înregistrare pot fi fie tipuri referință (<code>record class</code>) fie tipuri valori
+    (<code>record struct</code>).
+</p>
+
+<p>
+    În general, clasele sunt folosite pentru a modela un comportament mai complex. Clasele stochează în mod obișnuit
+    date care se intenționează a fi modificate după crearea unui obiect. Structurile sunt cele mai potrivite
+    pentru structurile de date mici. Structurile stochează de obicei date care nu sunt destinate să fie modificate după
+    crearea structurii. Tipurile înregistrare sunt structuri de date cu membri suplimentari sintetizati de
+    compilator. Înregistrările stochează de obicei date care nu sunt destinate să fie modificate după crearea
+    obiectului.
+</p>
+
+<h3>Tipuri valoare</h3>
+
+<p>
+    Tipurile valoare derivă din <span style="color: blue;">System.ValueType</span>, care derivă din <span
+        style="color: blue;">System.Object</span>. Tipurile care derivă din
+    <span style="color: blue;">System.ValueType</span> au un comportament special în CLR. Variabilele de tip valoare
+    conțin direct valorile lor. Memoria
+    pentru o structură este alocată inline în orice context este declarată variabila. Nu există o alocare separată a
+    heap-ului sau o suprasarcină de <i>garbage collection</i> pentru variabilele de tip valoare. Puteți declara tipuri
+    <code>record struct</code> care sunt tipuri valoare și include membrii sintetizati pentru <span
+        style="color: blue;">înregistrări</span>.
+</p>
+
+<p>
+    Există două categorii de tipuri de valori: <code>struct</code> și <code>enum</code>.
+</p>
+
+<p>
+    Tipurile numerice predefinite sunt structuri și au câmpuri și metode pe care le puteți accesa:
+</p>
+
+<pre>
+    <code>
+        //C#
+        // constant field on type byte.
+        byte b = byte.MaxValue;
+    </code>
+</pre>
+
+<p>
+    Dar le declarați și le atribuiți valori ca și cum ar fi simple tipuri neagregate:
+</p>
+
+<pre>
+    <code>
+        //C#
+        byte num = 0xA;
+        int i = 5;
+        char c = 'Z';
+    </code>
+</pre>
+
+<p>
+    Tipurile valori sunt <i>sigilate</i>. Nu puteți deriva un tip din orice tip valoare, de exemplu <span
+        style="color: blue;">System.Int32</span>. Nu
+    puteți defini o structură de moștenit de la orice clasă sau structură definită de utilizator, deoarece o structură
+    poate moșteni numai din <span style="color: blue;">System.ValueType</span>.
+    Cu toate acestea, o structură poate implementa una sau mai multe
+    interfețe. Puteți <i>castui</i> un tip de struct la orice tip de interfață pe care îl implementează. Această
+    distribuție
+    determină o operațiune de tip <i>boxing</i> pentru a împacheta structura într-un obiect de tip referință pe heap-ul
+    gestionat.
+    Operațiunile boxing apar atunci când dați un tip valoare unei metode care ia un <span
+        style="color: blue;">System.Object</span> sau orice tip de
+    interfață ca parametru de intrare.
+</p>
+
+<p>
+    Folosiți cuvântul cheie <code>struct</code> pentru a vă crea propriile tipuri valori personalizate. De obicei, o
+    structură
+    este utilizată ca un container pentru un set mic de variabile asociate, așa cum se arată în exemplul următor:
+</p>
+
+<pre>
+    <code>
+        //C#
+        public struct Coords
+        {
+            public int x, y;
+
+            public Coords(int p1, int p2)
+            {
+                x = p1;
+                y = p2;
+            }
+        }
+    </code>
+</pre>
+
+<p>
+    Cealaltă categorie de tipuri valoare este <code>ebum</code>. O enumerare definește un set de constante integrale
+    numite. De
+    exemplu, enumerarea <span style="color: blue;">System.IO.FileMode</span> din biblioteca de clase .NET conține un set
+    de numere întregi constante
+    denumite care specifică modul în care trebuie deschis un fișier. Este definit așa cum se arată în exemplul următor:
+</p>
+
+<pre>
+    <code>
+        public enum FileMode
+        {
+            CreateNew = 1,
+            Create = 2,
+            Open = 3,
+            OpenOrCreate = 4,
+            Truncate = 5,
+            Append = 6,
+        }
+    </code>
+</pre>
+
+<p>
+    Constanta <span style="color: blue;">System.IO.FileMode.Create</span> are valoarea 2. Cu toate acestea, numele este
+    mult mai semnificativ pentru
+    oamenii care citesc codul sursă și, din acest motiv, este mai bine să folosiți enumerații în loc de numere literale
+    constante.
+</p>
+
+<p>
+    Toate enumerarile moștenesc <span style="color: blue;">System.Enum</span>, care moștenește <span
+        style="color: blue;">System.ValueType</span>. Toate regulile care se
+    aplică structurilor se aplică și enumărilor.
+</p>
+
+<h3>Tipuri referință</h3>
+
+<p>
+    Un tip care este definit ca și <code>class, record, delegate</code> sau <code>interface</code> este un tip
+    referință.
+</p>
+
+<p>
+    Când declarați o variabilă a unui tip referință, aceasta conține valoarea null până când o atribuiți cu o instanță
+    de acel tip sau creați una folosind operatorul <code>new</code>. Crearea și atribuirea unei clase sunt demonstrate
+    în următorul
+    exemplu:
+</p>
+
+<pre>
+    <code>
+        //C#
+        MyClass myClass = new MyClass();
+        MyClass myClass2 = myClass;
+    </code>
+</pre>
+
+<p>
+    O interfață nu poate fi instanțiată direct folosind operatorul <code>new</code>. În schimb, creați și atribuiți o
+    instanță a unei
+    clase care implementează interfața. Luați în considerare următorul exemplu:
+</p>
+
+<pre>
+    <code>
+        //C#
+        MyClass myClass = new MyClass();
+
+        // Declare and assign using an existing value.
+        IMyInterface myInterface = myClass;
+
+        // Or create and assign a value in a single statement.
+        IMyInterface myInterface2 = new MyClass();
+    </code>
+</pre>
+
+<p>
+    Când obiectul este creat, memoria este alocată pe heap-ul gestionat. Variabila deține doar o referință la locația
+    obiectului. Tipurile din heap-ul gestionat necesită supraîncărcare atât atunci când sunt alocate, cât și când sunt
+    revendicate. <i>Garbage collection</i> este funcționalitatea automată de gestionare a memoriei a CLR, care
+    efectuează
+    recuperarea. Cu toate acestea, <i>Garbage collection</i> este, de asemenea, foarte optimizată și, în majoritatea
+    scenariilor, nu creează o problemă de performanță.
+</p>
+
+<p>
+    Toate tablourile sunt tipuri referință, chiar dacă elementele lor sunt tipuri valoare. Tablourile derivă
+    implicit din clasa <span style="color: blue;">System.Array</span>. Le declarați și le utilizați cu sintaxa
+    simplificată furnizată de C#, așa cum se
+    arată în exemplul următor:
+</p>
+
+<pre>
+    <code>
+        // Declare and initialize an array of integers.
+        int[] nums = { 1, 2, 3, 4, 5 };
+
+        // Access an instance property of System.Array.
+        int len = nums.Length;
+    </code>
+</pre>
+
+<p>
+    Tipurile referință acceptă pe deplin moștenirea. Când creați o clasă, puteți moșteni de la orice altă interfață
+    sau clasă care nu este definită ca <i>sealed</i>. Alte clase pot moșteni din clasa ta și pot suprascrie metodele
+    tale
+    virtuale.
+</p>
+
+<h3>Tipuri de valori literale</h3>
+
+<p>
+    În C#, valorile literale primesc un tip de la compilator. Puteți specifica modul în care trebuie introdus un literal
+    numeric prin adăugarea unei litere la sfârșitul numărului. De exemplu, pentru a specifica că valoarea
+    <code>4.56</code> trebuie
+    tratată ca <code>float</code>, adăugați un „f” sau „F” după număr: <code>4.56f</code>. Dacă nu este adăugată nicio
+    literă, compilatorul va
+    deduce un tip pentru literal.
+</p>
+
+<p>
+    Deoarece literalele sunt tastate și toate tipurile derivă în cele din urmă din <span
+        style="color: blue;">System.Object</span>, puteți scrie și compila cod, cum ar fi următorul cod:
+</p>
+
+<pre>
+    <code>
+        string s = "The answer is " + 5.ToString();
+        // Outputs: "The answer is 5"
+        Console.WriteLine(s);
+
+        Type type = 12345.GetType();
+        // Outputs: "System.Int32"
+        Console.WriteLine(type);
+    </code>
+</pre>
+
+<h3>Tipuri generice</h3>
+
+<p>
+    Un tip poate fi declarat cu unul sau mai mulți <i>parametri de tip</i> care servesc ca substituent pentru tipul real
+    (
+    <i>tipul concret</i>). Codul client oferă tipul concret atunci când creează o instanță a tipului. Astfel de tipuri
+    sunt
+    numite <i>tipuri generice</i>. De exemplu, tipul .NET <code>System.Collections.Generic.List<T></code> are un
+    parametru de tip căruia
+    prin convenție i se dă numele T. Când creați o instanță a tipului, specificați tipul obiectelor pe care le va
+    conține lista, de exemplu string:
+</p>
+
+<pre>
+    <code>
+        //C#
+        List<string> stringList = new List<string>();
+        stringList.Add("String example");
+        // compile time error adding a type other than a string:
+        stringList.Add(4);
+    </code>
+</pre>
+
+<p>
+    Utilizarea parametrului type face posibilă reutilizarea aceleiași clase pentru a deține orice tip de element, fără a
+    fi nevoie să convertiți fiecare element în <code>object</code>. Clasele de colecție generice sunt numite colecții
+    puternic
+    tipizate deoarece compilatorul cunoaște tipul specific al elementelor colecției și poate genera o eroare în timpul
+    compilării dacă, de exemplu, încercați să adăugați un număr întreg la obiectul <code>stringList</code> din exemplul
+    anterior.
+</p>
+
+<h3>Tipuri implicite, tipuri anonime și tipuri de valori nullabile</h3>
+
+<p>
+    Puteți introduce implicit o variabilă locală (dar nu membrii clasei) folosind cuvântul cheie <code>var</code>.
+    Variabila încă
+    primește un tip în momentul compilării, dar tipul este furnizat de compilator.
+</p>
+
+<p>
+    Poate fi incomod să creați un tip numit pentru seturi simple de valori înrudite pe care nu intenționați să le
+    stocați sau să le folosiți în afara limitelor metodei. Puteți crea tipuri anonime în acest scop.
+</p>
+
+<p>
+    Tipurile de valori obișnuite nu pot avea valoarea null. Cu toate acestea, puteți crea <i>tipuri de valori
+        nullabile</i>
+    adăugând un <code>?</code> după tip. De exemplu, <code>int?</code> este un tip <code>int</code> care poate avea și
+    valoarea null. Tipurile de valori nullable
+    sunt instanțe ale tipului de struct generic <code>System.Nullable<T></code>. Tipurile de valori nullabile sunt utile
+    în special
+    atunci când transferați date către și de la baze de date în care valorile numerice ar putea fi <code>null</code>.
+</p>
+
+<h3>Tip timp de compilare și tip timp de execuție</h3>
+
+<p>
+    O variabilă poate avea diferite tipuri de timp compilare și execuție. <i>Tipul de compilare</i> este tipul declarat
+    sau
+    dedus al variabilei din codul sursă. <i>Tipul de rulare</i> este tipul instanței la care se referă acea variabilă.
+    Adesea,
+    cele două tipuri sunt aceleași, ca în exemplul următor:
+</p>
+
+<pre>
+    <code>
+        //C#
+        string message = "This is a string of characters";
+    </code>
+</pre>
+
+<p>
+    În alte cazuri, tipul de compilare este diferit, așa cum se arată în următoarele două exemple:
+</p>
+
+<pre>
+    <code>
+        //C#
+        object anotherMessage = "This is another string of characters";
+        IEnumerable<char> someCharacters = "abcdefghijklmnopqrstuvwxyz";
+    </code>
+</pre>
+
+<p>
+    În ambele exemple precedente, tipul de rulare este un <code>string</code>. Tipul în timp de compilare este
+    <code>object</code> în prima linie și
+    <code>IEnumerable&lt;char&gt;</code> în a doua.
+</p>
+
+<p>
+    Dacă cele două tipuri sunt diferite pentru o variabilă, este important să înțelegeți când se aplică tipul de
+    compilare și tipul de rulare. Tipul în timp de compilare determină toate acțiunile întreprinse de compilator. Aceste
+    acțiuni ale compilatorului includ rezoluția apelurilor de metodă, rezoluția supraîncărcării și <i>cast-urile</i>
+    implicite și
+    explicite disponibile. Tipul de rulare determină toate acțiunile care sunt rezolvate în timpul rulării. Aceste
+    acțiuni de rulare includ trimiterea apelurilor de metode virtuale, evaluarea expresiilor <code>is</code> și
+    <code>switch</code> și alte API-uri
+    de testare de tip. Pentru a înțelege mai bine modul în care codul interacționează cu tipurile, recunoașteți ce
+    acțiune se aplică pentru ce tip.
+</p>
+
+
+
 <h2>2.2 Namespace-uri</h2>
 
 
 <p>
-    Namespace-urile sunt folosite intens în programarea C# în două moduri. În primul rând, .NET utilizează namespace-urile pentru a organiza numeroasele sale clase, după cum urmează:
+    Namespace-urile sunt folosite intens în programarea C# în două moduri. În primul rând, .NET utilizează
+    namespace-urile pentru a organiza numeroasele sale clase, după cum urmează:
 </p>
 <pre>
 <code>
@@ -12,7 +553,9 @@
 </code>
 </pre>
 <p>
-    <strong>System </strong>este un namespace, iar <strong>Console</strong> este o clasă în acel namespace. Cuvântul cheie <strong>using</strong> poate fi utilizat pentru a nu fi necesară folosirea numelui complet, așa cum se arată în exemplul următor:
+    <strong>System </strong>este un namespace, iar <strong>Console</strong> este o clasă în acel namespace. Cuvântul
+    cheie <strong>using</strong> poate fi utilizat pentru a nu fi necesară folosirea numelui complet, așa cum se arată
+    în exemplul următor:
 </p>
 <pre>
 <code>
@@ -25,7 +568,8 @@
 </code>
 </pre>
 <p>
-    SDK-ul .NET 6 adaugă, de asemenea, un set de directive using implicite globale pentru proiectele care utilizează următoarele SDK-uri:
+    SDK-ul .NET 6 adaugă, de asemenea, un set de directive using implicite globale pentru proiectele care utilizează
+    următoarele SDK-uri:
 </p>
 <ul>
     <li>Microsoft.NET.Sdk</li>
@@ -36,7 +580,9 @@
     Aceste directive using implicite globale includ cele mai comune namespace-uri pentru tipurile de proiect.
 </p>
 <p>
-    În al doilea rând, declararea propriilor namespace-uri vă poate ajuta să controlați domeniul de aplicare al numelor de clasă și metode în proiectele de programare mai mari. Utilizați cuvântul cheie namespace pentru a declara un namespace, așa cum se arată în exemplul următor:
+    În al doilea rând, declararea propriilor namespace-uri vă poate ajuta să controlați domeniul de aplicare al numelor
+    de clasă și metode în proiectele de programare mai mari. Utilizați cuvântul cheie namespace pentru a declara un
+    namespace, așa cum se arată în exemplul următor:
 </p>
 <pre>
 <code>
@@ -57,7 +603,8 @@
     Numele namespace-ului trebuie să fie un nume valid de identificator C#.
 </p>
 <p>
-    Începând cu C# 10, puteți declara un namespace pentru toate tipurile definite în acel fișier, așa cum se arată în exemplul următor:
+    Începând cu C# 10, puteți declara un namespace pentru toate tipurile definite în acel fișier, așa cum se arată în
+    exemplul următor:
 </p>
 <pre>
 <code>
@@ -74,19 +621,27 @@
 </code>
 </pre>
 <p>
-    Avantajul acestei noi sintaxe este că este mai simplă, economisind spațiu orizontal și acolade. Astfel, codul dvs. devine mai ușor de citit.
+    Avantajul acestei noi sintaxe este că este mai simplă, economisind spațiu orizontal și acolade. Astfel, codul dvs.
+    devine mai ușor de citit.
 </p>
 <p>
-    <strong>Important:</strong> Dacă doriți să utilizați clasele dintr-un namespace în alt namespace, trebuie să le faceți publice (public) sau să utilizați modificatorul de acces adecvat.
+    <strong>Important:</strong> Dacă doriți să utilizați clasele dintr-un namespace în alt namespace, trebuie să le
+    faceți publice (public) sau să utilizați modificatorul de acces adecvat.
 </p>
 <p>
-    În general, utilizarea namespace-urilor vă ajută să organizați și să gestionați codul sursă în proiectele C#. Ele vă permit să evitați ambiguitatea numelui și să creați o ierarhie logică a claselor și modulelor. Este important să înțelegeți cum să utilizați namespace-urile corect și să le organizați într-un mod coerent în aplicațiile dvs. pentru a facilita dezvoltarea și menținerea codului sursă.
+    În general, utilizarea namespace-urilor vă ajută să organizați și să gestionați codul sursă în proiectele C#. Ele vă
+    permit să evitați ambiguitatea numelui și să creați o ierarhie logică a claselor și modulelor. Este important să
+    înțelegeți cum să utilizați namespace-urile corect și să le organizați într-un mod coerent în aplicațiile dvs.
+    pentru a facilita dezvoltarea și menținerea codului sursă.
 </p>
 
 <h2>2.3 Clase</h2>
 
 <p>
-    Un tip de date definit ca o clasă este un tip de referință. La momentul rulării, atunci când declari o variabilă de tip referință, variabila conține valoarea null până când creezi explicit o instanță a clasei folosind operatorul new, sau îi atribui un obiect de tip compatibil care poate fi creat în altă parte, așa cum este prezentat în exemplul următor:
+    Un tip de date definit ca o clasă este un tip de referință. La momentul rulării, atunci când declari o variabilă de
+    tip referință, variabila conține valoarea null până când creezi explicit o instanță a clasei folosind operatorul
+    new, sau îi atribui un obiect de tip compatibil care poate fi creat în altă parte, așa cum este prezentat în
+    exemplul următor:
 </p>
 <pre>
     <code>
@@ -98,10 +653,16 @@
     </code>
 </pre>
 <p>
-    Când obiectul este creat, este alocată suficientă memorie pe heap-ul administrat pentru acel obiect specific, iar variabila reține doar o referință la locația acelui obiect. Tipurile de date de pe heap-ul administrat necesită un overhead atât la alocarea lor, cât și la recuperarea lor de către funcționalitatea de gestionare automată a memoriei din partea CLR (Common Language Runtime), cunoscută sub numele de colectare a gunoiului (garbage collection). Cu toate acestea, colectarea gunoiului este optimizată în mare măsură și în cele mai multe scenarii nu creează probleme de performanță.
+    Când obiectul este creat, este alocată suficientă memorie pe heap-ul administrat pentru acel obiect specific, iar
+    variabila reține doar o referință la locația acelui obiect. Tipurile de date de pe heap-ul administrat necesită un
+    overhead atât la alocarea lor, cât și la recuperarea lor de către funcționalitatea de gestionare automată a memoriei
+    din partea CLR (Common Language Runtime), cunoscută sub numele de colectare a gunoiului (garbage collection). Cu
+    toate acestea, colectarea gunoiului este optimizată în mare măsură și în cele mai multe scenarii nu creează probleme
+    de performanță.
 </p>
 <p>
-    Clasele sunt declarate folosind cuvântul cheie "class" urmat de un identificator unic, așa cum se arată în exemplul de mai jos:
+    Clasele sunt declarate folosind cuvântul cheie "class" urmat de un identificator unic, așa cum se arată în exemplul
+    de mai jos:
 </p>
 
 <pre>
@@ -115,14 +676,21 @@ public class Customer
 </pre>
 
 <p>
-    Cuvântul cheie "class" este precedat de nivelul de acces. În acest caz, fiind folosit "public", oricine poate crea instanțe ale acestei clase. Numele clasei urmează după cuvântul cheie "class". Numele clasei trebuie să fie un identificator valid în C#. Restul definiției este corpul clasei, unde sunt definite comportamentul și datele. Câmpurile (fields), proprietățile (properties), metodele (methods) și evenimentele (events) unei clase sunt colectiv denumite membri ai clasei.
+    Cuvântul cheie "class" este precedat de nivelul de acces. În acest caz, fiind folosit "public", oricine poate crea
+    instanțe ale acestei clase. Numele clasei urmează după cuvântul cheie "class". Numele clasei trebuie să fie un
+    identificator valid în C#. Restul definiției este corpul clasei, unde sunt definite comportamentul și datele.
+    Câmpurile (fields), proprietățile (properties), metodele (methods) și evenimentele (events) unei clase sunt colectiv
+    denumite membri ai clasei.
 </p>
 <p>
-    Deși sunt uneori folosite interschimbabil, o clasă și un obiect sunt lucruri diferite. O clasă definește un tip de obiect, dar în sine nu este un obiect. Un obiect este o entitate concretă bazată pe o clasă și este uneori denumit o instanță a unei clase.
+    Deși sunt uneori folosite interschimbabil, o clasă și un obiect sunt lucruri diferite. O clasă definește un tip de
+    obiect, dar în sine nu este un obiect. Un obiect este o entitate concretă bazată pe o clasă și este uneori denumit o
+    instanță a unei clase.
 </p>
 
 <p>
-    Obiectele pot fi create folosind cuvântul cheie "new" urmat de numele clasei pe baza căreia va fi creat obiectul, în felul următor:
+    Obiectele pot fi create folosind cuvântul cheie "new" urmat de numele clasei pe baza căreia va fi creat obiectul, în
+    felul următor:
 </p>
 
 <pre>
@@ -132,7 +700,10 @@ public class Customer
 </pre>
 
 <p>
-    Când o instanță a unei clase este creată, o referință la obiect este returnată programatorului. În exemplul anterior, "object1" este o referință la un obiect bazat pe clasa "Customer". Această referință se referă la noul obiect, dar nu conține datele obiectului în sine. De fapt, poți crea o referință la un obiect fără a crea de fapt un obiect deloc:
+    Când o instanță a unei clase este creată, o referință la obiect este returnată programatorului. În exemplul
+    anterior, "object1" este o referință la un obiect bazat pe clasa "Customer". Această referință se referă la noul
+    obiect, dar nu conține datele obiectului în sine. De fapt, poți crea o referință la un obiect fără a crea de fapt un
+    obiect deloc:
 </p>
 
 <pre>
@@ -142,7 +713,10 @@ public class Customer
 </pre>
 
 <p>
-    Nu este recomandat să creezi referințe la obiecte, precum cea de mai sus, care nu se referă la un obiect, deoarece încercarea de a accesa un obiect prin intermediul unei astfel de referințe va eșua în timpul execuției. Cu toate acestea, o astfel de referință poate fi făcută să se refere la un obiect, fie prin crearea unui nou obiect, fie prin atribuirea unei existente, în felul următor:
+    Nu este recomandat să creezi referințe la obiecte, precum cea de mai sus, care nu se referă la un obiect, deoarece
+    încercarea de a accesa un obiect prin intermediul unei astfel de referințe va eșua în timpul execuției. Cu toate
+    acestea, o astfel de referință poate fi făcută să se refere la un obiect, fie prin crearea unui nou obiect, fie prin
+    atribuirea unei existente, în felul următor:
 </p>
 
 <pre>
@@ -153,11 +727,17 @@ public class Customer
 </pre>
 
 <p>
-    Acest cod creează două referințe la obiect care se referă ambele la același obiect. Prin urmare, orice modificări aduse obiectului prin intermediul "object3" se vor reflecta în utilizările ulterioare ale "object4". Deoarece obiectele bazate pe clase sunt referite prin referințe, clasele sunt cunoscute sub numele de tipuri de referință.
+    Acest cod creează două referințe la obiect care se referă ambele la același obiect. Prin urmare, orice modificări
+    aduse obiectului prin intermediul "object3" se vor reflecta în utilizările ulterioare ale "object4". Deoarece
+    obiectele bazate pe clase sunt referite prin referințe, clasele sunt cunoscute sub numele de tipuri de referință.
 </p>
 <p>Moștenirea clasei</p>
-<p>Clasele suportă pe deplin moștenirea, o caracteristică fundamentală a programării orientate pe obiect. Când creați o clasă, puteți moșteni oricare altă clasă care nu este definită ca fiind "sealed", iar alte clase pot moșteni clasa dvs. și pot suprascrie metodele virtuale ale clasei. Mai mult, puteți implementa una sau mai multe interfețe.</p>
-<p>Moștenirea se realizează prin utilizarea unei derivate, ceea ce înseamnă că o clasă este declarată prin utilizarea unei clase de bază din care moștenește date și comportament. O clasă de bază este specificată prin adăugarea unui colon și numele clasei de bază după numele clasei derivate, în felul următor:</p>
+<p>Clasele suportă pe deplin moștenirea, o caracteristică fundamentală a programării orientate pe obiect. Când creați o
+    clasă, puteți moșteni oricare altă clasă care nu este definită ca fiind "sealed", iar alte clase pot moșteni clasa
+    dvs. și pot suprascrie metodele virtuale ale clasei. Mai mult, puteți implementa una sau mai multe interfețe.</p>
+<p>Moștenirea se realizează prin utilizarea unei derivate, ceea ce înseamnă că o clasă este declarată prin utilizarea
+    unei clase de bază din care moștenește date și comportament. O clasă de bază este specificată prin adăugarea unui
+    colon și numele clasei de bază după numele clasei derivate, în felul următor:</p>
 <pre><code>
 public class Manager : Employee
 {
@@ -166,14 +746,20 @@ public class Manager : Employee
 }
 </code></pre>
 <p>Când o clasă declară o clasă de bază, moștenește toate membrii clasei de bază, cu excepția constructorilor.</p>
-<p>O clasă în C# poate moșteni direct doar o singură clasă de bază. Cu toate acestea, deoarece o clasă de bază poate moșteni la rândul său o altă clasă, o clasă poate moșteni indirect mai multe clase de bază. Mai mult, o clasă poate implementa direct una sau mai multe interfețe.</p>
-<p>O clasă poate fi declarată ca abstractă. O clasă abstractă conține metode abstracte care au o definiție de semnătură, dar nu au o implementare. Clasele abstracte nu pot fi instanțiate. Ele pot fi utilizate doar prin clasele derivate care implementează metodele abstracte. În schimb, o clasă sealed nu permite altor clase să moștenească de la ea. Pentru mai multe informații, consultați Clasele și membrii de clasă abstracte și sigilate.</p>
+<p>O clasă în C# poate moșteni direct doar o singură clasă de bază. Cu toate acestea, deoarece o clasă de bază poate
+    moșteni la rândul său o altă clasă, o clasă poate moșteni indirect mai multe clase de bază. Mai mult, o clasă poate
+    implementa direct una sau mai multe interfețe.</p>
+<p>O clasă poate fi declarată ca abstractă. O clasă abstractă conține metode abstracte care au o definiție de semnătură,
+    dar nu au o implementare. Clasele abstracte nu pot fi instanțiate. Ele pot fi utilizate doar prin clasele derivate
+    care implementează metodele abstracte. În schimb, o clasă sealed nu permite altor clase să moștenească de la ea.
+    Pentru mai multe informații, consultați Clasele și membrii de clasă abstracte și sigilate.</p>
 
 
 
 <h2>2.4 Structuri</h2>
-<p>Un tip de structură (sau tip de struct) este un tip de valoare care poate încapsula date și funcționalități asociate. Utilizați cuvântul cheie <code>struct</code> pentru a defini un tip de structură:</p>
-    <pre><code>
+<p>Un tip de structură (sau tip de struct) este un tip de valoare care poate încapsula date și funcționalități asociate.
+    Utilizați cuvântul cheie <code>struct</code> pentru a defini un tip de structură:</p>
+<pre><code>
 public struct Coordonate
 {
     public Coordonate(double x, double y)
@@ -188,28 +774,49 @@ public struct Coordonate
     public override string ToString() => $"({X}, {Y})";
 }
     </code></pre>
-    <p>Tipurile de structură au semantica valorii. Aceasta înseamnă că o variabilă de tip structură conține o instanță a tipului. De regulă, valorile variabilelor sunt copiate la atribuire, la transmiterea unui argument către o metodă și la returnarea unui rezultat de metodă. Pentru variabile de tip structură, se creează o copie a instanței tipului. </p>
-    <p>De obicei, utilizați tipurile de structuri pentru a proiecta tipuri de date mici și centrate pe date, care furnizează puțină sau deloc comportament. De exemplu, .NET folosește tipurile de structuri pentru a reprezenta un număr (atât întreg, cât și real), o valoare Boolean, un caracter Unicode sau o instanță de timp. Dacă vă concentrați pe comportamentul unui tip, luați în considerare definirea unei clase. Tipurile de clase au semantica referinței. Aceasta înseamnă că o variabilă de tip clasă conține o referință către o instanță a tipului, nu instanța în sine.</p>
-    <p>Deoarece tipurile de structură au semantica valorii, vă recomandăm să definiți tipuri de structură imutabile. Aceasta înseamnă că starea structurii nu poate fi modificată după ce este creată. Acest lucru se datorează faptului că tipurile de structură sunt copiate atunci când sunt transmise ca argumente sau returnate din metode, iar orice modificări efectuate asupra unei copii a unei structuri nu vor afecta structura originală. Structurile imutabile pot ajuta la prevenirea comportamentului neașteptat și pot face codul mai previzibil.</p>
- <p>Utilizați modificatorul <code>readonly</code> pentru a declara că un tip de structură este imutabil. Toți membrii de date ai unei structuri <code>readonly</code> trebuie să fie de tip "doar pentru citire" conform următoarelor reguli:</p>
+<p>Tipurile de structură au semantica valorii. Aceasta înseamnă că o variabilă de tip structură conține o instanță a
+    tipului. De regulă, valorile variabilelor sunt copiate la atribuire, la transmiterea unui argument către o metodă și
+    la returnarea unui rezultat de metodă. Pentru variabile de tip structură, se creează o copie a instanței tipului.
+</p>
+<p>De obicei, utilizați tipurile de structuri pentru a proiecta tipuri de date mici și centrate pe date, care furnizează
+    puțină sau deloc comportament. De exemplu, .NET folosește tipurile de structuri pentru a reprezenta un număr (atât
+    întreg, cât și real), o valoare Boolean, un caracter Unicode sau o instanță de timp. Dacă vă concentrați pe
+    comportamentul unui tip, luați în considerare definirea unei clase. Tipurile de clase au semantica referinței.
+    Aceasta înseamnă că o variabilă de tip clasă conține o referință către o instanță a tipului, nu instanța în sine.
+</p>
+<p>Deoarece tipurile de structură au semantica valorii, vă recomandăm să definiți tipuri de structură imutabile. Aceasta
+    înseamnă că starea structurii nu poate fi modificată după ce este creată. Acest lucru se datorează faptului că
+    tipurile de structură sunt copiate atunci când sunt transmise ca argumente sau returnate din metode, iar orice
+    modificări efectuate asupra unei copii a unei structuri nu vor afecta structura originală. Structurile imutabile pot
+    ajuta la prevenirea comportamentului neașteptat și pot face codul mai previzibil.</p>
+<p>Utilizați modificatorul <code>readonly</code> pentru a declara că un tip de structură este imutabil. Toți membrii de
+    date ai unei structuri <code>readonly</code> trebuie să fie de tip "doar pentru citire" conform următoarelor reguli:
+</p>
 
-    <ul>
-        <li>Orice declarație de câmp trebuie să aibă modificatorul <code>readonly</code></li>
-        <li>Orice proprietate, inclusiv cele auto-implementate, trebuie să fie de tip "doar pentru citire". Începând cu C# 9.0, o proprietate poate avea un accesoriu <code>init</code>.</li>
-    </ul>
+<ul>
+    <li>Orice declarație de câmp trebuie să aibă modificatorul <code>readonly</code></li>
+    <li>Orice proprietate, inclusiv cele auto-implementate, trebuie să fie de tip "doar pentru citire". Începând cu C#
+        9.0, o proprietate poate avea un accesoriu <code>init</code>.</li>
+</ul>
 
-    <p>Aceasta garantează că niciun membru al unei structuri <code>readonly</code> nu modifică starea structurii. Acest lucru înseamnă că ceilalți membri ai instanței, cu excepția constructorilor, sunt implicit "doar pentru citire".</p>
-<p>Puteți utiliza, de asemenea, modificatorul <code>readonly</code> pentru a declara că un membru al unei instanțe nu modifică starea unei structuri. Dacă nu puteți declara întreaga structură ca fiind <code>readonly</code>, utilizați modificatorul <code>readonly</code> pentru a marca membrii instanței care nu modifică starea structurii.</p>
+<p>Aceasta garantează că niciun membru al unei structuri <code>readonly</code> nu modifică starea structurii. Acest
+    lucru înseamnă că ceilalți membri ai instanței, cu excepția constructorilor, sunt implicit "doar pentru citire".</p>
+<p>Puteți utiliza, de asemenea, modificatorul <code>readonly</code> pentru a declara că un membru al unei instanțe nu
+    modifică starea unei structuri. Dacă nu puteți declara întreaga structură ca fiind <code>readonly</code>, utilizați
+    modificatorul <code>readonly</code> pentru a marca membrii instanței care nu modifică starea structurii.</p>
 
-    <p>În cadrul unui membru de instanță <code>readonly</code>, nu puteți atribui câmpurilor de instanță ale structurii. Cu toate acestea, un membru <code>readonly</code> poate apela un membru care nu este <code>readonly</code>. În acest caz, compilatorul creează o copie a instanței de structură și apelează membrul care nu este <code>readonly</code> pe acea copie. Ca rezultat, instanța originală a structurii nu este modificată.</p>
+<p>În cadrul unui membru de instanță <code>readonly</code>, nu puteți atribui câmpurilor de instanță ale structurii. Cu
+    toate acestea, un membru <code>readonly</code> poate apela un membru care nu este <code>readonly</code>. În acest
+    caz, compilatorul creează o copie a instanței de structură și apelează membrul care nu este <code>readonly</code> pe
+    acea copie. Ca rezultat, instanța originală a structurii nu este modificată.</p>
 
-    <p>De obicei, aplicați modificatorul <code>readonly</code> la următoarele tipuri de membri de instanță:</p>
+<p>De obicei, aplicați modificatorul <code>readonly</code> la următoarele tipuri de membri de instanță:</p>
 
-    <ul>
-        <li>Metode:</li>
-    </ul>
+<ul>
+    <li>Metode:</li>
+</ul>
 
-    <pre>
+<pre>
         <code>
 public readonly double Sum()
 {
@@ -218,19 +825,21 @@ public readonly double Sum()
         </code>
     </pre>
 
-    <p>Puteți aplica, de asemenea, modificatorul <code>readonly</code> la metode care suprascriu metode declarate în <code>System.Object</code>:</p>
+<p>Puteți aplica, de asemenea, modificatorul <code>readonly</code> la metode care suprascriu metode declarate în
+    <code>System.Object</code>:
+</p>
 
-    <pre>
+<pre>
         <code>
 public readonly override string ToString() => $"({X}, {Y})";
         </code>
     </pre>
 
-    <ul>
-        <li>Proprietăți și indici:</li>
-    </ul>
+<ul>
+    <li>Proprietăți și indici:</li>
+</ul>
 
-    <pre>
+<pre>
         <code>
 private int counter;
 public int Counter
@@ -241,10 +850,13 @@ public int Counter
         </code>
     </pre>
 
-    <p>Dacă aveți nevoie să aplicați modificatorul <code>readonly</code> la ambele accesorii ale unei proprietăți sau indici, aplicați-l în declarația proprietății sau indicelui.</p>
-<p>Începând cu C# 10, puteți utiliza expresia <code>with</code> pentru a produce o copie a unei instanțe a unui tip de structură, cu proprietățile și câmpurile specificate modificate. Puteți utiliza sintaxa de inițializare a obiectelor pentru a specifica membrii de modificat și noile lor valori, așa cum arată exemplul următor:</p>
+<p>Dacă aveți nevoie să aplicați modificatorul <code>readonly</code> la ambele accesorii ale unei proprietăți sau
+    indici, aplicați-l în declarația proprietății sau indicelui.</p>
+<p>Începând cu C# 10, puteți utiliza expresia <code>with</code> pentru a produce o copie a unei instanțe a unui tip de
+    structură, cu proprietățile și câmpurile specificate modificate. Puteți utiliza sintaxa de inițializare a obiectelor
+    pentru a specifica membrii de modificat și noile lor valori, așa cum arată exemplul următor:</p>
 
-    <pre>
+<pre>
         <code>
 public readonly struct Coords
 {
@@ -273,9 +885,14 @@ public static void Main()
 }
         </code>
     </pre>
-    <p>Începând cu C# 10, puteți defini tipuri de structuri de înregistrare. Tipurile de înregistrare furnizează funcționalități încorporate pentru încapsularea datelor. Puteți defini atât structuri de înregistrare, cât și structuri de înregistrare care sunt read-only. O structură de înregistrare nu poate fi o structură de referință (ref struct).</p>
-    <p>O variabilă de tip structură (struct) conține direct datele pentru acea structură. Aceasta creează o distincție între o structură neinițializată, care are valoarea implicită și o structură inițializată, care stochează valorile setate la construirea sa. De exemplu, luați în considerare următorul cod:</p>
-    <pre>
+<p>Începând cu C# 10, puteți defini tipuri de structuri de înregistrare. Tipurile de înregistrare furnizează
+    funcționalități încorporate pentru încapsularea datelor. Puteți defini atât structuri de înregistrare, cât și
+    structuri de înregistrare care sunt read-only. O structură de înregistrare nu poate fi o structură de referință (ref
+    struct).</p>
+<p>O variabilă de tip structură (struct) conține direct datele pentru acea structură. Aceasta creează o distincție între
+    o structură neinițializată, care are valoarea implicită și o structură inițializată, care stochează valorile setate
+    la construirea sa. De exemplu, luați în considerare următorul cod:</p>
+<pre>
         <code>
             <span >public readonly struct Măsurare</span>
             {
@@ -311,11 +928,15 @@ public static void Main()
         </code>
     </pre>
 <p>
-După cum arată exemplul anterior, expresia valorii implicite ignoră un constructor fără parametri și produce valoarea implicită a tipului de structură. Instantierea unui tablou de tip structură ignoră, de asemenea, un constructor fără parametri și produce un tablou populat cu valorile implicite ale tipului de structură.
+    După cum arată exemplul anterior, expresia valorii implicite ignoră un constructor fără parametri și produce
+    valoarea implicită a tipului de structură. Instantierea unui tablou de tip structură ignoră, de asemenea, un
+    constructor fără parametri și produce un tablou populat cu valorile implicite ale tipului de structură.
 </p>
 
 <p>
-Situația cel mai des întâlnită în care veți vedea valorile implicite este în cazul tablourilor sau altor colecții în care stocarea internă include blocuri de variabile. Următorul exemplu creează un tablou de 30 de structuri TemperatureRange, fiecare având valoarea implicită:
+    Situația cel mai des întâlnită în care veți vedea valorile implicite este în cazul tablourilor sau altor colecții în
+    care stocarea internă include blocuri de variabile. Următorul exemplu creează un tablou de 30 de structuri
+    TemperatureRange, fiecare având valoarea implicită:
 </p>
 
 <pre><code>
@@ -324,33 +945,51 @@ TemperatureRange[] lastMonth = new TemperatureRange[30];
 </code></pre>
 
 <p>
-Toate câmpurile unui membru al unei structuri trebuie să fie atribuite definitiv la crearea sa, deoarece tipurile de structuri stochează datele direct. Valoarea implicită a unei structuri are toate câmpurile atribuite definitiv la 0. Toate câmpurile trebuie să fie atribuite definitiv la apelarea unui constructor. Câmpurile pot fi inițializate folosind mecanismele următoare:
+    Toate câmpurile unui membru al unei structuri trebuie să fie atribuite definitiv la crearea sa, deoarece tipurile de
+    structuri stochează datele direct. Valoarea implicită a unei structuri are toate câmpurile atribuite definitiv la 0.
+    Toate câmpurile trebuie să fie atribuite definitiv la apelarea unui constructor. Câmpurile pot fi inițializate
+    folosind mecanismele următoare:
 </p>
 
 <ul>
-  <li>Puteți adăuga inițializatori de câmp la oricare câmp sau proprietate cu implementare automată.</li>
-  <li>Puteți inițializa oricare câmp sau proprietate cu implementare automată în corpul constructorului.</li>
+    <li>Puteți adăuga inițializatori de câmp la oricare câmp sau proprietate cu implementare automată.</li>
+    <li>Puteți inițializa oricare câmp sau proprietate cu implementare automată în corpul constructorului.</li>
 </ul>
 
 <p>
-Începând cu C# 11, dacă nu inițializați toate câmpurile dintr-o structură, compilatorul adaugă cod în constructor care le inițializează la valoarea implicită. Compilatorul efectuează analiza sa obișnuită de atribuire definitivă. Orice câmpuri care sunt accesate înainte de a fi atribuite sau care nu sunt atribuite definitiv la finalul execuției constructorului sunt atribuite valorile lor implicite înainte ca corpul constructorului să se execute. Dacă acestea sunt accesate înainte de a fi atribuite toate câmpurile, structura este inițializată cu valoarea implicită înainte ca corpul constructorului să se execute.
+    Începând cu C# 11, dacă nu inițializați toate câmpurile dintr-o structură, compilatorul adaugă cod în constructor
+    care le inițializează la valoarea implicită. Compilatorul efectuează analiza sa obișnuită de atribuire definitivă.
+    Orice câmpuri care sunt accesate înainte de a fi atribuite sau care nu sunt atribuite definitiv la finalul execuției
+    constructorului sunt atribuite valorile lor implicite înainte ca corpul constructorului să se execute. Dacă acestea
+    sunt accesate înainte de a fi atribuite toate câmpurile, structura este inițializată cu valoarea implicită înainte
+    ca corpul constructorului să se execute.
 </p>
 <p>
-Structurile au majoritatea capacităților unui tip de clasă. Există câteva excepții și unele excepții care au fost eliminate în versiunile mai recente:
+    Structurile au majoritatea capacităților unui tip de clasă. Există câteva excepții și unele excepții care au fost
+    eliminate în versiunile mai recente:
 </p>
 
 <ul>
-  <li>Un tip de structură nu poate moșteni de la alte tipuri de clasă sau structură și nu poate fi baza unei clase. Cu toate acestea, un tip de structură poate implementa interfețe.</li>
-  <li>Nu poți declara un finalizator într-un tip de structură.</li>
-  <li>Înainte de C# 11, un constructor al unui tip de structură trebuie să inițializeze toate câmpurile de instanță ale tipului.</li>
-  <li>Înainte de C# 10, nu poți declara un constructor fără parametri.</li>
-  <li>Înainte de C# 10, nu poți inițializa un câmp sau o proprietate de instanță la declarația sa.</li>
+    <li>Un tip de structură nu poate moșteni de la alte tipuri de clasă sau structură și nu poate fi baza unei clase. Cu
+        toate acestea, un tip de structură poate implementa interfețe.</li>
+    <li>Nu poți declara un finalizator într-un tip de structură.</li>
+    <li>Înainte de C# 11, un constructor al unui tip de structură trebuie să inițializeze toate câmpurile de instanță
+        ale tipului.</li>
+    <li>Înainte de C# 10, nu poți declara un constructor fără parametri.</li>
+    <li>Înainte de C# 10, nu poți inițializa un câmp sau o proprietate de instanță la declarația sa.</li>
 </ul>
 <p>
-Atunci când transmiteți o variabilă de tip structură ca argument către o metodă sau returnați o valoare de tip structură dintr-o metodă, întreaga instanță a tipului de structură este copiată. Transmiterea prin valoare poate afecta performanța codului în scenarii de înaltă performanță care implică tipuri de structură mari. Puteți evita copierea valorii prin transmiterea unei variabile de tip structură prin referință. Utilizați modificatorii de parametru de metodă ref, out sau in pentru a indica că un argument trebuie transmis prin referință. Utilizați returnări ref pentru a returna rezultatul unei metode prin referință.
+    Atunci când transmiteți o variabilă de tip structură ca argument către o metodă sau returnați o valoare de tip
+    structură dintr-o metodă, întreaga instanță a tipului de structură este copiată. Transmiterea prin valoare poate
+    afecta performanța codului în scenarii de înaltă performanță care implică tipuri de structură mari. Puteți evita
+    copierea valorii prin transmiterea unei variabile de tip structură prin referință. Utilizați modificatorii de
+    parametru de metodă ref, out sau in pentru a indica că un argument trebuie transmis prin referință. Utilizați
+    returnări ref pentru a returna rezultatul unei metode prin referință.
 </p>
 <p>
-De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrângerea de tip struct pentru a specifica că un parametru de tip este un tip de valoare non-nullable. Atât tipurile de structură, cât și tipurile de enumerare satisfac constrângerea de tip struct.
+    De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrângerea de tip struct pentru a specifica că
+    un parametru de tip este un tip de valoare non-nullable. Atât tipurile de structură, cât și tipurile de enumerare
+    satisfac constrângerea de tip struct.
 </p>
 
 <h2>2.5 Introducere în tipurile de înregistrări din C#</h2>
@@ -399,7 +1038,8 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
 <h3>2.5.2 Cum diferă înregistrările de clase și structuri</h3>
 <p>
     Aceeași sintaxă care declară și instanțiază clasele sau structurile poate fi utilizată pentru înregistrări. Trebuie
-    doar să înlocuiți cuvântul cheie <code>class</code> cu <code>record</code> sau să utilizați <code>record sturct</code>
+    doar să înlocuiți cuvântul cheie <code>class</code> cu <code>record</code> sau să utilizați
+    <code>record sturct</code>
     în loc de <code>struct</code>. De asemenea, aceeași sintaxă pentru exprimarea relațiilor de moștenire este acceptată
     de clasele record. Înregistrările diferă de clase în următoarele moduri:
 </p>
@@ -410,7 +1050,8 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
         <code>Object.Equals(Object)</code> și <code>==</code>) indică egalitatea sau inegalitatea valorilor în
         înregistrări.
     </li>
-    <li>Puteți utiliza o expresie with pentru a crea o copie a unui obiect imuabil cu valori noi în proprietățile selectate.</li>
+    <li>Puteți utiliza o expresie with pentru a crea o copie a unui obiect imuabil cu valori noi în proprietățile
+        selectate.</li>
     <li>
         Metoda <code>ToString</code> a unei înregistrări creează un șir de caractere formatat care afișează numele
         tipuluiunui obiect, precum și numele și valorile tuturor proprietăților sale publice.
@@ -421,7 +1062,8 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </li>
 </ul>
 <p>
-    Structurile de înregistrare diferă de structuri deoarece compilatorul sintetizează metodele pentru egalitate și <code>ToString</code>.
+    Structurile de înregistrare diferă de structuri deoarece compilatorul sintetizează metodele pentru egalitate și
+    <code>ToString</code>.
     Compilatorul sintetizează o metodă <code>Deconstruct</code> pentru structurile de înregistrări poziționale.
 </p>
 
@@ -498,15 +1140,20 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
 <h2>2.6 Interfețe - definirea comportamentului pentru mai multe tipuri</h2>
 
 <p>
-    O interfață conține definiții pentru un grup de funcționalități conexe pe care o clasă neabstractă sau o structură trebuie să le implementeze.
-    O interfață poate defini metode statice, care trebuie să aibă o implementare. De asemenea, o interfață poate defini o implementare implicită
+    O interfață conține definiții pentru un grup de funcționalități conexe pe care o clasă neabstractă sau o structură
+    trebuie să le implementeze.
+    O interfață poate defini metode statice, care trebuie să aibă o implementare. De asemenea, o interfață poate defini
+    o implementare implicită
     pentru membri.
-    O interfață nu poate declara date instanță, cum ar fi câmpuri, proprietăți autoimplementate sau evenimente de tip proprietate.
+    O interfață nu poate declara date instanță, cum ar fi câmpuri, proprietăți autoimplementate sau evenimente de tip
+    proprietate.
 </p>
 
 <p>
-    Prin utilizarea interfețelor, puteți, de exemplu, să includeți într-o clasă comportamente din mai multe surse. Această capacitate este
-    importantă în C# deoarece limbajul nu acceptă moștenirea multiplă a claselor. În plus, trebuie să folosiți o interfață dacă doriți
+    Prin utilizarea interfețelor, puteți, de exemplu, să includeți într-o clasă comportamente din mai multe surse.
+    Această capacitate este
+    importantă în C# deoarece limbajul nu acceptă moștenirea multiplă a claselor. În plus, trebuie să folosiți o
+    interfață dacă doriți
     să simulați moștenirea structurilor, deoarece acestea nu pot moșteni efectiv de la o altă structură sau clasă.
 </p>
 <p>
@@ -522,24 +1169,34 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 <p>
-    Numele unei interfețe trebuie să fie un nume valid de identificator C#. Prin convenție, numele interfețelor încep cu un <code>I</code> mare.
+    Numele unei interfețe trebuie să fie un nume valid de identificator C#. Prin convenție, numele interfețelor încep cu
+    un <code>I</code> mare.
 </p>
 <p>
-    Orice clasă sau structură care implementează interfața <code>IEquatable&ltT&gt</code> trebuie să conțină o definiție pentru o metodă 
-    <code>Equals</code> care să corespundă semnăturii specificate de interfață. Prin urmare, puteți presupune că o clasă care implementează
-    <code>IEquatable&ltT&gt</code> va conține o metodă <code>Equals</code> cu ajutorul căreia o instanță a clasei poate determina dacă este egală
+    Orice clasă sau structură care implementează interfața <code>IEquatable&ltT&gt</code> trebuie să conțină o definiție
+    pentru o metodă
+    <code>Equals</code> care să corespundă semnăturii specificate de interfață. Prin urmare, puteți presupune că o clasă
+    care implementează
+    <code>IEquatable&ltT&gt</code> va conține o metodă <code>Equals</code> cu ajutorul căreia o instanță a clasei poate
+    determina dacă este egală
     cu o altă instanță a aceleiași clase.
 </p>
 <p>
-    Definiția <code>IEquatable&ltT&gt</code> nu prevede o implementare pentru <code>Equals</code>. O clasă sau o structură poate implementa mai
+    Definiția <code>IEquatable&ltT&gt</code> nu prevede o implementare pentru <code>Equals</code>. O clasă sau o
+    structură poate implementa mai
     multe interfețe, dar o clasă poate moșteni doar dintr-o singură clasă.
 </p>
 <p>
-    Interfețele pot conține metode de instanță, proprietăți, evenimente, indexatori sau orice combinație a acestor patru tipuri de membri.
-    Interfețele pot conține constructori statici, câmpuri, constante sau operatori. Începând cu C# 11, membrii interfeței care nu sunt
-    câmpuri pot fi declarați de tipul <code>static abstract</code>. O interfață nu poate conține câmpuri de instanță, contructori instanță sau =
-    finalizatori. Membrii interfeței sunt publici în mod implicit și puteți specifica în mod explicit modificatorii de acces,
-    cum ar fi <code>public</code>, <code>internal</code>, <code>private</code>, <code>protected internal</code> sau <code>private protected</code>.
+    Interfețele pot conține metode de instanță, proprietăți, evenimente, indexatori sau orice combinație a acestor patru
+    tipuri de membri.
+    Interfețele pot conține constructori statici, câmpuri, constante sau operatori. Începând cu C# 11, membrii
+    interfeței care nu sunt
+    câmpuri pot fi declarați de tipul <code>static abstract</code>. O interfață nu poate conține câmpuri de instanță,
+    contructori instanță sau =
+    finalizatori. Membrii interfeței sunt publici în mod implicit și puteți specifica în mod explicit modificatorii de
+    acces,
+    cum ar fi <code>public</code>, <code>internal</code>, <code>private</code>, <code>protected internal</code> sau
+    <code>private protected</code>.
     Un membru privat trebuie să aibă o implementare implicită.
 </p>
 <p>
@@ -592,7 +1249,8 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     fi convertită implicit la interfața derivată sau la oricare dintre interfețele de bază ale acesteia. O clasă
     poate include o interfață de mai multe ori prin clasele de bază pe care le moștenește sau prin interfețe
     moștenite de alte interfețe. Cu toate acestea, clasa poate furniza o implementare a unei interfețe doar o
-    singură dată și doar dacă clasa declară interfața ca parte a definiției clasei <code>(class ClassName : InterfaceName)</code>.
+    singură dată și doar dacă clasa declară interfața ca parte a definiției clasei
+    <code>(class ClassName : InterfaceName)</code>.
     În cazul în care interfața este moștenită deoarece ați moștenit o clasă de bază care implementează interfața,
     clasa de bază va asigura implementarea membrilor interfeței. Cu toate acestea, clasa derivată poate
     reimplementa orice membri virtuali ai interfeței în loc să utilizeze implementarea moștenită. Atunci când
@@ -602,38 +1260,41 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
 </p>
 <p>
     O clasă de bază poate, de asemenea, să implementeze membrii interfeței prin utilizarea membrilor virtuali.
-    În acest caz, o clasă derivată poate modifica comportamentul interfeței prin suprascrierea membrilor virtuali. 
+    În acest caz, o clasă derivată poate modifica comportamentul interfeței prin suprascrierea membrilor virtuali.
 </p>
 <h3>Rezumat interfețe</h3>
 <p>
     O interfață are următoarele proprietăți:
-    <ul>
-        <li>
-            În versiunile C# anterioare versiunii 8.0, o interfață este ca o clasă de bază abstractă care are numai membri
-            abstracți. O clasă sau o structură care implementează interfața trebuie să implementeze toți membrii acesteia.
-        </li>
-        <li>
-            Începând cu versiunea C# 8.0, o interfață poate defini implementări implicite pentru unii sau toți membrii săi.
-            O clasă sau o structură care implementează interfața nu trebuie să implementeze membrii care au implementări
-            implicite.
-        </li>
-        <li>
-            O interfață nu poate fi instanțiată direct. Membrii săi sunt implementați de orice clasă sau structură care
-            implementează interfața.
-        </li>
-        <li>
-            O clasă sau o structură poate implementa mai multe interfețe. O clasă poate moșteni o clasă de bază și,
-            totodată, poate implementa una sau mai multe interfețe.
-        </li>
-    </ul>
+<ul>
+    <li>
+        În versiunile C# anterioare versiunii 8.0, o interfață este ca o clasă de bază abstractă care are numai membri
+        abstracți. O clasă sau o structură care implementează interfața trebuie să implementeze toți membrii acesteia.
+    </li>
+    <li>
+        Începând cu versiunea C# 8.0, o interfață poate defini implementări implicite pentru unii sau toți membrii săi.
+        O clasă sau o structură care implementează interfața nu trebuie să implementeze membrii care au implementări
+        implicite.
+    </li>
+    <li>
+        O interfață nu poate fi instanțiată direct. Membrii săi sunt implementați de orice clasă sau structură care
+        implementează interfața.
+    </li>
+    <li>
+        O clasă sau o structură poate implementa mai multe interfețe. O clasă poate moșteni o clasă de bază și,
+        totodată, poate implementa una sau mai multe interfețe.
+    </li>
+</ul>
 </p>
 
 <h2>2.7 Clase și metode generice</h2>
 
 <p>
-    Genericitatea introduce în .NET conceptul de parametri de tip, care fac posibilă proiectarea de clase și metode care întârzie specificarea unuia
-    sau mai multor tipuri până când clasa sau metoda este declarată și instanțiată de codul client. De exemplu, prin utilizarea unui parametru de
-    tip generic <code>T</code>, puteți scrie o singură clasă pe care alte coduri client o pot utiliza fără a suporta costul sau riscul unor operații
+    Genericitatea introduce în .NET conceptul de parametri de tip, care fac posibilă proiectarea de clase și metode care
+    întârzie specificarea unuia
+    sau mai multor tipuri până când clasa sau metoda este declarată și instanțiată de codul client. De exemplu, prin
+    utilizarea unui parametru de
+    tip generic <code>T</code>, puteți scrie o singură clasă pe care alte coduri client o pot utiliza fără a suporta
+    costul sau riscul unor operații
     de cast sau boxing în timpul execuției, așa cum se arată aici:
 </p>
 <pre>
@@ -664,16 +1325,23 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 <p>
-    Clasele și metodele generice combină capacitatea de reutilizare, siguranța tipurilor și eficiența într-un mod în care nu o pot face omologii lor
-    ne-generici. Genericitatea este cel mai frecvent utilizată în cazul colecțiilor și al metodelor care operează cu acestea. Spațiul de nume
-    <code>System.Collections.Generic</code> conține mai multe clase de colecții bazate pe generice. Colecțiile ne-generice, cum ar fi
+    Clasele și metodele generice combină capacitatea de reutilizare, siguranța tipurilor și eficiența într-un mod în
+    care nu o pot face omologii lor
+    ne-generici. Genericitatea este cel mai frecvent utilizată în cazul colecțiilor și al metodelor care operează cu
+    acestea. Spațiul de nume
+    <code>System.Collections.Generic</code> conține mai multe clase de colecții bazate pe generice. Colecțiile
+    ne-generice, cum ar fi
     <code>ArrayList</code>, nu sunt recomandate și sunt menținute în scopuri de compatibilitate.
 </p>
 <p>
-    De asemenea, puteți crea tipuri și metode generice personalizate pentru a vă asigura propriile soluții generalizate și modele de proiectare
-    care sunt sigure din punct de vedere al tipurilor și eficiente. Următorul exemplu de cod prezintă o clasă generică simplă de liste legate în
-    scop demonstrativ. (În majoritatea cazurilor, ar trebui să utilizați clasa <code>List&ltT&gt</code> furnizată de .NET în loc să vă creați propria clasă).
-    Parametrul de tip <code>T</code> este utilizat în mai multe locuri în care, în mod normal, ar trebui să se utilizeze un tip concret pentru a indica
+    De asemenea, puteți crea tipuri și metode generice personalizate pentru a vă asigura propriile soluții generalizate
+    și modele de proiectare
+    care sunt sigure din punct de vedere al tipurilor și eficiente. Următorul exemplu de cod prezintă o clasă generică
+    simplă de liste legate în
+    scop demonstrativ. (În majoritatea cazurilor, ar trebui să utilizați clasa <code>List&ltT&gt</code> furnizată de
+    .NET în loc să vă creați propria clasă).
+    Parametrul de tip <code>T</code> este utilizat în mai multe locuri în care, în mod normal, ar trebui să se utilizeze
+    un tip concret pentru a indica
     tipul elementului stocat în listă. Acesta este utilizat în următoarele moduri:
 </p>
 <ul>
@@ -682,8 +1350,10 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     <li>Ca tip al membrului privat <code>data</code> al clasei imbricate.</li>
 </ul>
 <p>
-    <code>T</code> este disponibil pentru clasa imbricata <code>Node</code>. Atunci când <code>GenericList&ltT&gt</code> este instanțiată cu un tip concret, de
-    exemplu ca <code>GenericList&ltint&gt</code>, fiecare apariție a lui <code>T</code> va fi înlocuită cu <code>int</code>.
+    <code>T</code> este disponibil pentru clasa imbricata <code>Node</code>. Atunci când <code>GenericList&ltT&gt</code>
+    este instanțiată cu un tip concret, de
+    exemplu ca <code>GenericList&ltint&gt</code>, fiecare apariție a lui <code>T</code> va fi înlocuită cu
+    <code>int</code>.
 </p>
 <pre>
     <code>
@@ -748,8 +1418,10 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     </code>
 </pre>
 <p>
-    Următorul exemplu de cod arată modul în care codul client utilizează clasa generică <code>GenericList&ltT&gt</code> pentru a crea o listă de
-    numere întregi. Prin simpla schimbare a argumentului de tip, codul de mai jos ar putea fi modificat cu ușurință pentru a crea liste de șiruri
+    Următorul exemplu de cod arată modul în care codul client utilizează clasa generică <code>GenericList&ltT&gt</code>
+    pentru a crea o listă de
+    numere întregi. Prin simpla schimbare a argumentului de tip, codul de mai jos ar putea fi modificat cu ușurință
+    pentru a crea liste de șiruri
     de caractere sau orice alt tip personalizat:
 </p>
 <pre>
@@ -781,14 +1453,17 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     <li>Utilizați tipuri generice pentru a maximiza reutilizarea codului, siguranța tipurilor și performanța.</li>
     <li>Tipurile generice sunt folosite cel mai frecvent la crearea claselor de colecții.</li>
     <li>
-        Biblioteca de clase .NET conține mai multe clase de colecții generice în spațiul de nume <code>System.Collections.Generic</code>.
-        Colecțiile generice ar trebui utilizate ori de câte ori este posibil în locul claselor precum <code>ArrayList</code> din spațiul de nume
+        Biblioteca de clase .NET conține mai multe clase de colecții generice în spațiul de nume
+        <code>System.Collections.Generic</code>.
+        Colecțiile generice ar trebui utilizate ori de câte ori este posibil în locul claselor precum
+        <code>ArrayList</code> din spațiul de nume
         <code>System.Collections</code>.
     </li>
     <li>Puteți să vă creați propriile interfețe generice, clase, metode, evenimente și delegați.</li>
     <li>Clasele generice pot fi restricționate pentru a permite accesul la metode pentru anumite tipuri de date.</li>
     <li>
-        Informațiile privind tipurile care sunt utilizate într-un tip de date generic pot fi obținute în timpul execuției
+        Informațiile privind tipurile care sunt utilizate într-un tip de date generic pot fi obținute în timpul
+        execuției
         prin utilizarea mecanismului de reflecție.
     </li>
 </ul>
@@ -817,7 +1492,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
 </pre>
 <p>
     Tipurile anonime sunt utilizate de obicei în clauza de selecție a unei expresii de interogare pentru a
-    returna un subset de proprietăți din fiecare obiect din secvența sursă. 
+    returna un subset de proprietăți din fiecare obiect din secvența sursă.
 </p>
 <p>
     Tipurile anonime conțin una sau mai multe proprietăți publice read-only. Nu sunt valide alte tipuri de
@@ -859,7 +1534,8 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     De asemenea, este posibil să se definească un câmp prin intermediul unui obiect de alt tip: clasă,
     structură sau chiar un alt tip anonim. Acest lucru se face prin utilizarea variabilei care conține acest
     obiect, la fel ca în exemplul următor, în care două tipuri anonime sunt create folosind tipuri definite de
-    utilizator deja instanțiate. În ambele cazuri, câmpul <code>product</code> din tipurile anonime <code>shipment</code>
+    utilizator deja instanțiate. În ambele cazuri, câmpul <code>product</code> din tipurile anonime
+    <code>shipment</code>
     și <code>shipmentWithBonus</code> va fi de tip <code>Product</code> și va conține valorile implicite ale
     fiecărui câmp. Iar câmpul <code>bonus</code> va fi de tip anonim creat de compilator.
 </p>
@@ -913,8 +1589,10 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     Nu puteți declara un câmp, o proprietate, un eveniment sau tipul de returnare al unei metode ca având un
     tip anonim. În mod similar, nu puteți declara un parametru formal al unei metode, al unei proprietăți, al
     unui constructor sau al unui indexor ca având un tip anonim. Pentru a transmite un tip anonim sau o
-    colecție care conține tipuri anonime ca argument al unei metode, puteți declara parametrul ca fiind de tip <code>object</code>.
-    Cu toate acestea, utilizarea <code>object</code> pentru tipurile anonime contravine scopului tipizării puternice. Dacă
+    colecție care conține tipuri anonime ca argument al unei metode, puteți declara parametrul ca fiind de tip
+    <code>object</code>.
+    Cu toate acestea, utilizarea <code>object</code> pentru tipurile anonime contravine scopului tipizării puternice.
+    Dacă
     trebuie să stocați rezultatele interogării sau să le transmiteți în afara limitei metodei, luați în
     considerare utilizarea unei structuri sau clase cu nume obișnuit în locul unui tip anonim.
 </p>
@@ -939,9 +1617,11 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
 
 <p>
     Un șir de caractere este un obiect de tip String a cărui valoare este text. Pe plan intern, textul este
-    stocat ca o colecție secvențială de obiecte <code>Char</code>, numai pentru citire. La sfârșitul unui șir de caractere
+    stocat ca o colecție secvențială de obiecte <code>Char</code>, numai pentru citire. La sfârșitul unui șir de
+    caractere
     C# nu există un terminator de șir, prin urmare, un șir C# poate conține orice număr de caractere zero
-    încorporate ("\0"). Proprietatea <code>Length</code> a unui șir reprezintă numărul de obiecte Char pe care le conține,
+    încorporate ("\0"). Proprietatea <code>Length</code> a unui șir reprezintă numărul de obiecte Char pe care le
+    conține,
     nu numărul de caractere Unicode. Pentru a accesa punctele de cod Unicode individuale dintr-un șir,
     utilizați obiectul <code>StringInfo</code>.
 </p>
@@ -1014,7 +1694,8 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     și <code>s2</code> este concatenat pentru a forma un singur șir, cele două șiruri originale nu sunt
     modificate. Operatorul <code>+=</code> creează un nou șir de caractere care conține conținutul combinat.
     Acest nou obiect este atribuit variabilei <code>s1</code>, iar obiectul original care a fost atribuit lui
-    <code>s1</code>, este eliberat în vederea colectării gunoiului deoarece nicio altă variabilă nu mai conține o referință la acesta.
+    <code>s1</code>, este eliberat în vederea colectării gunoiului deoarece nicio altă variabilă nu mai conține o
+    referință la acesta.
 </p>
 <pre>
     <code>
@@ -1242,7 +1923,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
             <td>\'</td>
             <td>Ghilimea simplă</td>
             <td>0x0027</td>
-        </tr>    
+        </tr>
         <tr>
             <td>\"</td>
             <td>Ghilimea dublă</td>
@@ -1306,7 +1987,9 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
         <tr>
             <td>\x</td>
             <td>Secvență escape Unicode similară cu "\u", însă de lungime variabilă</td>
-            <td><code>\xH[H][H][H]</code> (range: 0 - FFFF; example: <code>\x00E7</code> or <code>\x0E7</code> or <code>\xE7</code> = "ç")</td>
+            <td><code>\xH[H][H][H]</code> (range: 0 - FFFF; example: <code>\x00E7</code> or <code>\x0E7</code> or
+                <code>\xE7</code> = "ç")
+            </td>
         </tr>
     </tbody>
 </table>
@@ -1346,7 +2029,7 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
 </p>
 <p>
     Utilizați interpolarea șirurilor de caractere pentru a îmbunătăți lizibilitatea și a ușura întreținerea
-    codului dumneavoastră. Interpolarea șirurilor de caractere obține aceleași rezultate ca și metoda 
+    codului dumneavoastră. Interpolarea șirurilor de caractere obține aceleași rezultate ca și metoda
     <code>String.Format</code>, dar simplifică utilizarea și îmbunătățește claritatea codului.
 </p>
 <pre>
@@ -1395,8 +2078,8 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
 </p>
 <p>
     Pentru a interpreta secvențele escape în mod literal, utilizați un literal de șir de caractere literale.
-    Un șir literar interpolat începe cu caracterul <code>$</code>  urmat de caracterul <code>@</code>. Puteți
-    utiliza simbolurile <code>$</code>  și <code>@</code>  în orice ordine: atât <code>$@"..."</code>, cât și
+    Un șir literar interpolat începe cu caracterul <code>$</code> urmat de caracterul <code>@</code>. Puteți
+    utiliza simbolurile <code>$</code> și <code>@</code> în orice ordine: atât <code>$@"..."</code>, cât și
     <code>@$"..."</code> sunt șiruri verbatim interpolate valide.
 </p>
 <pre>
@@ -1436,7 +2119,8 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
 
 <h3>2.9.9 Subșiruri</h3>
 <p>
-    O subșir este orice secvență de caractere conținută într-un șir de caractere. Utilizați metoda <code>Substring</code>
+    O subșir este orice secvență de caractere conținută într-un șir de caractere. Utilizați metoda
+    <code>Substring</code>
     pentru a crea un nou șir de caractere dintr-o porțiune a șirului original. Puteți căuta una sau mai multe
     apariții ale unui subșir, folosind metoda IndexOf. Utilizați metoda <code>Replace</code> pentru a înlocui
     toate aparițiile unui subșir specificat cu un nou șir. Ca și metoda <code>Substring</code>, <code>Replace</code>
@@ -1512,7 +2196,8 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
 </pre>
 <p>
     În schimb, un șir de caractere nul nu se referă la o instanță a unui obiect <code>System.String</code> și
-    orice încercare de a apela o metodă pe un șir de caractere nul provoacă o excepție <code>NullReferenceException</code>.
+    orice încercare de a apela o metodă pe un șir de caractere nul provoacă o excepție
+    <code>NullReferenceException</code>.
     Cu toate acestea, puteți utiliza șiruri de caractere nule în operațiile de concatenare și comparare cu
     alte șiruri de caractere. Exemplele următoare ilustrează câteva cazuri în care o referință la un șir de
     caractere nul provoacă sau nu o excepție:
@@ -1558,7 +2243,8 @@ De asemenea, puteți utiliza cuvântul cheie <code>struct</code> în constrânge
     impact semnificativ asupra performanței. Cu toate acestea, în anumite scenarii, cum ar fi buclele strânse
     care se execută de mai multe sute sau mii de ori, operațiunile cu șiruri de caractere pot afecta performanța.
     Clasa <code>StringBuilder</code> creează un buffer de șiruri de caractere care oferă o performanță mai
-    bună dacă programul dumneavoastră efectuează multe manipulări de șiruri de caractere. Șirul <code>StringBuilder</code>
+    bună dacă programul dumneavoastră efectuează multe manipulări de șiruri de caractere. Șirul
+    <code>StringBuilder</code>
     vă oferă, de asemenea, posibilitatea de a realoca caractere individuale, aspect pe care tipul de date
     string încorporat nu îl permite. Acest cod, de exemplu, modifică conținutul unui șir de caractere fără a
     crea un nou șir de caractere:
